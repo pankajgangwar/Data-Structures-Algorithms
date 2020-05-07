@@ -1336,11 +1336,7 @@ public class DecemberW3 {
         }
 
         int counter = p_map.size();
-
         int begin = 0, end = 0;
-
-        int len = Integer.MAX_VALUE;
-
         List<Integer> result = new ArrayList<>();
 
         while(end < slen){

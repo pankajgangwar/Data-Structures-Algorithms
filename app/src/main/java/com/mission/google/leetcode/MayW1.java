@@ -43,6 +43,57 @@ public class MayW1 {
         System.out.println("res = " + res);
     }
 
+    /* https://leetcode.com/problems/minesweeper/ */
+    public char[][] updateBoard(char[][] board, int[] click) {
+        helper(board, click[0], click[1]);
+        return board;
+    }
+
+    public void helper(char[][] board, int curr_x, int curr_y){
+        if(curr_x < 0 || curr_x > board.length -1 || curr_y < 0 || curr_y > board[0].length -1){
+            return;
+        }
+        
+        if(board[curr_x][curr_y] == 'M') {
+            board[curr_x][curr_y] = 'X';
+            return;
+        }
+        
+        if(board[curr_x][curr_y] != 'E') return;
+
+        int[][] dirs = new int[][]{{0, 1}, {1, 1}, {1, 0}, {-1, 1}, {-1, 0}, {-1, -1}, {0, -1}, {1, -1}};
+
+        board[curr_x][curr_y] = 'B';
+
+        int totalMines = 0;
+        for(int[] dir : dirs){
+            int next_x = dir[0] + curr_x;
+            int next_y = dir[1] + curr_y;
+
+            if(next_x >= 0 && next_x < board.length && next_y >= 0 && next_y < board[0].length){
+                if(board[next_x][next_y] == 'M'){
+                    totalMines++;
+                }
+            }
+        }
+        if(totalMines > 0){
+            board[curr_x][curr_y] = (char) (totalMines + '0');
+        }else{
+                for(int[] dir : dirs){
+                int next_x = dir[0] + curr_x;
+                int next_y = dir[1] + curr_y;
+
+                if(next_x >= 0 && next_x < board.length && next_y >= 0 && next_y < board[0].length){
+                    if(board[next_x][next_y] == 'E'){
+                        helper(board, next_x, next_y);
+                    }
+                }
+            }
+        }
+        
+    }
+
+
     /* https://leetcode.com/problems/find-k-pairs-with-smallest-sums/ */
     /* https://leetcode.com/problems/find-the-kth-smallest-sum-of-a-matrix-with-sorted-rows/ 
        Revisit

@@ -27,11 +27,6 @@ import java.util.TreeSet;
 import java.util.stream.IntStream;
 
 public class MayW1 {
-    /* https://leetcode.com/problems/minimum-cost-for-tickets/ */
-    /* https://leetcode.com/problems/all-oone-data-structure/ */
-    /* https://leetcode.com/problems/couples-holding-hands/ */
-    /* https://leetcode.com/problems/find-the-kth-smallest-sum-of-a-matrix-with-sorted-rows/ */
-        
 
     public static void main(String[] args) {
         MayW1 mayW1 = new MayW1();
@@ -41,6 +36,89 @@ public class MayW1 {
         list.add(Arrays.asList(5));
         int res = mayW1.maxDiff(123456);
         System.out.println("res = " + res);
+    }
+
+    /* https://leetcode.com/problems/partition-array-into-three-parts-with-equal-sum/ */
+    public boolean canThreePartsEqualSum(int[] A) {
+        int sum = Arrays.stream(A).sum();
+
+        if(sum % 3 != 0) return false;
+        int reqsum = sum / 3;
+        int currsum = 0;
+        int subarrays = 0;
+        for(int i = 0; i < A.length; i++){
+            currsum += A[i];
+            if(currsum == reqsum) {
+                currsum = 0;
+                subarrays++;
+            }
+        }
+        return subarrays >= 3;
+    }
+
+    /* https://leetcode.com/problems/check-if-it-is-a-straight-line/ */
+    public boolean checkStraightLine(int[][] points) {
+        if(points.length <= 2) return true;
+        
+        for(int i = 1; i < points.length -1; i++){
+            int[] first = points[i];
+            int[] second = points[i-1];
+            int[] third = points[i+1];
+            
+            if(!isCollinear(first[0], first[1], second[0], second[1], third[0], third[1])){
+                return false;
+            }
+            /*int s1 = 0, s2 = 0;
+            if(second[1] != first[1])
+                s1 = (second[0] - first[0]) / (second[1] - first[1]);
+            
+            if(third[1] != first[1])
+                s2 = (third[0] - first[0]) / (third[1] - first[1]);
+            
+            if(s1 != s2) return false;*/
+        }
+        return true;
+    }
+
+    public boolean isCollinear(int x1, int y1, int x2, int y2, int x3, int y3){
+        int s = x1 * (y2 - y3) 
+              + x2 * (y3 - y1) 
+              + x3 * (y1 - y2);
+        return s == 0;
+    }
+    
+    /* https://leetcode.com/problems/burst-balloons/
+    *  Revisit
+    * */
+    public int maxCoins(int[] balloons) {
+        int[] nums = new int[balloons.length + 2];
+
+        Arrays.fill(nums, 1);
+        int n = nums.length;
+        for(int i = 0; i < balloons.length; i++){
+            nums[i+1] = balloons[i];
+        }
+        for(int i = 0; i < n; i++){
+            //System.out.print(nums[i] + "\t");
+        }
+        
+        int[][] memo = new int[n][n];
+        return burst(memo, nums, 0, n -1);
+    }
+
+    public int burst(int[][] memo, int[] nums, int left, int right){
+        if(left + 1 == right) return 0;
+        
+        if(memo[left][right] > 0) return memo[left][right];
+        
+        int ans = 0;
+        
+        for(int i = left + 1; i < right; i++){
+            ans = Math.max(ans, nums[left] * nums[i] * nums[right] 
+                + burst(memo, nums, left, i) + burst(memo, nums, i, right));
+        }
+        memo[left][right] = ans;
+        return ans;
     }
 
     /* https://leetcode.com/problems/minesweeper/ */
@@ -90,9 +168,7 @@ public class MayW1 {
                 }
             }
         }
-        
     }
-
 
     /* https://leetcode.com/problems/find-k-pairs-with-smallest-sums/ */
     /* https://leetcode.com/problems/find-the-kth-smallest-sum-of-a-matrix-with-sorted-rows/ 
@@ -105,7 +181,7 @@ public class MayW1 {
         }
         return row[k-1];
     }
-    
+
     public int[] kSmallestPairs(int[] nums1, int[] nums2) {
          int k = 200;
          PriorityQueue<int[]> mMinHeap = new PriorityQueue<>((a, b)->a[0]+a[1]-b[0]-b[1]);
@@ -253,6 +329,7 @@ public class MayW1 {
     public int subarraysWithKDistinct(int[] A, int K) {
         return atMostK(A, K) - atMostK(A, K - 1);
     }
+
     int atMostK(int[] A, int K) {
         int i = 0, res = 0;
         Map<Integer, Integer> count = new HashMap<>();

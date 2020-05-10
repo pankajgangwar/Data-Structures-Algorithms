@@ -1,4 +1,4 @@
-apply plugin: 'com.android.application'
+apply plugin: 'java'
 
 sourceCompatibility = 1.8
 version = '1.0'
@@ -7,24 +7,6 @@ repositories {
     mavenCentral()
 }
 
-android {
-    compileSdkVersion 29
-    buildToolsVersion '29.0.3'
-    defaultConfig {
-        applicationId "com.mission.google"
-        minSdkVersion 28
-        targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
-    }
-    compileOptions {
-        targetCompatibility 1.8
-        sourceCompatibility 1.8
-    }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
 }

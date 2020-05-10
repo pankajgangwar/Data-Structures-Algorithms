@@ -697,17 +697,34 @@ public class AprilW3 {
         return res.toString();
     }
 
-    public int consecutiveNumbersSum(int n) {
-        int ways = 0;
-        for(int i = 1 ; i <= n; i++ ){
-            int j = i + 1;
-            int sum = i;
-            for (; sum < n; j++) {
-                sum += j;
+    /* https://leetcode.com/problems/consecutive-numbers-sum/  */
+    public int solution3(int N){
+        int res = 0;
+        for(int n = 2 ; n * (n + 1) / 2 <= N; ++n){
+            if( ( N - ( n * ( n + 1 )  / 2 )  ) % n  ==  0) {
+                res++;
             }
-            if(sum == n) ways++;
         }
-        return ways;
+        return res + 1;
+    }
+    public int solution1(int n) {
+        int ans = 0;
+        for(int i = 1; i * (i - 1) / 2 < n; i++){
+            if((n - i * (i - 1) / 2) % i == 0){
+                ++ans;
+            }
+        }
+        return ans;
+    }
+
+    public int solution2(int n) {
+        int count = 1;
+        for(int k = 2; k < Math.sqrt(2*n); k++){
+            if((n - ( k * ( k - 1)) / 2) % k == 0){
+                ++count;
+            }
+        }
+        return count;
     }
 
     /* https://leetcode.com/problems/before-and-after-puzzle/ */

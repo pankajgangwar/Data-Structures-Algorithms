@@ -20,6 +20,42 @@ public class MayW2 {
         System.out.println("status = " + status);
     }
 
+    /* https://leetcode.com/problems/brick-wall/ */
+    public int leastBricks(List<List<Integer>> wall) {
+        return 0;
+    }
+
+    /* https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iii/ */
+    public int maxProfit(int[] prices) {
+        int t1Cost = Integer.MAX_VALUE;
+        int t2Cost = Integer.MAX_VALUE;
+        int t1Profit = 0, t2Profit = 0;
+        for(int i = 0; i < prices.length; i++){
+            int price = prices[i];
+            t1Cost = Math.min(t1Cost, price);
+            t1Profit = Math.max(t1Profit, price - t1Cost);
+            t2Cost = Math.min(t2Cost, price - t1Profit);
+            t2Profit = Math.max(t2Profit, price - t2Cost);
+        }
+        return t2Profit;
+    }
+
+    /* https://leetcode.com/problems/excel-sheet-column-number/ 
+       Revisit
+    */
+    public int titleToNumber(String s) {
+        int n = s.length();
+        if( n == 1) return s.charAt(0) - 'A' + 1;
+
+        int base = 26;
+        int number = 0;
+        for(int i = 0; i < n; i++) {
+            int idx = s.charAt(i) - 'A' + 1;
+            number += idx * Math.pow(base, n - i -1);
+        }
+        return number;
+    }
+
     /* https://leetcode.com/problems/minimum-time-to-collect-all-apples-in-a-tree/ */
      public int minTime(int n, int[][] edges, List<Boolean> hasApple) {
         LinkedList<Integer> adjList[] = new LinkedList[n];
@@ -160,8 +196,5 @@ public class MayW2 {
         return false;
     }
 
-    /* https://leetcode.com/problems/brick-wall/ */
-    public int leastBricks(List<List<Integer>> wall) {
-        return 0;
-    }
+
 }

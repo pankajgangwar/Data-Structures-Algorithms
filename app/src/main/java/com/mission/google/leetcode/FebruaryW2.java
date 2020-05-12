@@ -906,12 +906,21 @@ public class FebruaryW2 {
        Revisit
      */
     public boolean reachingPoints(int sx, int sy, int tx, int ty) {
-        while(sx < tx && sy < ty)
-            if(tx < ty) ty = ty % tx;
-            else tx = tx % ty;
-
-        return sx == tx && sy <= ty && (ty - sy) % sx == 0
-        || sy == ty && sx <= tx && (tx - sx) % sy == 0;
+        while(tx >= sx && ty >= sy){
+            if(tx == ty) break;
+            if(tx > ty){
+                if(ty > sy){
+                    tx = tx % ty;
+                }
+                else return (tx - sx) % ty == 0;
+            }else{
+                if(tx > sx ){
+                    ty = ty % tx;
+                }
+                else return (ty - sy) % tx == 0;
+            }
+        }
+        return (tx == sx && ty == sy);
     }
 
     /* https://leetcode.com/problems/count-of-smaller-numbers-after-self/ */

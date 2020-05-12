@@ -1,5 +1,7 @@
 package com.mission.google.leetcode;
 
+import com.mission.google.TreeNode;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -23,6 +25,59 @@ public class MayW2 {
     /* https://leetcode.com/problems/brick-wall/ */
     public int leastBricks(List<List<Integer>> wall) {
         return 0;
+    }
+
+    /* https://leetcode.com/problems/find-a-corresponding-node-of-a-binary-tree-in-a-clone-of-that-tree/ */
+    public final TreeNode getTargetCopy(final TreeNode o, final TreeNode c, final TreeNode t) {
+        if(o == null && c == null) return null;
+        if(t.val == c.val){
+            return c;
+        }
+        TreeNode resLeft = getTargetCopy(o.left, c.left, t);
+        TreeNode resRight = getTargetCopy(o.right, c.right, t);
+
+        if(resLeft != null) return resLeft;
+        return resRight;
+    }
+
+    class Node {
+        public int val;
+        public Node left;
+        public Node right;
+        public Node() {}
+        public Node(int _val) {
+            val = _val;
+        }
+        public Node(int _val,Node _left,Node _right) {
+            val = _val;
+            left = _left;
+            right = _right;
+        }
+    };
+    /* https://leetcode.com/problems/convert-binary-search-tree-to-sorted-doubly-linked-list/ */
+    public Node treeToDoublyList(Node root) {
+        if(root == null)
+            return null;
+
+        helper(root);
+        first.left = last;
+        last.right = first;
+        return first;
+    }
+
+    Node last = null, first = null;
+    public void helper(Node root){
+        if(root != null){
+            helper(root.left);
+            if(last != null){
+                last.right = root;
+                root.left = last;
+            }else{
+                first = root;
+            }
+            last = root;
+            helper(root.right);
+        }
     }
 
     /* https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iii/ */

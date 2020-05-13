@@ -1,11 +1,18 @@
 package com.mission.google.leetcode;
 
 import com.mission.google.TreeNode;
+import com.mission.google.datastructures.ListNode;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Stack;
 
 public class MayW2 {
@@ -15,17 +22,191 @@ public class MayW2 {
     /* https://leetcode.com/problems/increasing-subsequences/ */
     /* https://leetcode.com/problems/partition-array-into-three-parts-with-equal-sum/ */
 
+    /* DP on trees */
+    /* 
+       https://leetcode.com/problems/sum-of-distances-in-tree/ 
+       https://leetcode.com/problems/minimum-cost-tree-from-leaf-values/
+       https://leetcode.com/problems/unique-binary-search-trees-ii/
+    */
+
     public static void main(String[] args) {
         MayW2 w2 = new MayW2();
         //w2.leastBricks(new ArrayList<>());
-        boolean status = w2.isPerfectSquare(8);
-        System.out.println("status = " + status);
+        ListNode head = new ListNode(3);
+        head.next = new ListNode(1);
+        head.next.next = new ListNode(4);
+        head.next.next.next = new ListNode(2);
+        //w2.sortList(head);
+        List<String> list1 = Arrays.asList("John", "johnsmith@mail.com", "john00@mail.com");
+        List<String> list2 = Arrays.asList("John", "johnnybravo@mail.com");
+        List<String> list3 = Arrays.asList("John", "johnsmith@mail.com", "john_newyork@mail.com");
+        List<String> list4 = Arrays.asList("Mary", "mary@mail.com");
+        List<List<String>> accounts = new ArrayList<>();
+        accounts.add(list1);
+        accounts.add(list2);
+        accounts.add(list3);
+        accounts.add(list4);
+
+        w2.accountsMerge(accounts);
     }
 
     /* https://leetcode.com/problems/brick-wall/ */
     public int leastBricks(List<List<Integer>> wall) {
         return 0;
     }
+
+    /* https://leetcode.com/problems/accounts-merge/ */
+    /*
+       Similar to https://leetcode.com/problems/smallest-string-with-swaps/
+    */
+    public List<List<String>> accountsMerge(List<List<String>> accounts) {
+        HashSet<String> sets = new HashSet<>();
+        HashMap<String, String> mapWithNames = new HashMap<>();
+        for(List<String> account : accounts){
+            for(int i = 1; i < account.size(); i++){
+                sets.add(account.get(i)); // All unique emails
+                mapWithNames.put(account.get(i), account.get(0)); // map names with emails
+            }
+        }
+        String [] arr = new String[sets.size()];
+        Iterator<String> it = sets.iterator();
+        int i = 0;
+        Map<String, Integer> map = new HashMap<>();
+        while(it.hasNext()){ // Make an array to perform union on emails indexes
+            String curr = it.next();
+            map.put(curr, i);
+            arr[i++] = curr;
+        }
+        int n = arr.length;
+        UnionFind unionFind = new UnionFind(n);
+        i = 0;
+
+        for(List<String> account : accounts){
+            if(account.size() == 2)continue; // No 2 emails to pair
+            for( i = 1; i < account.size() - 1; i++){
+                String e1 = account.get(i);
+                String e2 = account.get(i + 1);
+                int x = map.get(e1);
+                int y = map.get(e2);
+                unionFind.union(x, y); // Union two email accounts if they belong to same subsets
+            }
+        }
+        Map<Integer, ArrayList<String>> mapWithHead = new HashMap<>();
+        i = 0;
+        for( i = 0; i < n; i++){
+            int root = unionFind.find(i);
+            mapWithHead.putIfAbsent(root, new ArrayList<>());
+            mapWithHead.get(root).add(arr[i]); // Add all emails with same subsets under one bucket
+        }
+
+        List<List<String>> res = new ArrayList<>();
+        for(Map.Entry<Integer, ArrayList<String>> entry : mapWithHead.entrySet()){
+            ArrayList<String> accountList = entry.getValue();
+            String name = mapWithNames.get(accountList.get(0)); // find name with this email subset
+            List<String> currlist = new ArrayList<>();
+            Collections.sort(accountList); //Sort the email accounts
+            currlist.add(name);
+            currlist.addAll(accountList);
+            res.add(currlist); // add to final result
+        }
+        return res;
+    }
+
+    /* Template for Union find */
+    class UnionFind {
+        private int count = 0;
+        private int[] parent, rank;
+
+        public UnionFind(int n) {
+            count = n;
+            parent = new int[n];
+            rank = new int[n];
+            for (int i = 0; i < n; i++) {
+                parent[i] = i;
+            }
+        }
+
+        public int find(int p) {
+            while (p != parent[p]) {
+                parent[p] = parent[parent[p]];    // path compression by halving
+                p = parent[p];
+            }
+            return p;
+        }
+
+        public void union(int p, int q) {
+            int rootP = find(p);
+            int rootQ = find(q);
+            if (rootP == rootQ) return;
+            if (rank[rootQ] > rank[rootP]) {
+                parent[rootP] = rootQ;
+            } else {
+                parent[rootQ] = rootP;
+                if (rank[rootP] == rank[rootQ]) {
+                    rank[rootP]++;
+                }
+            }
+            count--;
+        }
+
+        public int count() {
+            return count;
+        }
+    }
+
+
+
+    /* https://leetcode.com/problems/sort-list/ */
+    public ListNode sortList(ListNode head) {
+        return mergeSort(head);
+    }
+
+    public ListNode mergeSort(ListNode head){
+        ListNode fast = head;
+        ListNode middle = head;
+        ListNode prev = head;
+
+        while(fast != null && fast.next != null) {
+            fast = fast.next.next;
+            prev = middle;
+            middle = middle.next;
+        }
+        if(head == middle) return head;
+
+        prev.next = null; // split into 2 halves
+
+        ListNode first = mergeSort(head);
+        ListNode second = mergeSort(middle);
+        ListNode sorted = mergeSortedListIterative(first, second);
+        return sorted;
+    }
+
+    /* https://leetcode.com/problems/merge-two-sorted-lists/ */
+    public ListNode mergeSortedListIterative(ListNode l1, ListNode l2) {
+        ListNode a = l1;
+        ListNode b = l2;
+        ListNode dummy = new ListNode(0);
+        ListNode head = dummy;
+        while (a != null && b != null) {
+            if (a.val < b.val) {
+                dummy.next = a;
+                a = a.next;
+            } else {
+                dummy.next = b;
+                b = b.next;
+            }
+            dummy = dummy.next;
+        }
+
+        if (a != null) {
+            dummy.next = a;
+        }
+        if (b != null) {
+            dummy.next = b;
+        }
+        return head.next;
+    }
+
 
     /* https://leetcode.com/problems/find-a-corresponding-node-of-a-binary-tree-in-a-clone-of-that-tree/ */
     public final TreeNode getTargetCopy(final TreeNode o, final TreeNode c, final TreeNode t) {

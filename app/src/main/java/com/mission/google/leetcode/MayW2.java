@@ -60,62 +60,56 @@ public class MayW2 {
        Similar to https://leetcode.com/problems/smallest-string-with-swaps/
     */
     public List<List<String>> accountsMerge(List<List<String>> accounts) {
-        HashSet<String> sets = new HashSet<>();
+        Map<String, Integer> mapEmailWithId = new HashMap<>();
         HashMap<String, String> mapWithNames = new HashMap<>();
+
+        UnionFind unionFind = new UnionFind();
+        int id = 0;
         for(List<String> account : accounts){
             for(int i = 1; i < account.size(); i++){
-                sets.add(account.get(i)); // All unique emails
-                mapWithNames.put(account.get(i), account.get(0)); // map names with emails
+                String email = account.get(i);
+                mapWithNames.put(email, account.get(0));
+                
+                if(!mapEmailWithId.containsKey(email)){
+                    mapEmailWithId.put(email, id++);
+                }
+                unionFind.union(mapEmailWithId.get(account.get(1)), mapEmailWithId.get(email));
             }
         }
-        String [] arr = new String[sets.size()];
-        Iterator<String> it = sets.iterator();
-        int i = 0;
-        Map<String, Integer> map = new HashMap<>();
-        while(it.hasNext()){ // Make an array to perform union on emails indexes
-            String curr = it.next();
-            map.put(curr, i);
-            arr[i++] = curr;
-        }
-        int n = arr.length;
-        UnionFind unionFind = new UnionFind(n);
-        i = 0;
 
-        for(List<String> account : accounts){
-            if(account.size() == 2)continue; // No 2 emails to pair
-            for( i = 1; i < account.size() - 1; i++){
-                String e1 = account.get(i);
-                String e2 = account.get(i + 1);
-                int x = map.get(e1);
-                int y = map.get(e2);
-                unionFind.union(x, y); // Union two email accounts if they belong to same subsets
-            }
-        }
         Map<Integer, ArrayList<String>> mapWithHead = new HashMap<>();
-        i = 0;
-        for( i = 0; i < n; i++){
-            int root = unionFind.find(i);
+
+        for(String email : mapWithNames.keySet()){
+            int root = unionFind.find(mapEmailWithId.get(email));
             mapWithHead.putIfAbsent(root, new ArrayList<>());
-            mapWithHead.get(root).add(arr[i]); // Add all emails with same subsets under one bucket
+            mapWithHead.get(root).add(email);
         }
 
         List<List<String>> res = new ArrayList<>();
         for(Map.Entry<Integer, ArrayList<String>> entry : mapWithHead.entrySet()){
             ArrayList<String> accountList = entry.getValue();
-            String name = mapWithNames.get(accountList.get(0)); // find name with this email subset
+            String name = mapWithNames.get(accountList.get(0));
             List<String> currlist = new ArrayList<>();
-            Collections.sort(accountList); //Sort the email accounts
+            Collections.sort(accountList);
             currlist.add(name);
             currlist.addAll(accountList);
-            res.add(currlist); // add to final result
+            res.add(currlist);
         }
         return res;
     }
 
-    /* Template for Union find */
     class UnionFind {
         private int count = 0;
         private int[] parent, rank;
+        int n = 10001;
+        public UnionFind() {
+            count = n;
+            parent = new int[n];
+            rank = new int[n];
+            for (int i = 0; i < n; i++) {
+                parent[i] = i;
+            }
+        }
 
         public UnionFind(int n) {
             count = n;
@@ -125,7 +119,6 @@ public class MayW2 {
                 parent[i] = i;
             }
         }
-
         public int find(int p) {
             while (p != parent[p]) {
                 parent[p] = parent[parent[p]];    // path compression by halving
@@ -133,7 +126,6 @@ public class MayW2 {
             }
             return p;
         }
-
         public void union(int p, int q) {
             int rootP = find(p);
             int rootQ = find(q);
@@ -148,7 +140,6 @@ public class MayW2 {
             }
             count--;
         }
-
         public int count() {
             return count;
         }

@@ -55,6 +55,124 @@ public class MayW2 {
         return 0;
     }
 
+    /* https://leetcode.com/problems/largest-bst-subtree/ 
+       Ans: https://leetcode.com/problems/largest-bst-subtree/discuss/630909/JAVA-0ms-O(n)-solution
+       Revist
+    */
+    public int largestBSTSubtree(TreeNode root) {
+        int[] res = largestBST(root);
+        return res[1]; //returns size of largest BST
+    }
+
+    public int[] largestBST(TreeNode root) {
+        if(root == null) {
+            // { is BST, max length of BST, max from left, min from right}
+            return new int[]{1, 0, Integer.MAX_VALUE, Integer.MIN_VALUE};
+        }
+
+        if(root.left == null && root.right == null) {
+            // { Is BST, length of leaf is 1, max is root, min is root}
+            return new int[]{1, 1, root.val, root.val };
+        }
+
+        int[] leftRes = largestBST(root.left);
+        int[] rightRes = largestBST(root.right);
+
+        int[] res = new int[]{0, 0, root.val, root.val };
+
+        if(leftRes[0] == 1 && rightRes[0] == 1){ //If left and right both are BST
+            int max = leftRes[3];
+            int min = rightRes[2];
+
+            if(max < root.val && root.val < min){ // root should be between max from left tree and min from right
+                 res[0] = 1; // Its a BST
+                 res[1] = leftRes[1] + rightRes[1] + 1;
+                 res[2] = Math.min(leftRes[2], res[2]); // min from left tree
+                 res[3] = Math.max(res[3], rightRes[3]); // max from right tree
+            }else{
+                res[1] = Math.max(leftRes[1], rightRes[1]); // return max length from left and right subtree
+            }
+        }else{
+            res[1] = Math.max(leftRes[1], rightRes[1]);
+        }
+        return res;
+    }
+
+    /* https://leetcode.com/problems/monotone-increasing-digits/ */
+    public int monotoneIncreasingDigits(int number) {
+        char[] arr = String.valueOf(number).toCharArray();
+        int n = arr.length;
+
+        int startIdx = n - 1;
+        for(int i = n - 1; i > 0; i-- ){
+            if(arr[i] < arr[i-1]){
+                startIdx = i - 1;
+                arr[i-1]--;
+            }
+        }
+
+        for(int i = startIdx + 1; i < n; i++){
+            arr[i] = '9';
+        }
+
+        String ans = new String(arr);
+        return Integer.valueOf(ans);
+    }
+
+    /**
+     * 402. Remove K Digits
+     * https://leetcode.com/problems/remove-k-digits/
+     */
+    public String removeKdigits(String num, int k) {
+        int n = num.length();
+        if(k == n) return "0";
+        Stack<Character> stack = new Stack<>();
+        int i = 0;
+        while (i < n) {
+            while(k > 0 && !stack.isEmpty() && stack.peek() > num.charAt(i)){
+                stack.pop();
+                k--;
+            }
+            stack.push(num.charAt(i++));
+        }
+        //If the numbers are in increasing order i.e 123456
+        while(k > 0){
+            stack.pop();
+            k--;
+        }
+        StringBuilder builder = new StringBuilder();
+        while(!stack.isEmpty()){
+            builder.append(stack.pop());
+        }
+        builder.reverse();
+        while(builder.length() > 0 && builder.charAt(0) == '0'){
+            builder.deleteCharAt(0);
+        }
+        if(builder.length() == 0){
+            builder.append('0');
+        }
+        return builder.toString();
+    }
+
+    /* https://leetcode.com/problems/minimum-number-of-arrows-to-burst-balloons/
+    * Ans : https://leetcode.com/problems/minimum-number-of-arrows-to-burst-balloons/discuss/629813/JAVA-Simple-Greedy-Sol*/
+    public int findMinArrowShots(int[][] points) {
+        if(points.length == 0) return 0;
+
+        Arrays.sort(points, (a,b) -> a[1] - b[1]);
+
+        List<int[]> res = new  ArrayList<>();
+        res.add(points[0]);
+
+        for(int[] point : points){
+            int[] prev = res.get(res.size()-1);
+            if(prev[1] < point[0]) {
+                res.add(point);
+            }
+        }
+        return res.size();
+    }
+
     /* https://leetcode.com/problems/accounts-merge/ */
     /*
        Similar to https://leetcode.com/problems/smallest-string-with-swaps/
@@ -144,8 +262,6 @@ public class MayW2 {
             return count;
         }
     }
-
-
 
     /* https://leetcode.com/problems/sort-list/ */
     public ListNode sortList(ListNode head) {

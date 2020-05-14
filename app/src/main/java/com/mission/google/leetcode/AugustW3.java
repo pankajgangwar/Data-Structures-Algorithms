@@ -512,31 +512,6 @@ public class AugustW3 {
     }
 
     /**
-     * 402. Remove K Digits
-     * https://leetcode.com/problems/remove-k-digits/
-     */
-    public static String removeKdigits(String num, int k) {
-        if (num.length() == k)
-            return "0";
-
-        StringBuilder builder = new StringBuilder(num);
-        for (int i = 0; i < k; i++) {
-            int j = 0;
-            while (j < builder.length() - 1 && builder.charAt(j) <= builder.charAt(j + 1)) {
-                j++;
-            }
-            builder.delete(j, j + 1);
-        }
-        while (builder.length() > 1 && builder.charAt(0) == '0')
-            builder.delete(0, 1);
-
-        if (builder.length() == 0)
-            return "0";
-
-        return builder.toString();
-    }
-
-    /**
      * 139. Word Break
      * <p>
      * https://leetcode.com/problems/word-break/

@@ -16,11 +16,13 @@ import java.util.PriorityQueue;
 import java.util.Stack;
 
 public class MayW2 {
+    // TODO: 5/15/2020  
     /* https://leetcode.com/problems/minimum-cost-for-tickets/ */
     /* https://leetcode.com/problems/all-oone-data-structure/ */
     /* https://leetcode.com/problems/couples-holding-hands/ */
     /* https://leetcode.com/problems/increasing-subsequences/ */
     /* https://leetcode.com/problems/partition-array-into-three-parts-with-equal-sum/ */
+    /* https://leetcode.com/problems/minimum-distance-to-type-a-word-using-two-fingers/*/
 
     /* DP on trees */
     /* 
@@ -55,9 +57,96 @@ public class MayW2 {
         return 0;
     }
 
+    /* 
+        LC : 1135
+        https://leetcode.com/problems/connecting-cities-with-minimum-cost/ 
+    */
+    public int minimumCost(int n, int[][] connections) {
+        
+        Arrays.sort(connections, (a,b) -> a[2] - b[2]);
+            
+        UnionFind unionfind = new UnionFind(n);
+        int cost = 0;
+        for(int i = 0; i < connections.length; i++) {
+            int x = connections[i][0] - 1;
+            int y = connections[i][1] - 1;
+            
+            int xroot = unionfind.find(x);
+            int yroot = unionfind.find(y);
+            
+            if(xroot == yroot){ // These 2 nodes are already connected
+                continue;
+            }
+            unionfind.union(x, y); // Connect the 2 nodes
+            
+            cost += connections[i][2];
+        }
+        if(unionfind.count() != 1){
+            return -1;            
+        }
+        return cost;
+    }
+    
+    /*
+        LC : 1229
+        https://leetcode.com/problems/meeting-scheduler/
+        Ans: https://leetcode.com/problems/meeting-scheduler/discuss/631154/JAVA-O(n)-using-2-pointers
+    */
+    public List<Integer> minAvailableDuration(int[][] s1, int[][] s2, int d) {
+        ArrayList<Integer> res = new ArrayList<>();
+
+        Arrays.sort(s1, (a,b) -> a[1] - b[1]);
+        Arrays.sort(s2, (a,b) -> a[1] - b[1]);
+
+        int i = 0, j = 0;
+        for(; i < s1.length && j < s2.length; ){
+            int start = Math.max(s1[i][0], s2[j][0]);
+            int end = start + d;
+            if(end <= Math.min(s1[i][1], s2[j][1])){
+                res.add(start);
+                res.add(end);
+                break;
+            }else if(s1[i][1] <  s2[j][1]){
+                i++;
+            }else if(s2[j][1] <  s1[i][1]){
+                j++;
+            }else{
+                i++;
+                j++;
+            }
+        }
+        return res;
+    }
+
+    /* LC : 435
+    * https://leetcode.com/problems/non-overlapping-intervals/
+    * Ans : https://leetcode.com/problems/non-overlapping-intervals/discuss/630989/JAVA-Based-on-highest-voted-O(nlogn)
+    * Revisit : Why can't we sort the interval with start time
+    * */
+    public int eraseOverlapIntervals(int[][] intervals) {
+        // Arrays.sort(intervals, (a,b) -> a[0] == b[0] ? a[1] - b[1] : a[0] - b[0]);
+        Arrays.sort(intervals, (a,b) -> a[1] - b[1]); // Sort the intervals with end time
+
+        int n = intervals.length;
+
+        if(n == 1 || n == 0) return 0;
+
+        List<int[]> res = new ArrayList<>();
+        int[] prev = intervals[0];
+        res.add(prev);
+        for(int i = 1; i < intervals.length; i++){
+            int[] curr = intervals[i];
+            if(prev[1] <= curr[0]){
+                res.add(curr);
+                prev = curr;
+            }
+        }
+        return n - res.size();
+    }
+
     /* https://leetcode.com/problems/largest-bst-subtree/ 
        Ans: https://leetcode.com/problems/largest-bst-subtree/discuss/630909/JAVA-0ms-O(n)-solution
-       Revist
+       Revisit
     */
     public int largestBSTSubtree(TreeNode root) {
         int[] res = largestBST(root);

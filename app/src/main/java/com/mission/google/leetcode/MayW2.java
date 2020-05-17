@@ -57,6 +57,19 @@ public class MayW2 {
         return 0;
     }
 
+    /* https://leetcode.com/problems/couples-holding-hands/ */
+    public int minSwapsCouples(int[] row) {
+        int n = row.length / 2;
+        UnionFind unionfind = new UnionFind(n);
+        for(int i = 0; i < n; i++){
+            int a = row[2 * i];
+            int b = row[2 * i  +1];
+            unionfind.union(a / 2, b / 2);
+        }
+
+        return unionfind.count() - n;
+    }
+
     /* 
         LC : 1135
         https://leetcode.com/problems/connecting-cities-with-minimum-cost/ 

@@ -2,7 +2,6 @@ package com.mission.google.leetcode;
 import com.mission.google.TreeNode;
 import com.mission.google.datastructures.ListNode;
 
-import java.lang.reflect.Array;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -205,8 +204,32 @@ public class NovemberW4 {
         return true;
     }
 
-    /*https://leetcode.com/problems/kth-smallest-element-in-a-bst/*/
+    /*
+    LC : 230
+    https://leetcode.com/problems/kth-smallest-element-in-a-bst/
+    */
     public int kthSmallest(TreeNode root, int k) {
+        //return solutionI(root, k, new ArrayList<>());
+        return solutionII(root, k);
+    }
+
+    public int solutionI(TreeNode root, int k, List<Integer> res){
+        if(root == null) return 0;
+
+        int left = solutionI(root.left, k, res);
+        if(left != 0) return left;
+
+        res.add(root.val);
+
+        if(res.size() == k) return res.get(res.size() -1);
+
+        int right = solutionI(root.right, k, res);
+        if(right != 0) return right;
+
+        return 0;
+    }
+
+    public int solutionII(TreeNode root, int k) {
         int kthSmallest = 0;
         Stack<TreeNode> stack = new Stack<TreeNode>();
         while(root != null || !stack.isEmpty()){

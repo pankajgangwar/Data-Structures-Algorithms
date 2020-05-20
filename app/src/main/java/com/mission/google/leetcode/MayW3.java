@@ -3,6 +3,7 @@ package com.mission.google.leetcode;
 import com.mission.google.TreeNode;
 import com.mission.google.datastructures.ListNode;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
 
@@ -40,9 +42,225 @@ public class MayW3 {
         return 0;
     }
 
+
     public static void main(String[] args) {
         MayW3 test = new MayW3();
-        test.simplifiedFractions(4);
+        ArrayList<Integer> freq = new ArrayList<>();
+        //freq.add(4L);
+        //freq.add(3);
+        freq.add(9);
+        freq.add(5);
+        freq.add(8);
+
+        int ans = sortedSum(freq);
+        System.out.println("ans = " + ans);
+    }
+
+    /* 
+    LC : 901
+    https://leetcode.com/problems/online-stock-span/submissions/
+    */
+    class StockSpanner {
+        Stack<int[]> stack;
+
+        public StockSpanner() {
+            stack = new Stack<>();
+        }
+
+        public int next(int price) {
+            int len = 0;
+            int span = 1;
+            int[] curr = new int[]{price, span};
+
+            while (!stack.isEmpty() && stack.peek()[0] <= price) {
+                span += stack.pop()[1];
+            }
+            curr[1] = span;
+            stack.push(curr);
+            return span;
+        }
+    }
+
+    /*  LC : 909
+        https://leetcode.com/problems/snakes-and-ladders/ 
+    */
+    public int snakesAndLadders(int[][] board) {
+        int n = board.length;
+        int[] arr = new int[n*n];
+        Arrays.fill(arr, -1);
+        boolean flip = false;
+        int index = 0;
+        for(int i = n-1; i >= 0; i--){
+            if(flip){
+                for(int j = n-1; j >= 0; j--){
+                    index++;
+                    if(board[i][j] != -1){
+                        arr[index-1] = board[i][j] - 1;
+                    }
+                }
+                flip = false;
+            }else{
+                for(int j = 0; j < n; j++){
+                    index++;
+                    if(board[i][j] != -1){
+                        arr[index-1] = board[i][j] - 1;
+                    }
+                }
+                flip = true;
+            }
+        }
+        
+        Queue<Integer> bfs = new LinkedList<Integer>();
+        int minSteps = 0;
+        boolean[] visited = new boolean[arr.length];
+        int start = arr[0] > -1 ? arr[0] : 0;
+        
+        visited[start] = true;
+        bfs.offer(start);
+        
+        while(!bfs.isEmpty()){
+            int size = bfs.size();
+            while(size-- > 0){
+                int loc = bfs.poll();
+                if(loc == arr.length -1){
+                    return minSteps;
+                }
+
+                for(int next = loc + 1; next <= Math.min(6 + loc, arr.length -1); next++){
+                    int dest = arr[next] == -1 ? next : arr[next];
+                    if(!visited[dest]){
+                        visited[dest]= true;
+                        bfs.offer(dest);
+                    }
+                }
+            }
+            minSteps++;
+        }
+        return -1;
+    }
+
+    /* HackerRank problems*/
+    public static int sortedSum(List<Integer> a) {
+
+        int mod = (int)1e9+7;
+        int sum = 0;
+        ArrayList<Integer> list = new ArrayList<>();
+        for (int i = 0; i < a.size(); i++) {
+            int ele = a.get(i);
+            int loc = Collections.binarySearch(list, ele);
+            System.out.println("loc = " + loc);
+            list.add( Math.abs(loc) - 1, ele);
+
+            int currSum = 0;
+            for (int j = 0; j < list.size(); j++) {
+                currSum += (j + 1) * list.get(j);
+                currSum = ((currSum % mod ) + mod ) % mod;
+            }
+            sum += currSum;
+            sum =( (sum % mod) + mod ) % mod;
+        }
+        return sum;
+    }
+
+    /* HackerRank problems*/
+    public static long taskOfPairing(List<Long> freq) {
+        long pairs = 0L;
+        LinkedList<Long> freqs = new LinkedList<>(freq);
+
+        Long prevWeight = 0L;
+        while(!freqs.isEmpty()){
+            Long dumbbells = freqs.pollFirst() + prevWeight;
+            if(dumbbells % 2 == 0){
+                pairs += dumbbells / 2;
+                prevWeight = 0L;
+            }else if(dumbbells > 2){
+                prevWeight = 1L;
+                pairs += dumbbells / 2;
+            }else{
+                prevWeight = dumbbells;
+            }
+        }
+        BigInteger big = BigInteger.valueOf(pairs);
+        return big.longValue();
+    }
+
+    /* 
+        LC : 686
+        https://leetcode.com/problems/repeated-string-match/ 
+    */
+    public int repeatedStringMatch(String A, String B) {
+        return bruteForce(A, B);
+    }
+    
+    public int bruteForce(String A, String B) {
+        StringBuilder builder = new StringBuilder();
+        int minSteps = 0;
+        while(builder.length() < B.length()){
+            builder.append(A);
+            minSteps++;
+        }
+        if(builder.toString().contains(B)) return minSteps;
+        if(builder.append(A).toString().contains(B)) return minSteps + 1;
+        return -1;
+    }
+
+
+    /* 
+        LC : 459
+        https://leetcode.com/problems/repeated-substring-pattern/ 
+    */
+    public boolean repeatedSubstringPattern(String s) {
+        int len = s.length();
+
+        for(int i = len / 2; i >= 1; --i){
+            if(len % i == 0){
+                int factor = len / i;
+                String first = s.substring(0, i);
+                StringBuilder builder = new StringBuilder();
+                for(int j = 0 ; j < factor; j++){
+                    builder.append(first);
+                }
+                if(s.equals(builder.toString())){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public List<Integer> findAnagrams(String s, String p) {
+        HashMap<Character, Integer> map = new HashMap<>();
+        HashMap<Character, Integer> temp = new HashMap<>();
+        
+        int counter = 0;
+        for(char ch : p.toCharArray()){
+            map.put(ch, map.getOrDefault(ch, 0) + 1);
+            counter++;
+        }
+        
+        temp = map;
+        int start = 0;
+        int tempCounter = counter;
+        List<Integer> res = new ArrayList<>();
+        for(int end = 0; end < s.length(); end++){
+            char endch = s.charAt(end);
+            if(temp.containsKey(endch)){
+                
+                if(temp.get(endch) > 0 ){
+                    temp.put(endch, temp.get(endch) -1);
+                    tempCounter--;
+                }
+            }
+            if(tempCounter == 0){
+                res.add(start);
+            }
+            char startch = s.charAt(start);
+            if(temp.containsKey(startch)){
+                temp.put(startch, temp.get(startch) + 1);
+                counter++;
+            }
+        }
+        return res;
     }
 
     /*
@@ -179,10 +397,9 @@ public class MayW3 {
         return ans;
     }
 
-    public int gcd(int a, int b) {
-        if (a == 0)
-            return b;
-        return gcd(b%a, a);
+    public int gcd(int a, int b){
+        if(a == 0) return b;
+        return gcd(b % a, a);
     }
 
     /*
@@ -226,7 +443,6 @@ public class MayW3 {
         }
         return res;
     }
-
 
     /* https://leetcode.com/problems/odd-even-linked-list/ */
     public ListNode oddEvenList(ListNode head) {

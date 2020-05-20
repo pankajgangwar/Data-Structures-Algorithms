@@ -121,7 +121,7 @@ public class DecemberW3 {
         //System.out.println(res);
 
         //w3.grayCodeRec(3, new ArrayList<>());
-        //w3.findAnagrams("cbaebabacd","abc");
+        w3.findAnagrams("cbaebabacd","abc");
 
         String[] words = new String[]{"good","best","word"};
 
@@ -135,7 +135,7 @@ public class DecemberW3 {
                                     {1,1,1,1} };
 
         //w3.colorBorder(grid, 1,1, 2);
-        w3.asteroidCollision(new int[]{5, 10, -5});
+       // w3.asteroidCollision(new int[]{5, 10, -5});
     }
 
     /* 
@@ -1336,25 +1336,21 @@ public class DecemberW3 {
         }
 
         int counter = p_map.size();
-        int begin = 0, end = 0;
+        int begin = 0;
         List<Integer> result = new ArrayList<>();
-
-        while(end < slen){
+        for (int end = 0; end < slen; end++) {
             char ch = s.charAt(end);
-            if(p_map.containsKey(ch)){
+            if (p_map.containsKey(ch)) {
                 p_map.put(ch, p_map.get(ch) - 1);
-                if(p_map.get(ch) == 0) counter--;
+                if (p_map.get(ch) == 0) counter--;
             }
-            end++;
-
-            while (counter == 0){
+            while (counter == 0) {
                 char tempch = s.charAt(begin);
-                if(p_map.containsKey(tempch)){
+                if (p_map.containsKey(tempch)) {
                     p_map.put(tempch, p_map.get(tempch) + 1);
-                    if(p_map.get(tempch) > 0) counter++;
+                    if (p_map.get(tempch) > 0) counter++;
                 }
-
-                if(end - begin == plen)
+                if (end - begin + 1 == plen)
                     result.add(begin);
 
                 begin++;

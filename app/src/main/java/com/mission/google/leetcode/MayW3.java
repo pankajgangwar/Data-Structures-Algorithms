@@ -3,7 +3,6 @@ package com.mission.google.leetcode;
 import com.mission.google.TreeNode;
 import com.mission.google.datastructures.ListNode;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -19,46 +18,411 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
 
-import sun.reflect.generics.tree.Tree;
-
 public class MayW3 {
-    // TODO: 5/15/2020  
-    /* https://leetcode.com/problems/minimum-cost-for-tickets/ */
-    /* https://leetcode.com/problems/all-oone-data-structure/ */
-    /* https://leetcode.com/problems/couples-holding-hands/ */
-    /* https://leetcode.com/problems/increasing-subsequences/ */
-    /* https://leetcode.com/problems/partition-array-into-three-parts-with-equal-sum/ */
-    /* https://leetcode.com/problems/minimum-distance-to-type-a-word-using-two-fingers/*/
-
-    /* DP on trees */
-    /* 
-       https://leetcode.com/problems/sum-of-distances-in-tree/ 
-       https://leetcode.com/problems/minimum-cost-tree-from-leaf-values/
-       https://leetcode.com/problems/unique-binary-search-trees-ii/
-    */
-
-    /* https://leetcode.com/problems/brick-wall/ */
-    public int leastBricks(List<List<Integer>> wall) {
-        return 0;
-    }
-
+    
 
     public static void main(String[] args) {
         MayW3 test = new MayW3();
-        ArrayList<Integer> freq = new ArrayList<>();
-        //freq.add(4L);
-        //freq.add(3);
-        freq.add(9);
-        freq.add(5);
-        freq.add(8);
+        int[][] grid = new int[][]{
+                {0,-3}
+        };
+        //int res = test.calculateMinimumHP(grid);
+        //String res = test.minWindow("cnhczmccqouqadqtmjjzl" ,"czm");
+        //System.out.println("res = " + res);
+        //int res = test.isPrefixOfWord("i love eating burger", "burg");
+        boolean res = test.isPalindrome("");
+        System.out.println("res = " + res);
+    }
+    
+    /* LC : 787
+       https://leetcode.com/problems/cheapest-flights-within-k-stops/
+    */
+    public int findCheapestPrice(int n, int[][] flights, int src, int dst, int k) {
+        // Using Dijkstra's Algorithm
+        HashMap<Integer, HashMap<Integer, Integer>> map = new HashMap<>();
+        for (int i = 0; i < flights.length; i++) {
+            int curr[] = flights[i];
+            map.putIfAbsent(curr[0], new HashMap<Integer, Integer>());
+            map.get(curr[0]).put(curr[1], curr[2]);
+        }
 
-        int ans = sortedSum(freq);
-        System.out.println("ans = " + ans);
+        PriorityQueue<int[]> pq = new PriorityQueue<>((a,b) -> Integer.compare(a[0], b[0]));
+        pq.offer(new int[]{0, src, k + 1});
+
+        while(!pq.isEmpty()){
+            int[] curr = pq.poll();
+            int stops = curr[2];
+            int curr_src = curr[1];
+            int cost = curr[0];
+            if(stops == 0){
+                return cost;
+            }
+            if(stops > 0){
+                HashMap<Integer, Integer> adj = map.getOrDefault(curr_src, new HashMap<Integer, Integer>());
+                for(Integer next_src : adj.keySet()){
+                    pq.offer(new int[]{adj.get(next_src), next_src, stops - 1});
+                }
+            }
+        }
+        return -1;
+    }
+
+    /* LC : 491
+       https://leetcode.com/problems/increasing-subsequences/
+    */
+    public List<List<Integer>> findSubsequences(int[] nums) {
+        helper(nums, 0, new ArrayList<>());
+        List<List<Integer>> ans = new ArrayList<>();
+        Iterator<List<Integer>> it = res.iterator();
+        while(it.hasNext()){
+            List<Integer> next = it.next();
+            ans.add(next);
+        }
+        return ans;
+    }
+
+    HashSet<List<Integer>> res = new HashSet<>();
+    public void helper(int[] nums, int start, List<Integer> curr){
+        //System.out.println(curr);
+        if(curr.size() > 1){
+            res.add(new ArrayList<>(curr));
+        }
+
+        for(int i = start; i < nums.length; i++){
+            if(curr.size() == 0){
+                curr.add(nums[i]);
+            }else {
+                int last = curr.get(curr.size() - 1);
+                if(last <= nums[i]){
+                    curr.add(nums[i]);
+                }
+            }
+            helper(nums, i + 1 , curr);
+            if(curr.get(curr.size() - 1) == nums[i]){
+                curr.remove(curr.size() - 1);
+            }
+        }
+    }
+
+    /*
+    LC : 1458
+    https://leetcode.com/problems/max-dot-product-of-two-subsequences/
+    */
+    public int maxDotProduct(int[] A, int[] B) {
+        int n = A.length;
+        int m = B.length;
+        int dp[][] = new int[n+1][m+1];
+
+        for (int i = 0; i <= n; i++) {
+            Arrays.fill(dp[i], Integer.MIN_VALUE);
+        }
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= m; j++) {
+                dp[i][j] = Math.max(dp[i][j], dp[i-1][j]); // If i is not selected
+                dp[i][j] = Math.max(dp[i][j], dp[i][j-1]); // If j is not selected
+                dp[i][j] = Math.max(dp[i][j], dp[i-1][j-1]);// If i & j  both are not selected
+                dp[i][j] = Math.max(dp[i][j], Math.max(dp[i-1][j-1], 0) + A[i-1] * B[j-1] ); //If both i & j  are selected
+            }
+        }
+        return dp[n][m];
+    }
+
+    /*  LC : 1456
+        https://leetcode.com/problems/maximum-number-of-vowels-in-a-substring-of-given-length/
+    */
+    public int maxVowels(String s, int k) {
+        int start = 0;
+        int end = 0;
+        int len = s.length();
+        char[] arr = s.toCharArray();
+        int count = 0;
+
+        for(; end < k; end++){
+            if(isVowel(arr[end])){
+                count++;
+            }
+        }
+        String res = "";
+        if(count > 0){
+            res = s.substring(start, end);
+        }
+        int max = count;
+        end = k;
+        start = 0;
+        while(end < len){
+            if(isVowel(arr[end++])){
+                count++;
+            }
+            if(isVowel(arr[start++])){
+                count--;
+            }
+            if(max < count){
+                res = s.substring(start, end);
+                max = count;
+            }
+        }
+        char[] ans = res.toCharArray();
+        int maxAns = 0;
+        for (int i = 0; i < ans.length; i++) {
+            if(isVowel(ans[i])){
+                maxAns++;
+            }
+        }
+        return maxAns;
+    }
+
+    public boolean isVowel(char ch){
+        if(ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u'){
+            return true;
+        }
+        return false;
+    }
+
+    /*
+    LC : 1457
+    https://leetcode.com/problems/pseudo-palindromic-paths-in-a-binary-tree/
+    */
+    public int pseudoPalindromicPaths (TreeNode root) {
+        return helperTree(root, "");
+    }
+
+    public int helperTree(TreeNode root, String path){
+        if(root == null) return 0;
+        if(root.left == null && root.right == null){
+            if(isPalindrome(path + "" + root.val)) return 1;
+        }
+        int left = helperTree(root.left, path + "" + root.val + "");
+        int right = helperTree(root.right, path + "" + root.val + "");
+        return left + right;
+    }
+
+    public boolean isPalindrome(String s){
+        char[] arr = s.toCharArray();
+        int[] intarr = new int[10];
+        for (char ch : arr){
+            int ele = (int)ch - '0';
+            intarr[ele]++;
+        }
+        int odd = 0;
+        for (int i = 0; i < 10; i++) {
+            if(odd > 1) return false;
+            if(intarr[i] % 2 != 0){
+                odd++;
+            }
+        }
+        if(s.length() % 2 == 0 && odd > 0){
+            return false;
+        }
+        if(s.length() % 2 != 0 && odd > 1) return false;
+        return true;
+    }
+
+    /*
+    LC : 1455
+    https://leetcode.com/problems/check-if-a-word-occurs-as-a-prefix-of-any-word-in-a-sentence/
+    */
+    public int isPrefixOfWord(String sentence, String searchWord) {
+        String[] words = sentence.split(" ");
+        int minIdx = Integer.MAX_VALUE;
+        for (int i = 0; i < words.length; i++) {
+            String curr = words[i];
+            if(curr.startsWith(searchWord)){
+                if(minIdx > i + 1){
+                    minIdx = i + 1;
+                }
+            }
+        }
+        return minIdx != Integer.MAX_VALUE ? minIdx : -1;
+    }
+
+    /* 
+    LC : 1273
+    https://leetcode.com/problems/delete-tree-nodes/ 
+    */
+    public int deleteTreeNodes(int nodes, int[] parent, int[] value) {
+        List<List<Integer>> tree = constructTree(nodes, parent);
+        int[] ans = helper(tree, value, 0);
+        return ans[1];
+    }
+
+    public int[] helper(List<List<Integer>> tree, int[] values, int root) {
+        int sum = values[root];
+        int count = 1; // including root;
+
+        for (int child : tree.get(root)) {
+            int[] childRes = helper(tree, values, child);
+            sum += childRes[0];
+            count += childRes[1];
+        }
+
+        int[] res = new int[]{sum, sum == 0 ? 0 : count};
+        return res;
+    }
+
+    public List<List<Integer>> constructTree(int nodes, int[] parent) {
+        List<List<Integer>> tree = new ArrayList<>();
+        for (int i = 0; i < nodes; i++) {
+            tree.add(new ArrayList<>());
+        }
+        for (int i = 0; i < nodes; i++) {
+            if(parent[i] != -1){
+                tree.get(parent[i]).add(i);
+            }
+        }
+        return tree;
+    }
+
+    /*
+    LC : 698
+    https://leetcode.com/problems/partition-to-k-equal-sum-subsets/
+    */
+    public boolean canPartitionKSubsets(int[] nums, int k) {
+        int targetSum = 0;
+        int maxNum = 0;
+        for(int x : nums){
+            targetSum += x;
+            maxNum = Math.max(maxNum, x);
+        }
+        if(targetSum % k != 0 || maxNum > targetSum / k){
+            return false;
+        }
+        return helper(nums, k, new boolean[nums.length], 0, targetSum / k, 0);
+    }
+
+    public boolean helper(int[] nums, int k, boolean[] visited, int curSum, int targetSum, int nextIndex){
+        if(k == 0) return true;
+        if(curSum == targetSum){
+            return helper(nums, k - 1, visited, 0, targetSum, 0 );
+        }
+
+        for(int i = nextIndex; i < nums.length; i++){
+            if (!visited[i] && curSum + nums[i] <= targetSum) {
+                visited[i] = true;
+                if (helper(nums, k, visited, curSum + nums[i], targetSum, i + 1)) {
+                    return true;
+                }
+                visited[i] = false;
+            }
+        }
+        return false;
+    }
+
+    /*
+    LC : 727
+    https://leetcode.com/problems/minimum-window-subsequence/
+    */
+    public String minWindow(String s, String t) {
+        int slen = s.length();
+        int tlen = t.length();
+        int si = 0;
+        int ti = 0;
+        int len = slen;
+        int start = -1;
+        while (si < slen){
+            if(s.charAt(si) == t.charAt(ti)){
+                if(++ti == tlen){
+                    int end = si+1;
+                    while (--ti >= 0){ // cabcczam czm
+                        while (s.charAt(si) != t.charAt(ti)){
+                            si--;
+                        }
+                    }
+                    ++si;
+                    ++ti;
+                    if(end - si < len){
+                        len = end - si;
+                        start = si;
+                    }
+                }
+            }
+            ++si;
+        }
+        return start == -1 ? "" : s.substring(start, start + len);
+    }
+
+     /*
+     LC : 895
+     https://leetcode.com/problems/maximum-frequency-stack/ 
+     */
+    class FreqStack {
+        HashMap<Integer, Integer> freqMap;
+        HashMap<Integer, Stack<Integer>> stackMap;
+        int maxFreq = 0;
+        public FreqStack() {
+            freqMap = new HashMap<>();
+            stackMap = new HashMap<>();
+        }
+        
+        public void push(int x) {
+            int f = freqMap.getOrDefault(x, 0) + 1;
+            freqMap.put(x, f);
+            maxFreq = Math.max(maxFreq, f);
+            stackMap.putIfAbsent(f, new Stack<>());
+            stackMap.get(f).add(x);
+        }
+        
+        public int pop() {
+            int res = stackMap.get(maxFreq).pop();
+            freqMap.put(res, maxFreq - 1);
+            if(stackMap.get(maxFreq).isEmpty()){
+                stackMap.remove(maxFreq);
+                maxFreq--;
+            }
+            return res;
+        }
+    }
+
+    /*
+    LC : 174
+    https://leetcode.com/problems/dungeon-game/
+    Revisit
+    */
+    public int calculateMinimumHP(int[][] grid) {
+        int row = grid.length;
+        int col = grid[0].length;
+
+        int dp[][] = new int[row+1][col+1];
+
+        for (int[]a : dp) {
+            Arrays.fill(a, Integer.MAX_VALUE);
+        }
+
+        dp[row-1][col] = 1;
+        dp[row][col-1] = 1;
+
+        for(int i = row -1; i >= 0; --i){
+            for (int j = col - 1; j >= 0; --j) {
+                int need = Math.min(dp[i + 1][j], dp[i][j + 1]) - grid[i][j];
+                dp[i][j] = need <= 0 ? 1 : need;
+            }
+        }
+        return dp[0][0];
+    }
+
+
+    /*
+    LC : 1003
+    https://leetcode.com/problems/check-if-word-is-valid-after-substitutions/
+    */
+    public boolean isValid(String S) {
+        String t = "abc";
+
+        if(S.equals(t)|| S.length() == 0) return true;
+
+        int idx = S.indexOf(t);
+        if(idx < 0){
+            return false;
+        }
+        StringBuilder builder = new StringBuilder(S);
+        builder.delete(idx, idx + t.length());
+
+        return isValid(builder.toString());
     }
 
     /* 
     LC : 901
-    https://leetcode.com/problems/online-stock-span/submissions/
+    https://leetcode.com/problems/online-stock-span/
+    Revisit
     */
     class StockSpanner {
         Stack<int[]> stack;
@@ -137,51 +501,6 @@ public class MayW3 {
             minSteps++;
         }
         return -1;
-    }
-
-    /* HackerRank problems*/
-    public static int sortedSum(List<Integer> a) {
-
-        int mod = (int)1e9+7;
-        int sum = 0;
-        ArrayList<Integer> list = new ArrayList<>();
-        for (int i = 0; i < a.size(); i++) {
-            int ele = a.get(i);
-            int loc = Collections.binarySearch(list, ele);
-            System.out.println("loc = " + loc);
-            list.add( Math.abs(loc) - 1, ele);
-
-            int currSum = 0;
-            for (int j = 0; j < list.size(); j++) {
-                currSum += (j + 1) * list.get(j);
-                currSum = ((currSum % mod ) + mod ) % mod;
-            }
-            sum += currSum;
-            sum =( (sum % mod) + mod ) % mod;
-        }
-        return sum;
-    }
-
-    /* HackerRank problems*/
-    public static long taskOfPairing(List<Long> freq) {
-        long pairs = 0L;
-        LinkedList<Long> freqs = new LinkedList<>(freq);
-
-        Long prevWeight = 0L;
-        while(!freqs.isEmpty()){
-            Long dumbbells = freqs.pollFirst() + prevWeight;
-            if(dumbbells % 2 == 0){
-                pairs += dumbbells / 2;
-                prevWeight = 0L;
-            }else if(dumbbells > 2){
-                prevWeight = 1L;
-                pairs += dumbbells / 2;
-            }else{
-                prevWeight = dumbbells;
-            }
-        }
-        BigInteger big = BigInteger.valueOf(pairs);
-        return big.longValue();
     }
 
     /* 

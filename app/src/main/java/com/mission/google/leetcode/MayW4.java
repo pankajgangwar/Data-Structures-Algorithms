@@ -47,6 +47,37 @@ public class MayW4 {
     }
 
     /* 
+    LC : 1035
+    https://leetcode.com/problems/uncrossed-lines/
+    */
+    public int maxUncrossedLines(int[] A, int[] B) {
+        int[][] dp = new int[A.length][B.length];
+        for(int i = 0; i < A.length; i++){
+            Arrays.fill(dp[i], -1);
+        }
+        return helper(dp, A, B, 0, 0 );
+    }
+
+    public int helper(int[][] dp, int[] a, int [] b, int x, int y){
+        if(x == a.length || y == b.length){
+            return 0;
+        }
+        if(dp[x][y] != -1){
+            return dp[x][y];
+        }
+        int max = 0;
+        if(a[x] == b[y]){
+            max = Math.max(helper(dp, a, b, x + 1, y + 1) + 1, max);
+        }else{
+            max = Math.max(helper(dp, a, b, x + 1, y), max);// Skip x
+            max = Math.max(helper(dp, a, b, x, y + 1), max);// Skip y
+        }
+
+        dp[x][y] = max;
+        return dp[x][y];
+    }
+
+    /* 
        LC : 886
        https://leetcode.com/problems/possible-bipartition/
        https://leetcode.com/problems/possible-bipartition/discuss/650930/JAVA-Union-find

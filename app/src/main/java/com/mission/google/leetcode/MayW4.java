@@ -46,6 +46,51 @@ public class MayW4 {
     }
 
     /*
+    991. Broken Calculator
+    https://leetcode.com/problems/broken-calculator/
+    */
+    public int brokenCalc(int x, int y) {
+        int ans = 0;
+        while(y > x){
+            ans++;
+            if(y % 2 == 1){
+                y++;
+            }else{
+                y /= 2;
+            }
+        }
+        return ans + x - y;
+    }
+
+    /* 
+    LC : 593. Valid Square
+    https://leetcode.com/problems/valid-square/
+    */
+    public boolean validSquare(int[] p1, int[] p2, int[] p3, int[] p4) {
+        // Using pythagoras theorem
+        double d1 = Math.sqrt((int)Math.pow(p1[0] - p2[0], 2) + (int) Math.pow(p1[1] - p2[1], 2) );
+        double d2 = Math.sqrt(Math.pow(p3[0] - p4[0], 2) +  Math.pow(p3[1] - p4[1], 2) );
+        double d3 = Math.sqrt(Math.pow(p1[0] - p3[0], 2) +  Math.pow(p1[1] - p3[1], 2) );
+        double d4 = Math.sqrt(Math.pow(p3[0] - p2[0], 2) +  Math.pow(p3[1] - p2[1], 2) );
+        double d5 = Math.sqrt(Math.pow(p4[0] - p2[0], 2) +  Math.pow(p4[1] - p2[1], 2) );
+        double d6 = Math.sqrt(Math.pow(p4[0] - p1[0], 2) +  Math.pow(p4[1] - p1[1], 2) );
+
+        HashSet<Double> sets = new HashSet<>();
+        sets.add(d1);
+        sets.add(d2);
+        sets.add(d3);
+        sets.add(d4);
+        sets.add(d5);
+        sets.add(d6);
+
+        if(sets.contains(0d)){ // Zero distance
+            return false;
+        }
+
+        return sets.size() == 2; // we should get Only 2 unique distance i.e side and diagonal
+    }
+
+    /*
     LC : 1302
     Q : https://leetcode.com/problems/deepest-leaves-sum/
     A : https://leetcode.com/problems/deepest-leaves-sum/discuss/652763/JAVA-O(n)-DFS-traversal

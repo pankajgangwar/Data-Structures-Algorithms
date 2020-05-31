@@ -697,7 +697,11 @@ public class JanuaryW3 {
         }
     }
 
-    /* https://leetcode.com/problems/is-graph-bipartite/ */
+    /*
+    LC : 785
+    https://leetcode.com/problems/is-graph-bipartite/
+    Graph coloring, Union - find
+    */
 
     public boolean isBipartite(int[][] graph) {
         int n = graph.length;
@@ -724,7 +728,6 @@ public class JanuaryW3 {
                     }else if(colors[next] != -colors[curr]){
                         return false;
                     }
-
                 }
             }
         }
@@ -738,9 +741,7 @@ public class JanuaryW3 {
         }
 
         for(int i = 0; i < graph.length; i++){
-
             int[] adj = graph[i];
-
             for(int j = 0; j < adj.length;  j++){
 
                 int xRoot = findPathCompression(i, root);

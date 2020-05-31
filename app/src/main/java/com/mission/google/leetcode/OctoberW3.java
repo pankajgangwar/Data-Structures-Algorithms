@@ -23,13 +23,6 @@ import java.util.TreeSet;
 public class OctoberW3 extends BoyerMooreAlgorithm {
 
 
-
-
-    public static void main(String[] args) {
-
-
-    }
-
     /**
      * https://leetcode.com/problems/shortest-unsorted-continuous-subarray/
      * 581. Shortest Unsorted Continuous Subarray
@@ -41,10 +34,7 @@ public class OctoberW3 extends BoyerMooreAlgorithm {
      *
      * */
     public int findUnsortedSubarray(int[] nums) {
-
-
         int[] cloneNums = nums.clone();
-
         Arrays.sort(cloneNums);
 
         int left = cloneNums.length;
@@ -462,28 +452,48 @@ public class OctoberW3 extends BoyerMooreAlgorithm {
         return false;
     }
 
+    public static void main(String[] args) {
+        OctoberW3 w3 = new OctoberW3();
+        int[][] grid = new int[][]{{1,2} ,{ 5,6}, {1,1}};
+
+        w3.minPathSum(grid);
+
+    }
     /***
-
-     https://leetcode.com/problems/minimum-path-sum/
-
-     Input:
-     [
-     [1,3,1],
-     [1,5,1],
-     [4,2,1]
-     ]
-     Output: 7
-     Explanation: Because the path 1→3→1→1→1 minimizes the sum
-
+     * LC : 64
+     * https://leetcode.com/problems/minimum-path-sum/
      ***/
 
     public int minPathSum(int[][] grid) {
-        int[][] memo = new int[grid.length + 1][grid[0].length + 1];
+        /*int[][] memo = new int[grid.length + 1][grid[0].length + 1];
         for (int i = 0; i < grid.length ; i++ ) {
             Arrays.fill(memo[i], -1);
         }
-        return minimumSumRec(grid, 0, 0, memo);
+        return minimumSumRec(grid, 0, 0, memo);*/
+
+        return minPathSumDp(grid);
     }
+
+    public int minPathSumDp(int[][] grid){
+        int row = grid.length;
+        int col = grid[0].length;
+
+        int dp[][] = new int[row+1][col+1];
+
+        for(int i = 1; i <= row; i++){
+            for(int j = 1; j <= col; j++){
+                if(i == 1) {
+                    dp[i][j] = dp[i][j-1] + grid[i-1][j-1];
+                } else if(j == 1){
+                    dp[i][j] = dp[i-1][j] + grid[i-1][j-1];
+                }else {
+                    dp[i][j] = Math.min(dp[i-1][j], dp[i][j-1]) + grid[i-1][j-1];
+                }
+            }
+        }
+        return dp[row][col];
+    }
+
 
     public int minimumSumRec(int[][] grid, int row, int col, int[][] memo){
 

@@ -1,5 +1,6 @@
 package com.mission.google.leetcode;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -10,18 +11,6 @@ import java.util.Queue;
 import java.util.Set;
 
 public class JuneW1 {
-
-    public static void main(String[] args) {
-        JuneW1 obj = new JuneW1();
-        //int ans = obj.openLock(new String[]{"0201","0101","0102","1212","2002"}, "0202");
-        String[] words = {"ktittgzawn","dgphvfjniv","gceqobzmis","alrztxdlah","jijuevoioe","mawiizpkub","onwpmnujos","zszkptjgzj","zwfvzhrucv","isyaphcszn"};
-        String pattern = "zdqmjnczma";
-        //obj.findAndReplacePattern(words , pattern);
-        //MapSum mapSum = new MapSum();
-        //mapSum.insert("apple",3);
-        //int res = mapSum.sum("ap");
-        //System.out.println("ans = " + res);
-    }
 
     // TODO: 5/15/2020
     /* https://leetcode.com/problems/minimum-cost-for-tickets/ */
@@ -39,6 +28,160 @@ public class JuneW1 {
        https://leetcode.com/problems/minimum-cost-tree-from-leaf-values/
        https://leetcode.com/problems/unique-binary-search-trees-ii/
     */
+
+    public static void main(String[] args) {
+        JuneW1 obj = new JuneW1();
+        //int ans = obj.openLock(new String[]{"0201","0101","0102","1212","2002"}, "0202");
+        String[] words = {"ktittgzawn","dgphvfjniv","gceqobzmis","alrztxdlah","jijuevoioe","mawiizpkub","onwpmnujos","zszkptjgzj","zwfvzhrucv","isyaphcszn"};
+        String pattern = "zdqmjnczma";
+        //obj.findAndReplacePattern(words , pattern);
+        //MapSum mapSum = new MapSum();
+        //mapSum.insert("apple",3);
+        //int res = mapSum.sum("ap");
+        int res = obj.findPaths(2,2,2,0,0);
+        System.out.println("ans = " + res);
+    }
+
+    /*
+     LC : 576
+     https://leetcode.com/problems/out-of-boundary-paths/
+     */
+
+    public int findPaths(int m, int n, int steps, int i, int j) {
+        long[][][] dp = new long[m][n][steps+1];
+        //return (int)dfsPaths(i, j, steps, m, n, dp);
+        return dpPaths(m, n, i, j, steps);
+    }
+
+    public int dpPaths(int m, int n, int curr_x, int curr_y, int steps){
+        if(steps <= 0){
+            return 0;
+        }
+        int mod = (int)1e9+7;
+        int[][] dirs = new int[][]{{1,0},{-1,0},{0,1},{0,-1}};
+
+        long[][] dp = new long[m][n];
+        for (int i = 0; i < m; i++) {
+            dp[i][0]++;
+            dp[i][n-1]++;
+        }
+
+        for (int i = 0; i < n; i++) {
+            dp[0][i]++;
+            dp[m-1][i]++;
+        }
+
+        for (int k = 2; k <= steps ; k++) {
+            long[][] dp2 = new long[m][n];
+            for (int i = 0; i < m; i++) {
+                for (int j = 0; j < n; j++) {
+                    for (int[] dir : dirs) {
+                        int next_x = i + dir[0];
+                        int next_y = j + dir[1];
+                        if (isOutOfBoundary(next_x, next_y, m, n)) {
+                            dp2[i][j] = (dp2[i][j] + 1) % mod;
+                        }else{
+                            dp2[i][j] = (dp2[i][j] + dp[next_x][next_y]) % mod;
+                        }
+                    }
+                }
+            }
+            dp = dp2;
+        }
+        return (int)dp[curr_x][curr_y];
+    }
+
+    public boolean isOutOfBoundary(int curr_x, int curr_y, int m, int n){
+        if(curr_x >= m || curr_x < 0 || curr_y >= n || curr_y < 0){
+            return true;
+        }
+        return false;
+    }
+
+    public long dfsPaths(int curr_x, int curr_y, int steps, int m, int n, long[][][] dp){
+        int mod = (int)1e9+7;
+        int[][] dirs = new int[][]{{1,0},{-1,0},{0,1},{0,-1}};
+        if(steps < 0) {
+            return 0;
+        }
+        if(isOutOfBoundary(curr_x, curr_y, m, n)){
+            return 1;
+        }
+        if(dp[curr_x][curr_y][steps] != 0){
+            return dp[curr_x][curr_y][steps];
+        }
+        long count = 0;
+        for(int[] dir : dirs) {
+            int next_x = curr_x + dir[0];
+            int next_y = curr_y + dir[1];
+            count = (count + dfsPaths(next_x, next_y, steps - 1 , m, n, dp)) % mod;
+        }
+        dp[curr_x][curr_y][steps] = count;
+        return count;
+    }
+
+
+    /*
+    LC : 983
+    https://leetcode.com/problems/minimum-cost-for-tickets/
+    Classic DP problem
+    Revisit
+    */
+    public int mincostTickets(int[] days, int[] costs) {
+        //return minCostSol1(days, costs);
+        //return minCostSol2(days, costs);
+        return minCostSol3(days, costs);
+    }
+
+    public int minCostSol3(int[] days, int[] costs){
+        Queue<int[]> qlast7 = new ArrayDeque<>();
+        Queue<int[]> qlast30 = new ArrayDeque<>();
+
+        int cost = 0;
+        for(int d : days){
+            while (!qlast7.isEmpty() && qlast7.peek()[0] + 7 <= d) qlast7.poll();
+            while (!qlast30.isEmpty() && qlast30.peek()[0] + 30 <= d) qlast30.poll();
+            qlast7.offer(new int[]{d, cost + costs[1]});
+            qlast30.offer(new int[]{d, cost + costs[2]});
+            cost = Math.min(qlast30.peek()[1],  Math.min(cost + costs[0], qlast7.peek()[1]));
+        }
+        return cost;
+    }
+
+    public int minCostSol2(int[] days, int[] costs){
+        int[] dp = new int[30];
+        HashSet<Integer> sets = new HashSet<>();
+        for(int day : days){
+            sets.add(day);
+        }
+        int first = days[0];
+        int last = days[days.length-1];
+        for (int i = first; i <= last; i++) {
+            if(sets.contains(i)){
+                dp[i % 30] = Math.min(Math.min(dp[(i-1) % 30] + costs[0], dp[Math.max(0, (i-7)) % 30] + costs[1]), dp[Math.max(0, i - 30) % 30] + costs[2]);
+            }else{
+                dp[i % 30] = dp[(i-1) % 30];
+            }
+        }
+        return dp[last % 30];
+    }
+
+    public int minCostSol1(int[] days, int[] costs){
+        int[] dp = new int[366];
+        HashSet<Integer> sets = new HashSet<>();
+        for(int day : days){
+            sets.add(day);
+        }
+
+        for (int i = 1; i < 366 ; i++) {
+            if(sets.contains(i)){
+                dp[i] = Math.min(Math.min(dp[i-1] + costs[0], dp[Math.max(0, (i-7))] + costs[1]), dp[Math.max(0, i - 30)] + costs[2]);
+            }else{
+                dp[i] = dp[i-1];
+            }
+        }
+        return dp[365];
+    }
 
     /* LC : 1236
     https://leetcode.com/problems/web-crawler/

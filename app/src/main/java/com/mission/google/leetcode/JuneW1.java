@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 
@@ -40,6 +41,79 @@ public class JuneW1 {
         //int res = mapSum.sum("ap");
         int res = obj.findPaths(2,2,2,0,0);
         System.out.println("ans = " + res);
+    }
+
+    /* https://leetcode.com/problems/push-dominoes/ */
+
+    /* LC : 630
+    https://leetcode.com/problems/course-schedule-iii/
+    */
+    public int scheduleCourse(int[][] courses) {
+        Arrays.sort(courses, (a,b) -> a[1] - b[1]); // Sort the courses with end time
+        PriorityQueue<Integer> pq = new PriorityQueue<>((a,b) -> b - a);
+        int totalTime = 0;
+        for (int i = 0; i < courses.length; i++) {
+            totalTime += courses[i][0];
+            pq.offer(courses[i][0]);
+            if(totalTime > courses[i][1]){
+                totalTime -= pq.poll(); //remove the courses with max duration
+            }
+        }
+        return pq.size();
+    }
+
+    /*
+    LC : 376
+    https://leetcode.com/problems/wiggle-subsequence/
+    */
+    public int wiggleMaxLength(int[] nums) {
+        int n = nums.length;
+        int [] up = new int[n];
+        int [] down = new int[n];
+        up[0] = 1;
+        down[0] = 1;
+        for (int i = 1; i < n; i++) {
+            if(nums[i] > nums[i-1]){
+                up[i] = down[i-1] + 1;
+                down[i] = down[i-1];
+            }else if(nums[i] < nums[i-1]){
+                down[i] = up[i-1] + 1;
+                up[i] = up[i-1];
+            }else{
+                up[i] = up[i-1];
+                down[i] = down[i-1];
+            }
+        }
+        return Math.max(down[n-1], up[n-1]);
+    }
+
+    public int wiggleMaxLengthI(int[] nums) {
+        int n = nums.length;
+        if(n == 0) return 0;
+        if(n == 1) return 1;
+        int [] res = new int[n];
+        for (int i = 0; i < n - 1; i++) {
+            int diff = nums[i] - nums[i+1];
+            res[i] = diff;
+        }
+        int i = 0;
+        while (i < n - 1 && res[i] == 0){
+            i++;
+        }
+        if(i == n - 1) return 1;
+
+        int prev = res[i];
+        int maxlen = 1; // Add 1 for first ele as res stores difference of two numbers
+        for (; i < n; i++) {
+            if(res[i] < 0 && prev >= 0){
+                maxlen++;
+                prev = res[i];
+            }else if(res[i] > 0 && prev < 0){
+                maxlen++;
+                prev = res[i];
+            }
+        }
+        return maxlen + 1; // Add 1 to res as i starts at index 1
     }
 
     /*
@@ -98,6 +172,7 @@ public class JuneW1 {
         return false;
     }
 
+    /* O(4^n) for recursion without memoization */
     public long dfsPaths(int curr_x, int curr_y, int steps, int m, int n, long[][][] dp){
         int mod = (int)1e9+7;
         int[][] dirs = new int[][]{{1,0},{-1,0},{0,1},{0,-1}};

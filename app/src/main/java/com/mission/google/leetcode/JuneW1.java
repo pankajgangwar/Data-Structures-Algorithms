@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
+import java.util.Stack;
 
 public class JuneW1 {
 
@@ -39,11 +40,147 @@ public class JuneW1 {
         //MapSum mapSum = new MapSum();
         //mapSum.insert("apple",3);
         //int res = mapSum.sum("ap");
-        int res = obj.findPaths(2,2,2,0,0);
-        System.out.println("ans = " + res);
+        //int res = obj.findPaths(2,2,2,0,0);
+       // obj.getStrongest(new int[]{6,7,11,7,6,8}, 5);
+        BrowserHistory browserHistory = new BrowserHistory("leetcode.com");
+        browserHistory.visit("google.com");       // You are in "leetcode.com". Visit "google.com"
+        browserHistory.visit("facebook.com");     // You are in "google.com". Visit "facebook.com"
+        browserHistory.visit("youtube.com");      // You are in "facebook.com". Visit "youtube.com"
+        browserHistory.back(1);                   // You are in "youtube.com", move back to "facebook.com" return "facebook.com"
+        browserHistory.back(1);                   // You are in "facebook.com", move back to "google.com" return "google.com"
+        browserHistory.forward(1);                // You are in "google.com", move forward to "facebook.com" return "facebook.com"
+        browserHistory.visit("linkedin.com");     // You are in "facebook.com". Visit "linkedin.com"
+        browserHistory.forward(2);                // You are in "linkedin.com", you cannot move forward any steps.
+        browserHistory.back(2);                   // You are in "linkedin.com", move back two steps to "facebook.com" then to "google.com". return "google.com"
+        browserHistory.back(7);
+        //ystem.out.println("ans = " + res);
     }
 
     /* https://leetcode.com/problems/push-dominoes/ */
+    public String pushDominoes(String dominoes) {
+
+    }
+
+    /*
+    LC : 1472
+    https://leetcode.com/problems/design-browser-history/
+    */
+    static class BrowserHistoryUsingDLL {
+        class Node{
+            Node next, prev;
+            String val;
+            public Node(String val){
+                this.val = val;
+                next = prev = null;
+            }
+        }
+        Node head, curr;
+        public BrowserHistoryUsingDLL(String homepage) {
+            head = new Node(homepage);
+            curr = head;
+        }
+
+        public void visit(String url) {
+            Node node = new Node(url);
+            curr.next = node;
+            node.prev = curr;
+            curr = node;
+        }
+
+        public String back(int steps) {
+            while (steps-- > 0 && curr.prev != null){
+                curr = curr.prev;
+            }
+            return curr.val;
+        }
+
+        public String forward(int steps) {
+            while (steps-- > 0 && curr.next != null){
+                curr = curr.next;
+            }
+            return curr.val;
+        }
+    }
+
+    static class BrowserHistory {
+        Stack<String> forwardHistory;
+        Stack<String> backwardHistory;
+        String currPage;
+        public BrowserHistory(String homepage) {
+            forwardHistory = new Stack<>();
+            backwardHistory = new Stack<>();
+            currPage = homepage;
+        }
+
+        public void visit(String url) {
+            forwardHistory.clear();
+            backwardHistory.push(url);
+        }
+
+        public String back(int steps) {
+            while (steps > 0 && !backwardHistory.isEmpty()){
+                forwardHistory.push(currPage);
+                currPage = backwardHistory.pop();
+                steps--;
+            }
+            return currPage;
+        }
+
+        public String forward(int steps) {
+            while (steps > 0 && !forwardHistory.isEmpty()){
+                backwardHistory.push(currPage);
+                currPage = forwardHistory.pop();
+                steps--;
+            }
+            return currPage;
+        }
+    }
+
+    /*
+    LC : 1471
+    https://leetcode.com/problems/the-k-strongest-values-in-an-array/
+    */
+    public int[] getStrongest(int[] arr, int k) {
+        int n = arr.length;
+        int med = arr[(n - 1) / 2];
+        Arrays.sort(arr);
+        PriorityQueue<Integer> queue = new PriorityQueue<>((a,b) -> Math.abs(a - med) == Math.abs(b - med) ? a - b :
+                Math.abs(a - med) - Math.abs(b - med) );
+
+        for (int x : arr) {
+            queue.offer(x);
+            if(queue.size() > k){
+                queue.poll();
+            }
+        }
+        int[] res = queue.stream().mapToInt(i -> i).toArray();
+        return res;
+    }
+
+    /*
+    LC : 1470
+    https://leetcode.com/problems/shuffle-the-array/
+    */
+    public int[] shuffle(int[] nums, int n) {
+        int[] first = new int[n];
+        int[] second = new int[n];
+        for (int i = 0; i < n; i++) {
+            first[i] = nums[i];
+        }
+        for (int i = n; i < 2*n ; i++) {
+            second[i - n] = nums[i];
+        }
+        int []res = new int[2*n];
+        int j = 0;
+        for (int i = 0; i < n; i++) {
+            res[j++] = first[i];
+            res[j++] = second[i];
+        }
+        System.out.println(Arrays.toString(res));
+        return res;
+    }
+
+
 
     /* LC : 630
     https://leetcode.com/problems/course-schedule-iii/

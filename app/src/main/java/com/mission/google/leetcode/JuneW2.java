@@ -1,8 +1,10 @@
 package com.mission.google.leetcode;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -13,10 +15,6 @@ import java.util.TreeMap;
 import java.util.stream.Stream;
 
 class JuneW2 {
-    // TODO: 5/15/2020
-    /* https://leetcode.com/problems/minimum-cost-for-tickets/ */
-
-    /* https://leetcode.com/problems/couples-holding-hands/ */
     /* https://leetcode.com/problems/minimum-distance-to-type-a-word-using-two-fingers/*/
     /* https://www.codechef.com/problems/COUPON */
     /* https://leetcode.com/problems/brick-wall/ */
@@ -37,8 +35,11 @@ class JuneW2 {
                 {2,3},
                 {3,4}
         };
-        obj.findLongestChain(pairs);
+        //obj.findLongestChain(pairs);
+        obj.increasingTriplet(new int[]{5,4,1,2,0,3});
     }
+    /* https://leetcode.com/problems/number-of-matching-subsequences/ */
+    /* https://leetcode.com/problems/shortest-way-to-form-string/ */
 
     /* https://leetcode.com/problems/analyze-user-website-visit-pattern/
      *
@@ -82,8 +83,56 @@ class JuneW2 {
     }
 
     /*
+    LC : 354
+    https://leetcode.com/problems/russian-doll-envelopes
+    Longest Increasing subsequence(LIS)
+    */
+    public int maxEnvelopes(int[][] envelopes) {
+        Arrays.sort(envelopes, (a,b) -> a[0] - b[0]);
+        int n = envelopes.length;
+        int[] dp = new int[n];
+        Arrays.fill(dp, 1);
+        for (int i = 1; i < envelopes.length; i++) {
+            for (int j = 0; j < i; j++) {
+                if(envelopes[i][0] == envelopes[j][0] || envelopes[i][1] == envelopes[j][1])
+                    continue;
+                if(envelopes[i][1] > envelopes[j][1]) {
+                    dp[i] = Math.max(dp[i], dp[j] + 1);
+                }
+            }
+        }
+        int max = 0;
+        for (int i = 0; i < dp.length; i++) {
+            if(max < dp[i]){
+                max = dp[i];
+            }
+        }
+        return max;
+    }
+
+    /*
+    LC : 334
+    https://leetcode.com/problems/increasing-triplet-subsequence/
+    */
+    public boolean increasingTriplet(int[] nums) {
+        int a = Integer.MAX_VALUE;
+        int b = Integer.MAX_VALUE;
+        for(int n : nums){
+            if(a >= n){
+                a = n;
+            }else if(b >= n){
+                b = n;
+            }else{
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /*
     LC : 646
     https://leetcode.com/problems/maximum-length-of-pair-chain/
+    Longest Increasing subsequence(LIS)
     */
     public int findLongestChain(int[][] pairs) {
         Arrays.sort(pairs, (a,b) -> a[0] - b[0]);

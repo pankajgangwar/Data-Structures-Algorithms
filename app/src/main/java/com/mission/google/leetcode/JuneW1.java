@@ -14,22 +14,6 @@ import java.util.Stack;
 
 public class JuneW1 {
 
-    // TODO: 5/15/2020
-    /* https://leetcode.com/problems/minimum-cost-for-tickets/ */
-
-    /* https://leetcode.com/problems/couples-holding-hands/ */
-    /* https://leetcode.com/problems/minimum-distance-to-type-a-word-using-two-fingers/*/
-    /* https://www.codechef.com/problems/COUPON */
-    /* https://leetcode.com/problems/brick-wall/ */
-
-    /* DP on trees */
-    /*
-       https://codeforces.com/blog/entry/20935
-       https://www.spoj.com/problems/PT07X/
-       https://leetcode.com/problems/sum-of-distances-in-tree/
-       https://leetcode.com/problems/minimum-cost-tree-from-leaf-values/
-       https://leetcode.com/problems/unique-binary-search-trees-ii/
-    */
 
     public static void main(String[] args) {
         JuneW1 obj = new JuneW1();
@@ -56,10 +40,7 @@ public class JuneW1 {
         //ystem.out.println("ans = " + res);
     }
 
-    /* https://leetcode.com/problems/push-dominoes/ */
-    public String pushDominoes(String dominoes) {
 
-    }
 
     /*
     LC : 1472

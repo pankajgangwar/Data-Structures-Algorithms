@@ -36,10 +36,127 @@ class JuneW2 {
                 {3,4}
         };
         //obj.findLongestChain(pairs);
-        obj.increasingTriplet(new int[]{5,4,1,2,0,3});
+        obj.expressiveWords("aaa", new String[]{"aaaa"});
     }
+    /* 
+    LC : 809
+    https://leetcode.com/discuss/interview-question/679321/google-onsite-determine-if-word-is-typo-because-of-stuck-key
+    https://leetcode.com/problems/expressive-words/
+    */
+    public int expressiveWords(String s, String[] words) {
+        int ans = 0;
+        for(String word : words){
+            if(isStretchy(s, word)){
+                ans++;
+            }
+        }
+        System.out.println("ans = " + ans);
+        return ans;
+    }
+
+    public boolean isStretchy(String stretchy, String word){
+        int wordPtr = 0;
+        int strPtr = 0;
+        int m = word.length();
+        int n = stretchy.length();
+        while (true){
+            if(wordPtr == m && strPtr == n) return true;
+            if(wordPtr == m || strPtr == n) return false;
+            if(word.charAt(wordPtr) != stretchy.charAt(strPtr)) return false;
+            int prevwordPtr = wordPtr;
+            while(wordPtr < m-1 && word.charAt(wordPtr) == word.charAt(wordPtr + 1)){
+                wordPtr++;
+            }
+            int wLen = wordPtr - prevwordPtr + 1;
+
+            int prevstrPtr = strPtr;
+            while(strPtr < n-1 && stretchy.charAt(strPtr) == stretchy.charAt(strPtr + 1)){
+                strPtr++;
+            }
+
+            int sLen = strPtr - prevstrPtr + 1;
+            if(sLen == wLen){
+                wordPtr++;
+                strPtr++;
+                continue;
+            }
+            if(sLen < 3 || sLen < wLen){
+                return false;
+            }
+        }
+    }
+
     /* https://leetcode.com/problems/number-of-matching-subsequences/ */
     /* https://leetcode.com/problems/shortest-way-to-form-string/ */
+    /* https://leetcode.com/problems/reconstruct-a-2-row-binary-matrix/ */
+
+    /*
+    LC : 916
+    https://leetcode.com/problems/word-subsets/
+    */
+    public List<String> wordSubsets(String[] A, String[] B) {
+        HashMap<String, HashMap<Character,Integer>> mapA = new HashMap<>();
+        for (String a : A){
+            char[] arr =  a.toCharArray();
+            HashMap<Character, Integer> freqMap = new HashMap<>();
+            for (char ch : arr ){
+                freqMap.put(ch, freqMap.getOrDefault(ch, 0) + 1);
+            }
+            mapA.put(a, freqMap);
+        }
+
+        HashMap<String, HashMap<Character,Integer>> mapB = new HashMap<>();
+        for (String b : B){
+            char[] arr =  b.toCharArray();
+            HashMap<Character, Integer> freqMap = new HashMap<>();
+            for (char ch : arr ){
+                freqMap.put(ch, freqMap.getOrDefault(ch, 0) + 1);
+            }
+            mapB.put(b, freqMap);
+        }
+        List<String> res = new ArrayList<>();
+        for (String str : A){
+            HashMap<Character, Integer> freqA = mapA.get(str);
+            for (Map.Entry<String, HashMap<Character, Integer>> entry : mapB.entrySet()){
+                String bs = entry.getKey();
+                for(Map.Entry<Character, Integer> subMap : entry.getValue().entrySet()){
+
+                }
+            }
+        }
+        return res;
+    }
+
+    /* 
+    LC : 1170
+    https://leetcode.com/problems/compare-strings-by-frequency-of-the-smallest-character/
+    */
+    public int[] numSmallerByFrequency(String[] queries, String[] words) {
+        ArrayList<Integer> res = new ArrayList<Integer>();
+
+        for(String q : queries){
+            int qFreq = func(q);
+            int ans = 0;
+            for(String word : words){
+                if(qFreq < func(word)){
+                    ans++;
+                }
+            }
+            res.add(ans);
+        }
+        return res.stream().mapToInt(i->i).toArray();
+    }
+
+    public int func(String s){
+        char[] arr = s.toCharArray();
+        Arrays.sort(arr);
+        char smallest = arr[0];
+        int i = 0;
+        while(i < arr.length && smallest == arr[i]){
+            i++;
+        }
+        return i + 1;
+    }   
 
     /* https://leetcode.com/problems/analyze-user-website-visit-pattern/
      *

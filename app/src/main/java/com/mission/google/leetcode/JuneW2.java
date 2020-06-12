@@ -7,9 +7,11 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Stream;
@@ -36,8 +38,129 @@ class JuneW2 {
                 {3,4}
         };
         //obj.findLongestChain(pairs);
-        obj.expressiveWords("aaa", new String[]{"aaaa"});
+        obj.shortestWay("abc", "abcbc");
     }
+
+    /*
+    LC : 792
+    https://leetcode.com/problems/number-of-matching-subsequences/
+    */
+    public int numMatchingSubseq(String target, String[] words) {
+        int count = 0;
+        HashMap<String, Boolean> map = new HashMap<>();
+        for(String source : words){
+            if(map.containsKey(source)){
+                if(map.get(source)){
+                    count++;
+                }
+                continue;
+            }
+            if(isSubSequence(source, target)){
+                count++;
+                map.put(source, true);
+            }else{
+                map.put(source, false);
+            }
+        }
+        return count;
+    }
+
+    public boolean isSubSequence(String s, String t){
+        int i = 0, j = 0;
+        while (i < s.length() && j < t.length()){
+            if(s.charAt(i) == t.charAt(j)){
+                i++;
+            }
+            j++;
+        }
+        return i == s.length();
+    }
+
+    /* 
+    LC : 1055
+    https://leetcode.com/problems/shortest-way-to-form-string/
+    */
+    public int shortestWay(String source, String target) {
+        for (int i = 0; i < target.length(); i++) {
+            String ch = target.charAt(i)+ "";
+            if(!source.contains(ch)){ // This character doesn't exists
+                return -1;
+            }
+        }
+        Queue<String> q = new LinkedList<>();
+        q.offer(target);
+        int min_steps = 0;
+        while (!q.isEmpty()){
+            String curr = q.poll();
+            int i = 0, j = 0;
+            while (i < curr.length() && j < source.length()){
+                if(curr.charAt(i) == source.charAt(j)){
+                    i++;
+                }
+                j++;
+            }
+            if(i < curr.length()){
+                String rem = curr.substring(i);
+                q.offer(rem);
+            }
+            if(i == curr.length()){
+                break;
+            }
+            min_steps++;
+        }
+        System.out.println("min_steps = " + min_steps);
+        return min_steps + 1;
+    }
+
+
+    /* 
+    LC : 1253
+    https://leetcode.com/problems/reconstruct-a-2-row-binary-matrix/
+    */
+    public List<List<Integer>> reconstructMatrix(int upper, int lower, int[] colsum) {
+        List<List<Integer>> res = new ArrayList<>();
+        
+        int[][] matrix = new int[2][colsum.length];
+        int upCount = 0, lowCount = 0;
+        
+        for(int i = 0; i < colsum.length; i++){
+            if(colsum[i] == 2){
+                matrix[0][i] = 1;
+                matrix[1][i] = 1;
+                upper--;
+                lower--;
+            }
+        }
+        
+        for(int i = 0; i < colsum.length; i++){
+            if(colsum[i] == 1){
+                if(upper > 0){
+                    matrix[0][i] = 1;    
+                    upper--;
+                }else if(lower > 0){
+                    matrix[1][i] = 1;
+                    lower--;
+                }else{
+                    return res;
+                }
+            }
+        }
+        if(upper != 0 || lower != 0){
+            return res;
+        }
+        
+        for(int i = 0; i < 2; i++){
+            List<Integer> row = new ArrayList<>();
+            for(int j = 0; j < colsum.length; j++){
+                row.add(matrix[i][j]);
+            }
+            res.add(row);
+        }
+
+        return res;  
+    }
+
+
     /* 
     LC : 809
     https://leetcode.com/discuss/interview-question/679321/google-onsite-determine-if-word-is-typo-because-of-stuck-key
@@ -86,10 +209,6 @@ class JuneW2 {
         }
     }
 
-    /* https://leetcode.com/problems/number-of-matching-subsequences/ */
-    /* https://leetcode.com/problems/shortest-way-to-form-string/ */
-    /* https://leetcode.com/problems/reconstruct-a-2-row-binary-matrix/ */
-
     /*
     LC : 916
     https://leetcode.com/problems/word-subsets/
@@ -105,27 +224,42 @@ class JuneW2 {
             mapA.put(a, freqMap);
         }
 
-        HashMap<String, HashMap<Character,Integer>> mapB = new HashMap<>();
+        HashMap<Character,Integer> mapB = new HashMap<>();
         for (String b : B){
             char[] arr =  b.toCharArray();
-            HashMap<Character, Integer> freqMap = new HashMap<>();
+            int[] freq = new int[26];
             for (char ch : arr ){
-                freqMap.put(ch, freqMap.getOrDefault(ch, 0) + 1);
+                freq[ch - 'a']++;
             }
-            mapB.put(b, freqMap);
-        }
-        List<String> res = new ArrayList<>();
-        for (String str : A){
-            HashMap<Character, Integer> freqA = mapA.get(str);
-            for (Map.Entry<String, HashMap<Character, Integer>> entry : mapB.entrySet()){
-                String bs = entry.getKey();
-                for(Map.Entry<Character, Integer> subMap : entry.getValue().entrySet()){
-
+            for (int i = 0; i < 26; i++) {
+                char curr = (char)(i + 'a');
+                int maxFreq = Math.max(freq[i], mapB.getOrDefault(curr, 0));
+                if(maxFreq > 0) {
+                    mapB.put(curr, maxFreq);
                 }
+            }
+        }
+
+        List<String> res = new ArrayList<>();
+        for (int i = 0; i < A.length; i++) {
+            String str = A[i];
+            HashMap<Character, Integer> freqA = mapA.get(str);
+            boolean found = true;
+            for (Map.Entry<Character, Integer> entry : mapB.entrySet()){
+                Character ch = entry.getKey();
+                int freq = entry.getValue();
+                if(!freqA.containsKey(ch) || freqA.get(ch) < freq){
+                    found = false;
+                    break;
+                }
+            }
+            if(found) {
+                res.add(A[i]);
             }
         }
         return res;
     }
+
 
     /* 
     LC : 1170
@@ -158,45 +292,45 @@ class JuneW2 {
         return i + 1;
     }   
 
-    /* https://leetcode.com/problems/analyze-user-website-visit-pattern/
-     *
-     * username = ["joe","joe","joe","james","james","james","james","mary","mary","mary"]
-     * timestamp = [1,2,3,4,5,6,7,8,9,10]
-     * website = ["home","about","career","home","cart","maps","home","home","about","career"]
-     * */
+    /*
+    LC : 1152
+    https://leetcode.com/problems/analyze-user-website-visit-pattern/
+    */
     public List<String> mostVisitedPattern(String[] username, int[] timestamp, String[] website) {
-        HashMap<String, HashSet<String>> websiteMap = new HashMap<>();
-        HashMap<String, HashSet<String>> userMap = new HashMap<>();
-
+        HashMap<String, ArrayList<String[]>> userMap = new HashMap<>();
         int n = username.length;
         for (int i = 0; i < n; i++) {
             String user = username[i];
             String url = website[i];
-            websiteMap.putIfAbsent(url, new HashSet<>());
-            websiteMap.get(url).add(user);
+            String time = String.valueOf(timestamp[i]);
+            userMap.putIfAbsent(user, new ArrayList<>());
+            userMap.get(user).add(new String[]{url, time});
         }
+        Map<String, Integer> count = new HashMap<>();
+        String res = "";
+        for (String key : userMap.keySet()) {
+            HashSet<String> sets = new HashSet<>();
+            List<String[]> list = userMap.get(key);
+            Collections.sort(list, (a, b) -> Integer.parseInt(a[1]) - Integer.parseInt(b[1]));
 
-        List<String> res = new ArrayList<>();
-        //PriorityQueue<int[]> pq = new PriorityQueue<>((a,b) -> );
-        TreeMap<Integer, List<String>> map = new TreeMap<>(Collections.reverseOrder());
-        for (Map.Entry<String, HashSet<String>> entry : websiteMap.entrySet()){
-            int size = entry.getValue().size();
-            map.putIfAbsent(size, new ArrayList<>());
-            map.get(size).add(entry.getKey());
-        }
-
-        while (res.size() < 3){
-            for(Map.Entry<Integer,List<String>> entry : map.entrySet()){
-                List<String> curr = entry.getValue();
-                //Collections.sort(curr, (a,b) -> timestamp);
-                if(curr.size() <= 3){
-                    res.addAll(curr);
-                }else{
-
+            for (int i = 0; i < list.size(); i++) {
+                for (int j = i + 1; j < list.size(); j++) {
+                    for (int k = j + 1; k < list.size(); k++) {
+                        String str = list.get(i)[0] + " " + list.get(j)[0] + " " + list.get(k)[0];
+                        if (!sets.contains(str)) {
+                            count.put(str, count.getOrDefault(str, 0) + 1);
+                            sets.add(str);
+                        }
+                        if (res.equals("") || count.get(res) < count.get(str) || (count.get(str) == count.get(res) && res.compareTo(str) > 0)) {
+                            res = str;
+                        }
+                    }
                 }
             }
         }
-        return res;
+        System.out.println("res = " + res);
+        String[] arr = res.split(" ");
+        return new ArrayList<>(Arrays.asList(arr));
     }
 
     /*

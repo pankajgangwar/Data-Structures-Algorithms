@@ -1,9 +1,12 @@
 package com.mission.google.leetcode;
 
+import com.mission.google.TreeNode;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,6 +16,7 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
+import java.util.Stack;
 import java.util.TreeMap;
 import java.util.stream.Stream;
 
@@ -38,7 +42,200 @@ class JuneW2 {
                 {3,4}
         };
         //obj.findLongestChain(pairs);
-        obj.shortestWay("abc", "abcbc");
+        //obj.printLIS(new int[]{10,9,2,5,3,7,101,18});
+        obj.largestDivisibleSubset(new int[]{2,8,18,19,20,4,16});
+    }
+
+    /* https://leetcode.com/problems/maximum-xor-of-two-numbers-in-an-array/ */
+
+    /* LC : 743
+    https://leetcode.com/problems/network-delay-time/
+    */
+
+    /*
+    LC : 920
+    https://leetcode.com/problems/number-of-music-playlists/
+    */
+    public int numMusicPlaylists(int N, int L, int K) {
+        return 0;
+    }
+
+    /*
+    LC : 285
+    https://leetcode.com/problems/inorder-successor-in-bst/
+    */
+    public TreeNode inorderSuccessor(TreeNode root, TreeNode p) {
+        return inorderSuccessorRec(root, p);
+    }
+    public TreeNode inorderSuccessorRec(TreeNode root, TreeNode p){
+        if(root ==null) return null;
+
+        if(root.val <= p.val){
+            return inorderSuccessorRec(root.right, p);
+        }else{
+            TreeNode left = inorderSuccessorRec(root.left, p);
+            return (left != null) ? left : root;
+        }
+    }
+
+    public TreeNode inorderSuccessorIterative(TreeNode root, TreeNode p) {
+        if(p.right != null){
+            p = p.right;
+            while (p.left != null){
+                p = p.left;
+            }
+            return p;
+        }
+        Stack<TreeNode> stack = new Stack<>();
+        int inorder = Integer.MAX_VALUE;
+        while (!stack.isEmpty() || root != null){
+            while (root != null){
+                stack.push(root);
+                root = root.left;
+            }
+            root = stack.pop();
+            if(inorder == p.val){
+                return root;
+            }
+            inorder = root.val;
+            root = root.right;
+        }
+        return null;
+    }
+
+    /*
+    LC : 510
+    https://leetcode.com/problems/inorder-successor-in-bst-ii/
+    */
+    public Node inorderSuccessor(Node node) {
+        return null;
+    }
+
+    /*
+    LC : 368
+    https://leetcode.com/problems/largest-divisible-subset/
+    Solution: https://leetcode.com/problems/largest-divisible-subset/discuss/683681/JAVA-DP-solution-lessLISgreater
+    https://cp-algorithms.com/sequences/longest_increasing_subsequence.html
+    */
+    public List<Integer> largestDivisibleSubset(int[] nums) {
+        if(nums.length == 0){
+            return new ArrayList<>();
+        }
+        int[] dp = new int[nums.length];
+        Arrays.fill(dp, 1);
+        int[] parent = new int[nums.length];
+        Arrays.fill(parent, -1);
+        Arrays.sort(nums);
+        for (int i = 0; i < nums.length; i++) {
+            for (int j = 0; j < i; j++) {
+                if((nums[i] % nums[j] == 0) && dp[i] < dp[j] + 1){
+                    dp[i] = dp[j] + 1;
+                    parent[i] = j;
+                }
+            }
+        }
+        int max = dp[0], pos = 0;
+        for (int i = 1; i < nums.length ; i++) {
+            if(dp[i] > max){
+                max = dp[i];
+                pos = i;
+            }
+        }
+        List<Integer> res = new ArrayList<>();
+        while (pos != -1){
+            res.add(nums[pos]);
+            pos = parent[pos];
+        }
+        Collections.reverse(res);
+        return res;
+    }
+
+    /*
+    LC : 300
+    https://leetcode.com/problems/longest-increasing-subsequence/
+    */
+    public int lengthOfLIS(int[] nums) {
+        return lengthOfLISPatienceSort(nums);
+    }
+    public int lengthOfLisDP(int[] nums) {
+        int LIS[] = new int[nums.length];
+
+        for(int i = 0; i < nums.length; i++){
+            LIS[i] = 1;
+        }
+
+        for(int i = 1; i < nums.length; i++){
+            for(int j = 0; j < i; j++){
+                if(nums[i] > nums[j]){
+                    LIS[i] = Math.max(LIS[i], LIS[j]+1);
+                }
+            }
+        }
+
+        int max = 0;
+        for(int i = 0; i < LIS.length; i++){
+            if(max < LIS[i]){
+                max = LIS[i];
+            }
+        }
+        return max;
+    }
+
+    public int lengthOfLISPatienceSort(int[] nums) {
+        List<Integer> piles = new ArrayList<>(nums.length);
+        for (int num : nums) {
+            int pile = Collections.binarySearch(piles, num);
+            if (pile < 0) {
+                pile = ~pile;//Bitwise unary NOT
+            }
+            if (pile == piles.size()) {
+                piles.add(num);
+            } else {
+                piles.set(pile, num);
+            }
+        }
+        return piles.size();
+    }
+    class Node implements Comparable<Node> {
+        int val;
+        Node prev;
+        public Node(int val){
+            this.val = val;
+        }
+
+        @Override
+        public int compareTo(Node that) {
+            return Integer.compare(this.val, that.val);
+        }
+    }
+
+    public void printLIS(int[] nums){
+        List<Node> piles = new ArrayList<>(nums.length);
+        for (int num : nums) {
+            Node node = new Node(num);
+            int pile = Collections.binarySearch(piles, node);
+            if (pile < 0) {
+                pile = ~pile;//Bitwise unary NOT, Bitwise Complement
+            }
+            if(pile != 0){
+                node.prev = piles.get(pile-1);
+            }
+            if (pile == piles.size()) {
+                piles.add(node);
+            } else {
+                piles.set(pile, node);
+            }
+        }
+        extractLIS(piles);
+    }
+
+    private void extractLIS(List<Node> piles) {
+        List<Integer> result = new ArrayList<>(piles.size());
+        for (Node curr = piles.isEmpty() ? null : piles.get(piles.size() - 1); curr != null; curr = curr.prev) {
+            result.add(curr.val);
+        }
+        Collections.reverse(result);
+        System.out.println("result = " + result);
     }
 
     /*

@@ -2,23 +2,17 @@ package com.mission.google.leetcode;
 
 import com.mission.google.TreeNode;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
-import java.util.TreeMap;
-import java.util.stream.Stream;
 
 class JuneW2 {
     /* https://leetcode.com/problems/minimum-distance-to-type-a-word-using-two-fingers/*/
@@ -61,6 +55,32 @@ class JuneW2 {
     }
 
     /*
+    LC : 510
+    https://leetcode.com/problems/inorder-successor-in-bst-ii/
+    */
+    class InorderNode {
+        public int val;
+        public InorderNode left;
+        public InorderNode right;
+        public InorderNode parent;
+    };
+    public InorderNode inorderSuccessor(InorderNode node) {
+        if(node.right == null){
+            InorderNode parent = node.parent;
+            while (parent != null && parent.val < node.val){
+                parent = parent.parent;
+            }
+            return parent;
+        }else {
+            node = node.right;
+            while (node.left != null){
+                node = node.left;
+            }
+            return node;
+        }
+    }
+
+    /*
     LC : 285
     https://leetcode.com/problems/inorder-successor-in-bst/
     */
@@ -75,6 +95,27 @@ class JuneW2 {
         }else{
             TreeNode left = inorderSuccessorRec(root.left, p);
             return (left != null) ? left : root;
+        }
+    }
+
+    public TreeNode inorderSuccessorRec1(TreeNode root, TreeNode p){
+        while (root != null && root.val <= p.val ){
+            root = root.right;
+        }
+        if(root == null) return null;
+        TreeNode left = inorderSuccessorRec1(root.left, p);
+        return left != null ? left : root;
+    }
+
+    public TreeNode inorderPredecessor(TreeNode root, TreeNode p){
+        if(root == null){
+            return null;
+        }
+        if(root.val >= p.val){
+            return inorderPredecessor(root.left, p);
+        }else{
+            TreeNode right = inorderPredecessor(root.right, p);
+            return (right != null) ? right : root;
         }
     }
 
@@ -100,14 +141,6 @@ class JuneW2 {
             inorder = root.val;
             root = root.right;
         }
-        return null;
-    }
-
-    /*
-    LC : 510
-    https://leetcode.com/problems/inorder-successor-in-bst-ii/
-    */
-    public Node inorderSuccessor(Node node) {
         return null;
     }
 

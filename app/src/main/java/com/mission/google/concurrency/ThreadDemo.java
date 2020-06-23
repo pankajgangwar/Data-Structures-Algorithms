@@ -1,5 +1,6 @@
 package com.mission.google.concurrency;
 
+import java.util.ArrayDeque;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -31,7 +32,6 @@ public class ThreadDemo {
 
         //producer.start();
        // consumer.start();
-
         try {
             producer.join();
             consumer.join();
@@ -56,6 +56,45 @@ public class ThreadDemo {
         threadA.start();
         threadB.start();
         threadC.start();
+    }
+
+    /*
+    LC : 1188
+    https://leetcode.com/problems/design-bounded-blocking-queue/
+    Ans: https://leetcode.com/problems/design-bounded-blocking-queue/discuss/662870/JAVA-Using-ArrayDeque
+    */
+    class BoundedBlockingQueue {
+        ArrayDeque<Integer> deque;
+        int cap;
+        Object lock = new Object();
+        public BoundedBlockingQueue(int capacity) {
+            deque = new ArrayDeque<>(capacity);
+            cap = capacity;
+        }
+
+        public void enqueue(int element) throws InterruptedException {
+            synchronized (lock){
+                while(deque.size() == cap){
+                    lock.wait();
+                }
+                deque.offerFirst(element);
+                lock.notifyAll();
+            }
+        }
+
+        public int dequeue() throws InterruptedException {
+            synchronized (lock){
+                while (deque.isEmpty()){
+                    lock.wait();
+                }
+                lock.notifyAll();
+                return deque.pollLast();
+            }
+        }
+
+        public int size() {
+            return deque.size();
+        }
     }
 
     public static class ResourceLock {

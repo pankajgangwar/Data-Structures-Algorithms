@@ -8,66 +8,180 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.OptionalInt;
 import java.util.Queue;
+import java.util.Random;
 import java.util.stream.IntStream;
 
 class JuneW3 {
 
-    /* https://leetcode.com/problems/minimum-distance-to-type-a-word-using-two-fingers/*/
-    /* https://www.codechef.com/problems/COUPON */
-    /* https://leetcode.com/problems/brick-wall/ */
-
-    /* DP on trees */
-    /*
-       https://codeforces.com/blog/entry/20935
-       https://www.spoj.com/problems/PT07X/
-       https://leetcode.com/problems/sum-of-distances-in-tree/
-       https://leetcode.com/problems/minimum-cost-tree-from-leaf-values/
-       https://leetcode.com/problems/unique-binary-search-trees-ii/
-    */
     public static void main(String[] args) {
         JuneW3 w3 = new JuneW3();
         //w3.validIPAddress("2001:0db8:85a3:0:0:8A2E:0370:asda:");
         //w3.shipWithinDays(new int[]{1,2,3,1,1}, 4);
+        Skiplist skiplist = new Skiplist();
+        skiplist.add(1);
+        skiplist.add(2);
+        skiplist.add(3);
+        skiplist.add(4);
+        skiplist.add(5);
+        skiplist.add(6);
+        skiplist.add(7);
+
+        boolean status = skiplist.search(3);
+        System.out.println("status = " + status);
+        String list = skiplist.toString();
+        System.out.println("list = " + list);
     }
 
-    /* https://leetcode.com/problems/maximum-xor-of-two-numbers-in-an-array/ */
-
-
-    /* Binary search problems*/
-    /* https://leetcode.com/problems/sum-of-mutated-array-closest-to-target/ */
-    /* https://leetcode.com/problems/k-th-smallest-prime-fraction/ */
-    /* https://leetcode.com/problems/preimage-size-of-factorial-zeroes-function/ */
-
-    
-    /* https://leetcode.com/problems/divide-chocolate/ */
-    /* https://leetcode.com/problems/integer-replacement/ */
-
     /*
-    LC : 920
-    https://leetcode.com/problems/number-of-music-playlists/
-    */
-    public int numMusicPlaylists(int N, int L, int K) {
-        return 0;
+    LC : 1206
+    https://leetcode.com/problems/design-skiplist/ */
+    static class Skiplist {
+        class SkipNode {
+            SkipNode left, right, down, up;
+            int val;
+            public SkipNode(int val) {
+                this.val = val;
+            }
+        }
+        private static final double DEFAULT_PROB = 0.5;
+        private final Random rand = new Random();
+        private final List<SkipNode> sentinels = new ArrayList<>();
+        public Skiplist() {
+            sentinels.add(new SkipNode(Integer.MIN_VALUE));
+        }
+
+        public boolean search(int target) {
+            SkipNode smallerOrEquals = getSmallerOrEquals(target);
+            return smallerOrEquals.val == target;
+        }
+
+        private SkipNode getSmallerOrEquals(int target) {
+            SkipNode skipNode = getSentinels();
+            while (skipNode != null){
+                if(skipNode.right == null || skipNode.right.val > target){
+                    if(skipNode.down == null)break;
+                    skipNode = skipNode.down;
+                }else{
+                    skipNode = skipNode.right;
+                }
+            }
+            return skipNode;
+        }
+
+        private SkipNode getSentinels(){
+            return sentinels.get(sentinels.size() - 1);
+        }
+
+        public boolean flipCoin(){
+            return rand.nextDouble() < DEFAULT_PROB;
+        }
+
+        public void add(int num) {
+            SkipNode curr = getSmallerOrEquals(num);
+            final SkipNode newNode = new SkipNode(num);
+            //Add newNode after curr node
+            append(curr, newNode);
+            populateLevelUp(newNode);
+        }
+
+        private void populateLevelUp(SkipNode newNode) {
+            SkipNode currPrev = newNode.left, curr = newNode;
+            while (flipCoin()){
+                while (currPrev.left != null && currPrev.up == null){
+                    currPrev = currPrev.left;
+                }
+                if(currPrev.up == null){
+                    SkipNode newSentinel = new SkipNode(Integer.MIN_VALUE);
+                    currPrev.up = newSentinel;
+                    newSentinel.down = currPrev;
+                    sentinels.add(currPrev.up);
+                }
+                currPrev = currPrev.up;
+                final SkipNode nodeUplifted = new SkipNode(newNode.val);
+                curr.up = nodeUplifted;
+                nodeUplifted.down = curr;
+                curr = curr.up;
+                currPrev.right = curr;
+                curr.left = currPrev;
+            }
+        }
+
+        private void append(SkipNode prev, SkipNode newNode) {
+            SkipNode next = prev.right;
+            prev.right = newNode;
+            newNode.left = prev;
+            if(next != null){
+                next.left = newNode;
+                newNode.right = next;
+            }
+        }
+
+        public boolean erase(int num) {
+            SkipNode toRemove = getSmallerOrEquals(num);
+            if(toRemove.val != num){
+                return false;
+            }
+            SkipNode curr = toRemove;
+            while (curr != null){
+                SkipNode prev = curr.left, next = curr.right;
+                prev.right = next;
+                if(next != null) {
+                    next.left = prev;
+                }
+                curr = curr.up;
+            }
+            return true;
+        }
+
+        @Override
+        public String toString() {
+            SkipNode node = sentinels.get(0);
+            StringBuilder builder = new StringBuilder();
+            while (node != null){
+                SkipNode curr = node;
+                while (curr != null){
+                    //builder.append(curr.val).append(",");
+                    if(curr.val == Integer.MIN_VALUE){
+                        builder.append("-INF").append(",");
+                    }else{
+                        builder.append(curr.val).append(",");
+                    }
+                    curr = curr.up;
+                }
+                builder.append("\n");
+                node = node.right;
+            }
+            return builder.toString();
+        }
     }
 
     /*
      LC : 663
      https://leetcode.com/problems/equal-tree-partition/ */
-    List<Integer> subtreesum;
+    long sum = 0;
+    boolean equal = false;
     public boolean checkEqualTree(TreeNode root) {
         if(root.left == null && root.right == null) return false;
-        subtreesum = new ArrayList<>();
-        int sum = getTotal(root);
-        if(sum % 2 != 0 ) return false;
-        subtreesum.remove(subtreesum.size()-1);
-        return subtreesum.contains(sum / 2);
+        sum = getTotal(root);
+        if(sum % 2 != 0) return false;
+        checkEqual(root, root);
+        return equal;
+    }
+
+
+    public long checkEqual(TreeNode root, TreeNode parent){
+        if(root == null || equal) return 0;
+        long runningSum = root.val + checkEqual(root.left, parent) + checkEqual(root.right, parent);
+        if(runningSum == (sum - runningSum) && root != parent){
+            equal = true;
+            return 0;
+        }
+        return runningSum;
     }
 
     public int getTotal(TreeNode root){
         if(root == null) return 0;
-        int sum = getTotal(root.left) + getTotal(root.right) + root.val;
-        subtreesum.add(sum);
-        return sum;
+        return getTotal(root.left) + getTotal(root.right) + root.val;
     }
 
     /*

@@ -1,14 +1,13 @@
 package com.mission.google.leetcode;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
-import java.util.Stack;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -47,14 +46,231 @@ class JuneW4 {
         JuneW4 obj = new JuneW4();
         //obj.getFolderNames(new String[]{"onepiece","onepiece(8)","onepiece(2)","onepiece(3)","onepiece","onepiece","onepiece"});
         //obj.singleNumber(new int[]{5,5,5,3});
-        obj.longestDupSubstring("banana");
+        obj.longestRepeatingSubstring("abbaba");
+        //obj.patternMatchingWithBinarySearch();
     }
 
     /*
      LC : 1062
      https://leetcode.com/problems/longest-repeating-substring/ */
-    public int longestRepeatingSubstring(String S) {
-        return 0;
+    public int longestRepeatingSubstring(String s) {
+       // return lcpConstructionUsingKasai("banana ");
+        //return usingLCPConstructionNaive("banana");
+        /*SuffixArray sa = new SuffixArray(s);
+        System.out.println("sa.lrs(); = " + sa.lrs());
+        return sa.lrs().first().length();*/
+        return usingRabinKarp(s);
+    }
+
+    //Rabin Karp with Rolling hash and Binary search
+    public int usingRabinKarp(String s){
+        int n = s.length();
+        int low = 0, high = n - 1;
+        int BASE = 26;
+        long MOD = (long)Math.pow(2, 32);
+        long[] pow = new long[n+1];
+        pow[0] = 1L;
+        for(int i = 1; i < n; ++i){
+            pow[i] = pow[i-1] * BASE % MOD;
+        }
+        String maxRes = "";
+        while (low <= high){
+            int mid = low + (high - low) / 2;
+            String res = search(s, mid, pow);
+            if(res.length() > maxRes.length()){
+                maxRes = res;
+                low = mid + 1;
+            }else{
+                high = mid - 1;
+            }
+        }
+        int maxLen = maxRes.length();
+        System.out.println("maxLen = " + maxRes);
+        return maxLen;
+    }
+
+    public String search(String s, int len, long[] POW){
+        if(len == 0) return "";
+        int BASE = 26;
+        long MOD = (long)Math.pow(2, 32);
+        long curr = 0;
+        int n = s.length();
+        for (int i = 0; i < len; i++) {
+            curr = (curr * BASE + (s.charAt(i) - 'a'))% MOD;
+        }
+        HashSet<Long> seen = new HashSet<>();
+        seen.add(curr);
+        for (int i = len; i < n; i++) {
+            curr = ((curr - ((s.charAt(i - len) - 'a') * POW[len - 1])) % MOD + MOD) % MOD;
+            curr = (curr * BASE + (s.charAt(i) - 'a')) % MOD;
+            if(seen.contains(curr)){
+                return s.substring(i - len, i);
+            }
+            seen.add(curr);
+        }
+        return "";
+    }
+
+    /* Time O(nlogn)*/
+    public int usingBinarySearch(String s){
+        int n = s.length();
+        int left = 1;
+        int right = n;
+        while (left <= right){
+            int mid = left + (right - left) / 2;
+            if(search(s, mid) != -1) left = mid + 1;
+            else right = mid - 1;
+        }
+        return left - 1;
+    }
+
+    private int search(String s, int mid) {
+        int n = s.length();
+        HashSet<Long> seen = new HashSet<>();
+        for (int i = 0; i < n - mid + 1; i++) {
+            long hash = s.substring(i, i + mid).hashCode();
+            if(!seen.add(hash)) return i;
+        }
+        return -1;
+    }
+
+    class Suffix implements Comparable<Suffix>{
+        final int orgIdx;
+        final String suffix;
+        final int len;
+        public Suffix(String suffix, int orgIdx){
+            this.len = suffix.length();
+            this.orgIdx = orgIdx;
+            this.suffix = suffix;
+        }
+
+        @Override
+        public int compareTo(Suffix other) {
+            if (this == other) return 0;
+            int min_len = Math.min(len, other.len);
+            for (int i = 0; i < min_len; i++) {
+                char otherCh = other.suffix.charAt(i);
+                char thisCh = suffix.charAt(i);
+                if (thisCh < otherCh) return -1;
+                if (thisCh > otherCh) return 1;
+            }
+            return len - other.len;
+        }
+
+        @Override
+        public String toString() {
+            return new String(suffix.toCharArray(), orgIdx, len);
+        }
+    }
+
+    /* Ans : https://leetcode.com/problems/longest-repeating-substring/discuss/704285/JAVA-Solution-using-Kasai's-Algorithm-to-construct-LCP*/
+    /* Time O(n^2logn)*/
+    public int lcpConstructionUsingKasai(String s){
+        int n = s.length();
+        Suffix[] suffixArray = new Suffix[n];
+        for (int i = 0; i < s.length(); i++) {
+            suffixArray[i] = new Suffix(s.substring(i), i);
+        }
+        Arrays.sort(suffixArray);
+
+        int[] sa = new int[n];
+        for (int i = 0; i < n; i++) {
+            sa[i] = suffixArray[i].orgIdx;
+            suffixArray[i] = null;
+        }
+        suffixArray = null;
+
+        int[] lcp = new int[n];
+        int[] rank = new int[n];
+        for (int i = 0; i < n; i++) {
+            rank[sa[i]] = i;
+        }
+
+        int k = 0;
+        for(int i = 0; i < n; i++) {
+            if(rank[i] == n - 1) {
+                k = 0;
+                continue;
+            }
+            if(rank[i] > 0) {
+                int j = sa[rank[i] + 1];
+                while (i + k < n && j + k < n && s.charAt(i + k) == s.charAt(j + k)) {
+                    k++;
+                }
+                lcp[rank[i] - 1] = k;
+                if (k > 0) {
+                    k--;
+                }
+            }
+        }
+        int maxLen = 0;
+        for (int i = 0; i < n; i++) {
+            maxLen = Math.max(maxLen, lcp[i]);
+        }
+        System.out.println("maxLcp = " + maxLen);
+        return maxLen;
+    }
+
+    public void patternMatchingWithBinarySearch(){
+        String pat = "ana";
+        String text = "banana";
+        int n = text.length();
+        Suffix[] suffixes = new Suffix[n];
+        for (int i = 0; i < n; i++) {
+            Suffix suffix = new Suffix(text.substring(i), i);
+            suffixes[i] = suffix;
+        }
+        Arrays.sort(suffixes, (a,b) -> a.suffix.compareTo(b.suffix));
+        int l = 0, r = n - 1;
+        while (l <= r){
+            int mid = l + (r - l) / 2;
+            int res = pat.compareTo(suffixes[mid].suffix);
+            if(res == 0 || suffixes[mid].suffix.startsWith(pat) && suffixes[mid].suffix.length() > pat.length()){
+                System.out.println("Pattern " + pat + " found at idx = " + suffixes[mid].orgIdx);
+                return;
+            }
+            if(res < 0){
+                r = mid - 1;
+            }else{
+                l = mid + 1;
+            }
+        }
+        System.out.println("Pattern not found = " + pat);
+    }
+
+    /* Time : O(n^2logn)*/
+    public int usingLCPConstructionNaive(String s){
+        List<String> res = new ArrayList<>();
+        for (int i = 0; i < s.length(); i++) {
+            res.add(s.substring(i));
+        }
+        Collections.sort(res);
+        int[] lcp = new int[res.size()];
+        lcp[0] = 0;
+        int maxLCP = 0;
+        for (int i = 1; i < res.size(); i++) {
+            String prev = res.get(i-1);
+            String curr = res.get(i);
+            int currLCP = 0;
+            for(int j = 0; j < Math.min(prev.length(), curr.length()); j++){
+                if(prev.charAt(j) == curr.charAt(j)){
+                    currLCP++;
+                }else{
+                    break;
+                }
+            }
+            maxLCP = Math.max(maxLCP, currLCP);
+            lcp[i] = currLCP;
+        }
+        int ans = 0;
+        for (int i = 1; i < lcp.length; i++) {
+            if(lcp[i] == maxLCP){
+                String curr = res.get(i).substring(0, maxLCP);
+                System.out.println("curr = " + curr);
+            }
+        }
+        System.out.println("maxLCP = " + maxLCP);
+        return maxLCP;
     }
 
     /*

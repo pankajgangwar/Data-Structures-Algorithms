@@ -56,6 +56,85 @@ public class JulyWeek4 {
     /**
      * https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/
      * **/
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        
+        //recurseTree(root, p, q);
+       // return result;
+        TreeNode lca = recurseTreeAnother(root, p, q);
+        int d1 = getShortestDistance(lca, p, 0);
+        int d2 = getShortestDistance(lca, q, 0);
+        int totalDistance = d1 + d2;
+        System.out.println("totalDistance: " + totalDistance);
+        return lca;
+    }
+    
+    private int getShortestDistance(TreeNode lca, TreeNode p, int level) {
+        if(lca == null) return -1;
+        if(lca.val == p.val) return level;
+        
+        int left = getShortestDistance(lca.left, p, level + 1);
+        int right = getShortestDistance(lca.right, p, level + 1);
+        
+        return Math.max(left, right);
+    }
+    
+    TreeNode result;
+    
+    public TreeNode recurseTreeAnother(TreeNode currentNode, TreeNode p, TreeNode q){
+        if(currentNode == null) return null;
+        
+        if(currentNode.val == p.val || currentNode.val == q.val) return currentNode;
+        
+        TreeNode right = recurseTreeAnother(currentNode.left, p, q);
+        TreeNode left = recurseTreeAnother(currentNode.right, p, q);
+        
+        if(right != null && left != null){
+            return currentNode;
+        }
+        
+        if(right == null && left != null){
+            return left;
+        }
+        
+        if(right != null && left == null){
+            return right;
+        }
+        
+        return null;
+    }
+    
+    public boolean recurseTree(TreeNode currentNode, TreeNode p, TreeNode q){
+        if(currentNode == null){
+            return false;
+        }
+        int left = recurseTree(currentNode.left, p, q) ? 1 : 0;
+        int right = recurseTree(currentNode.right, p, q) ? 1 : 0;
+        int middle = (currentNode == p || currentNode == q) ? 1 : 0;
+        if(middle + left + right >= 2)
+            result = currentNode;
+
+        return (middle + left + right) > 0;
+    }
+    
+    public boolean findPath(TreeNode root, TreeNode n, ArrayList<Integer> paths){
+        if(root == null)
+            return false;
+
+        paths.add(root.val);
+
+        if(root.val == n.val)
+            return true;
+
+        if(root.left != null && findPath(root.left, n, paths) )
+            return true;
+
+        if(root.right != null && findPath(root.right, n, paths) )
+            return true;
+
+        paths.remove(paths.size() -1);//BackTrack to prev arr
+
+        return false;
+    }
 
     public TreeNode lowestCommonAncestorApproach1(TreeNode root, TreeNode p, TreeNode q) {
         ArrayList<Integer> mPath1 = new ArrayList<>();
@@ -78,48 +157,6 @@ public class JulyWeek4 {
 
         return new TreeNode(mPath1.get(i-1));
 
-    }
-
-    public boolean findPath(TreeNode root, TreeNode n, ArrayList<Integer> paths){
-        if(root == null)
-            return false;
-
-        paths.add(root.val);
-
-        if(root.val == n.val)
-            return true;
-
-        if(root.left != null && findPath(root.left, n, paths))
-            return true;
-
-        if(root.right != null && findPath(root.right, n, paths))
-            return true;
-
-        paths.remove(paths.size() -1);//BackTrack to prev arr
-
-        return false;
-    }
-
-    /**
-     * https://leetcode.com/articles/lowest-common-ancestor-of-a-binary-tree/
-    **/
-    TreeNode result;
-    public TreeNode lowestCommonAncestorApproach2(TreeNode currentNode, TreeNode p, TreeNode q){
-        this.recurseTree(currentNode, p, q);
-        return this.result;
-    }
-
-    public boolean recurseTree(TreeNode currentNode, TreeNode p, TreeNode q){
-        if(currentNode == null){
-            return false;
-        }
-        int left = recurseTree(currentNode.left, p, q) ? 1 : 0;
-        int right = recurseTree(currentNode.right, p, q) ? 1 : 0;
-        int middle = (currentNode == p || currentNode == q) ? 1 : 0;
-        if(middle + left + right >= 2)
-            this.result = currentNode;
-
-        return (middle + left + right) > 0;
     }
 
     /**

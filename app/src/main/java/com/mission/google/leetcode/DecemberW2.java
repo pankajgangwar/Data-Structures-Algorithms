@@ -89,22 +89,19 @@ public class DecemberW2 {
         return res;
     }
 
-    /*
+    /*  LC : 1283
         https://leetcode.com/problems/find-the-smallest-divisor-given-a-threshold/ 
-        
-        Input: nums = [1,2,5,9], threshold = 6
-        Output: 5
-
+        Binary Search
     */
     public int smallestDivisor(int[] nums, int threshold) {
         int low = 1;
-        int high = (int)Math.pow(10,6);//1e6
+        int high = (int)1e6;
 
         while(low < high){
-            int mid = (high - (low + high))/2;
+            int mid = low + (high - low) / 2;
             int sum = 0;
-            for(int i : nums){
-                sum += (i + mid - 1) / mid;
+            for(int n : nums){
+                sum += (int)Math.ceil((double)n / mid);
             }
             if(sum > threshold){
                 low = mid + 1;

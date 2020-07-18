@@ -488,37 +488,6 @@ public class MarchW4 {
         return res;
     }
 
-    /* https://leetcode.com/problems/lonely-pixel-ii/ */
-    public int findBlackPixel(char[][] picture, int N) {
-        HashMap<Integer, Integer> mapR = new HashMap<>();
-        HashMap<Integer, Integer> mapC = new HashMap<>();
-
-        int m = picture.length;
-        int n = picture[0].length;
-        for(int i = 0; i < m; i++){
-            for(int j = 0; j < n; j++){
-                if(picture[i][j] == 'B'){
-                    mapR.put(i, mapR.getOrDefault(i, 0) + 1);
-                    mapC.put(j, mapC.getOrDefault(j, 0) + 1);
-                }
-            }
-        }
-
-        int res = 0;
-        for(int i = 0; i < m; i++){
-            for(int j = 0; j < n; j++){
-                if(picture[i][j] == 'B' && mapR.containsKey(i) && mapC.containsKey(j)){
-                    int countR = mapR.getOrDefault(i, 0);
-                    int countC = mapC.getOrDefault(j, 0);
-                    if((countR == N && countC == N )&& (countR == countC)){
-                        res++;
-                    }
-                }
-            }
-        }
-        return res;
-    }
-
     /* https://leetcode.com/problems/24-game/ */
     public boolean judgePoint24(int[] nums) {
         List<Double> list = new ArrayList<>();
@@ -1106,7 +1075,9 @@ public class MarchW4 {
         return false;
     }
 
-    /* https://leetcode.com/problems/the-maze-ii/ */
+    /*
+    LC : 505. The Maze II
+    https://leetcode.com/problems/the-maze-ii/ */
     public int shortestDistance(int[][] maze, int[] s, int[] d) {
         int m = maze.length;
         int n = maze[0].length;
@@ -1118,6 +1089,7 @@ public class MarchW4 {
 
     public int bfsShortestDistance(int[][] maze, boolean[][] visited, int[] s, int[] d){
         // Pop the coordinates which has less no. of steps
+        // Using Bellman-Ford
         PriorityQueue<int[]> q = new PriorityQueue<>( (a,b) -> a[2] - b[2]); // min PriorityQueue
 
         q.offer(new int[]{s[0], s[1], 0});

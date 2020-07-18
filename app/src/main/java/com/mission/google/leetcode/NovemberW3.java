@@ -608,7 +608,6 @@ public class NovemberW3 {
     public void morrisTraversal(TreeNode root){
         TreeNode curr = null;
         while(root != null){
-            
             if(root.left != null){//Connect threadings for root
                 curr = root.left;
                 while(curr.right != null && curr.right != root){

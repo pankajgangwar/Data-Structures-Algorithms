@@ -413,8 +413,8 @@ public class OctoberW3 extends BoyerMooreAlgorithm {
         }
         solution.remove(solution.size() - 1);
     }
-    /***
 
+    /***
      https://leetcode.com/problems/queue-reconstruction-by-height/
 
      Input:

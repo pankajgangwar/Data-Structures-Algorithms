@@ -113,7 +113,6 @@ public class JanuaryW3 {
                 }
             }
         }
-
         return set.size();
     }
 

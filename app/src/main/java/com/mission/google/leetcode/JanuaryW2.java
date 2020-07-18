@@ -564,7 +564,7 @@ public class JanuaryW2 {
             fhash = new long[1+n];
             for(int i = 1; i<= n; i++){
                 fhash[i] = (pow[i]*(t.charAt(i-1)-'a'+1))%mod;
-                fhash[i]+=fhash[i-1];
+                fhash[i] += fhash[i-1];
                 if(fhash[i]>=mod)fhash[i]-=mod;
             }
         }

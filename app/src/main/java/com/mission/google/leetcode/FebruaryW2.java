@@ -3,6 +3,7 @@ package com.mission.google.leetcode;
 import com.mission.google.TreeNode;
 import com.mission.google.datastructures.ListNode;
 
+import java.lang.reflect.Array;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,6 +22,8 @@ import java.util.Stack;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.function.IntConsumer;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class FebruaryW2 {
 
@@ -388,14 +391,51 @@ public class FebruaryW2 {
         return maxSum == 0 ? -1 : maxSum;
     }
 
+    /*
+     LC : 190
+     https://leetcode.com/problems/reverse-bits/submissions/ */
     public int reverseBits(int n) {
-        String binaryStr = Integer.toBinaryString(n);
-        System.out.println( "binaryStr " + binaryStr);
-        StringBuilder builder = new StringBuilder(binaryStr);
-        builder.reverse();
-        System.out.println("Reverse " + builder.toString());
+        if(n == 0) return n;
+        if(n > 0){
+            int[] arr = new int[32];
+            int start = arr.length - 1;
+            while (n != 1){
+                int rem = n % 2;
+                arr[start] = rem;
+                start--;
+                n /= 2;
+            }
+            arr[start] = n;
+            // Convert primitive array to List non-primitive obj
+            List<Integer> list=  Arrays.stream(arr).mapToObj(i -> i).collect(Collectors.toList());
+            Collections.reverse(list);
+            arr = list.stream().mapToInt(i -> i).toArray();
 
-        return Integer.parseInt(builder.toString(), 2);
+            /*int low = 0, high = arr.length - 1;
+            while (low < high){
+                int temp = arr[low];
+                arr[low] = arr[high];
+                arr[high] = temp;
+                low++;
+                high--;
+            }*/
+            int res = 0;
+            for (int i = 0; i < arr.length; i++) {
+                int num = arr[i];
+                res = res * 2 + num;
+            }
+            return res;
+        }else{
+            String binaryStr = Integer.toBinaryString(n);
+            StringBuilder builder = new StringBuilder(binaryStr);
+            builder.reverse();
+            int res = 0;
+            for (int i = 0; i < builder.length(); i++) {
+                int num = Integer.parseInt(builder.charAt(i) + "");
+                res = res * 2 + num;
+            }
+            return res;
+        }
     }
 
     /* https://leetcode.com/problems/zigzag-conversion/ */
@@ -1073,6 +1113,4 @@ public class FebruaryW2 {
         }
         return nums;
     }
-    
-
 }

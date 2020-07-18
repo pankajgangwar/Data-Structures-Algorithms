@@ -8,46 +8,292 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
 class JuneW4 {
-    /* https://leetcode.com/problems/minimum-distance-to-type-a-word-using-two-fingers/*/
-    /* https://www.codechef.com/problems/COUPON */
-    /* https://leetcode.com/problems/brick-wall/ */
-
-    /* DP on trees */
-    /*
-       https://codeforces.com/blog/entry/20935
-       https://www.spoj.com/problems/PT07X/
-       https://leetcode.com/problems/sum-of-distances-in-tree/
-       https://leetcode.com/problems/minimum-cost-tree-from-leaf-values/
-       https://leetcode.com/problems/unique-binary-search-trees-ii/
-    */
-    /* Binary search problems*/
-    /* https://leetcode.com/problems/sum-of-mutated-array-closest-to-target/ */
-    /* https://leetcode.com/problems/k-th-smallest-prime-fraction/ */
-    /* https://leetcode.com/problems/preimage-size-of-factorial-zeroes-function/ */
 
 
-    /* https://leetcode.com/problems/divide-chocolate/ */
-    /* https://leetcode.com/problems/integer-replacement/ */
-    /* https://leetcode.com/problems/maximum-xor-of-two-numbers-in-an-array/ */
-    /*
-    LC : 920
-    https://leetcode.com/problems/number-of-music-playlists/
-    https://www.youtube.com/watch?v=rhKuVZSsU_Q
-    */
-    public int numMusicPlaylists(int N, int L, int K) {
-        return 0;
-    }
+
 
     public static void main(String[] args) {
         JuneW4 obj = new JuneW4();
         //obj.getFolderNames(new String[]{"onepiece","onepiece(8)","onepiece(2)","onepiece(3)","onepiece","onepiece","onepiece"});
         //obj.singleNumber(new int[]{5,5,5,3});
-        obj.longestRepeatingSubstring("abbaba");
+        //obj.longestRepeatingSubstring("abbaba");
         //obj.patternMatchingWithBinarySearch();
+        int[][] grid = new int[4][4];
+        grid[0] = new int[]{1,1,0,0};
+        grid[1] = new int[]{1,1,0,0};
+        grid[2] = new int[]{0,0,1,1};
+        grid[3] = new int[]{0,0,1,1};
+        int res = obj.longestSubstring("abcdedghijklmnopqrstuvwxyz", 2);
+        System.out.println("res = " + res);
+    }
+
+    /*
+    LC : 395
+    https://leetcode.com/problems/longest-substring-with-at-least-k-repeating-characters/ */
+    public int longestSubstring(String s, int k) {
+        return longestSubstringMemo(s, k, new HashMap<>());
+    }
+
+    public int helper(String s, int k){
+        if(k < 1 || s.length() < k){
+            return 0;
+        }
+        if(k == 1) return s.length();
+        Map<Character, Integer> map = new HashMap<>();
+        for (int i = 0; i < s.length(); i++) {
+            map.put(s.charAt(i), map.getOrDefault(s.charAt(i), 0) + 1);
+        }
+        HashSet<Character> sets = new HashSet<>();
+        for (char ch : map.keySet()){
+            if(map.get(ch) < k) {
+                sets.add(ch);
+            }
+        }
+        if(sets.isEmpty()) return s.length();
+        int maxLen = 0;
+        int i = 0, j = 0;
+        while (j < s.length()){
+            char ch = s.charAt(j);
+            if(sets.contains(ch)){
+                if(j != i){
+                    maxLen = Math.max(maxLen, helper(s.substring(i, j), k));
+                }
+                i = j + 1;
+            }
+            j++;
+        }
+        if(i != j){
+            maxLen = Math.max(maxLen, helper(s.substring(i, j), k));
+        }
+        return maxLen;
+    }
+
+    //TLE
+    public int longestSubstringMemo(String s, int k, Map<String, Integer> dp) {
+        if(dp.containsKey(s)) return dp.get(s);
+
+        if(s.length() == 1 && k == 1){
+            return 1;
+        }
+        if(s.length() < k){
+            return 0;
+        }
+        System.out.println("s = " + s);
+        Map<Character, Integer> map = new HashMap<>();
+        int maxlen = 0;
+        for (int i = 0; i < s.length(); i++) {
+            map.put(s.charAt(i), map.getOrDefault(s.charAt(i), 0) + 1);
+        }
+        for (int i = 0; i < s.length(); i++) {
+            if (map.get(s.charAt(i)) < k) {
+                String firstHalf = s.substring(0, i);
+                String secondHalf = s.substring(i+1);
+                if (!firstHalf.isEmpty()) {
+                    if (!firstHalf.equals(s)) {
+                        maxlen = Math.max(maxlen, longestSubstringMemo(firstHalf, k, dp));
+                    }
+                }
+                if(!secondHalf.isEmpty()) {
+                    if(!secondHalf.equals(s)){
+                        maxlen = Math.max(maxlen, longestSubstringMemo(secondHalf, k, dp));
+                    }
+                }
+            }
+        }
+        if(maxlen == 0){
+            for (int i = 0; i < s.length(); i++) {
+                if(map.get(s.charAt(i)) < k){
+                    dp.put(s, 0);
+                    return 0;
+                }
+            }
+            dp.put(s, s.length());
+            return s.length();
+        }
+        dp.put(s, maxlen);
+        return maxlen;
+    }
+
+    /*
+     LC : 427
+     https://leetcode.com/problems/construct-quad-tree/ */
+    class Node {
+        public boolean val;
+        public boolean isLeaf;
+        public Node topLeft;
+        public Node topRight;
+        public Node bottomLeft;
+        public Node bottomRight;
+        public Node() {
+            this.val = false;
+            this.isLeaf = false;
+            this.topLeft = null;
+            this.topRight = null;
+            this.bottomLeft = null;
+            this.bottomRight = null;
+        }
+
+        public Node(boolean val, boolean isLeaf) {
+            this.val = val;
+            this.isLeaf = isLeaf;
+            this.topLeft = null;
+            this.topRight = null;
+            this.bottomLeft = null;
+            this.bottomRight = null;
+        }
+
+        public Node(boolean val, boolean isLeaf, Node topLeft, Node topRight, Node bottomLeft, Node bottomRight) {
+            this.val = val;
+            this.isLeaf = isLeaf;
+            this.topLeft = topLeft;
+            this.topRight = topRight;
+            this.bottomLeft = bottomLeft;
+            this.bottomRight = bottomRight;
+        }
+    }
+
+    public Node construct(int[][] grid) {
+        return helper(grid, 0, 0, grid.length);
+        //return dfs(grid);
+    }
+
+    public Node helper(int[][] grid, int x, int y, int len){
+        if(len == 1){
+            return new Node(grid[x][y] != 0, true, null,null,null,null);
+        }
+        Node root = new Node(true, false);
+        Node topLeft = helper(grid, x, y, len / 2);
+        Node topRight = helper(grid, x, y + len / 2, len / 2);
+        Node bottomLeft = helper(grid, x + len / 2, y, len / 2);
+        Node bottomRight = helper(grid, x + len / 2, y + len / 2, len / 2);
+        if(topLeft.isLeaf && topRight.isLeaf && bottomLeft.isLeaf && bottomRight.isLeaf &&
+            topLeft.val == topRight.val && topRight.val == bottomLeft.val && bottomLeft.val == bottomRight.val){
+            root.val = topLeft.val;
+            root.isLeaf = true;
+        }else{
+            root.topLeft = topLeft;
+            root.bottomLeft = bottomLeft;
+            root.topRight = topRight;
+            root.bottomRight = bottomRight;
+        }
+        return root;
+    }
+
+    private Node dfs(int[][] grid) {
+        int n = grid.length;
+        int start = grid[0][0];
+        boolean flag = true;
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[0].length; j++) {
+                if(start != grid[i][j]){
+                    flag = false;
+                    break;
+                }
+            }
+        }
+        if(flag){
+            //If all values in this grid are same
+            Node root = new Node(start == 1, true, null, null, null, null );
+            return root;
+        }else{
+            //break into 4 sub-square
+            //bottom-left
+            Node root = new Node(true, false);
+            int half = n / 2;
+            int[][] topLeft = new int[n / 2 ][n / 2];
+            int[][] topRight = new int[n / 2 ][n / 2];
+            int[][] bottomLeft = new int[n / 2 ][n / 2];
+            int[][] bottomRight = new int[n / 2 ][n / 2];
+            for (int k = 0; k < n / 2; k++) {
+                for (int l = 0; l < n / 2; l++) {
+                    topLeft[k][l] = grid[k][l];
+                }
+            }
+            root.topLeft = dfs(topLeft);
+
+            for (int m = 0; m < n / 2; m++) {
+                for (int l = n / 2; l < n ; l++) {
+                    topRight[m][l % half] = grid[m][l];
+                }
+            }
+            root.topRight = dfs(topRight);
+
+            for (int k = n / 2; k < n; k++) {
+                for (int m = 0; m < n / 2 ; m++) {
+                    bottomLeft[k % half][m % half] = grid[k][m];
+                }
+            }
+            root.bottomLeft = dfs(bottomLeft);
+
+            for (int p = n / 2; p < n; p++) {
+                for (int m = n / 2; m < n ; m++) {
+                    bottomRight[p % half][m % half] = grid[p][m];
+                }
+            }
+            root.bottomRight = dfs(bottomRight);
+            return root;
+        }
+    }
+
+    /*
+    LC : 482
+    https://leetcode.com/problems/license-key-formatting/ */
+    public String licenseKeyFormatting(String S, int K) {
+        StringBuilder builder = new StringBuilder();
+        for(int i = 0; i < S.length(); i++){
+            if(S.charAt(i) == '-')continue;
+            builder.append(S.charAt(i));
+        }
+        if(builder.length() == 0) return "";
+
+        String str = builder.toString().toUpperCase();
+        StringBuilder res = new StringBuilder();
+
+        int rem = str.length() % K;
+
+        int i = 0;
+        if(rem > 0){
+            while (rem > 0){
+                res.append(str.charAt(i++));
+                rem--;
+            }
+            res.append("-");
+        }
+        for (; i < str.length(); i += K){
+            res.append(str.subSequence(i, i + K));
+            res.append("-");
+        }
+        res.deleteCharAt(res.length() -1);
+        return res.toString();
+    }
+
+    /*
+     LC : 636
+     https://leetcode.com/problems/exclusive-time-of-functions/ */
+    public int[] exclusiveTime(int n, List<String> logs) {
+        Stack<Integer> stack = new Stack<>();
+        int prevTime = 0;
+        int[] res = new int[n];
+        for (int i = 0; i < logs.size(); i++){
+            String curr = logs.get(i);
+            String[] arr =  curr.split(":");
+            int functionId =  Integer.parseInt(arr[0]);
+            int time = Integer.parseInt(arr[2]);
+            if(arr[1].equals("start")){
+                if(!stack.isEmpty()) res[stack.peek()] += time - prevTime;
+                stack.push(functionId);
+                prevTime = time;
+            }else if(arr[1].equals("end")){
+                res[stack.pop()] += time - prevTime + 1;
+                prevTime = time + 1;
+            }
+        }
+        return res;
     }
 
     /*

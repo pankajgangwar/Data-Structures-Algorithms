@@ -166,7 +166,6 @@ public class NovemberW4 {
         int right = maxDepth(root.right);
 
         maxDiameter = Math.max(maxDiameter, left + right);
-
         return Math.max(left, right) + 1;
     }
 

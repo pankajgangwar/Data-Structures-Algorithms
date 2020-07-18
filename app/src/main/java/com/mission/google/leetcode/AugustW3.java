@@ -1714,7 +1714,7 @@ public class AugustW3 {
         }
     }
 
-    class Edge{
+    class Edge {
         int source;
         int destination;
         int weight;
@@ -1725,6 +1725,7 @@ public class AugustW3 {
             this.weight = weight;
         }
     }
+
     public int minCostToSupplyWater(int n, int[] wells, int[][] pipes) {
         int minCost = 0;
         Graph graph = new Graph(n);
@@ -1775,15 +1776,66 @@ public class AugustW3 {
      * Output: 6
      *
      * **/
+    /* O(logn^2) */
+    public int countNodesAnother(TreeNode root) {
+        if(root == null) return 0;
+        int lh = 0;
+        int rh = 0;
+        TreeNode leftR = root;
+        TreeNode rightR = root;
+        while (leftR != null) {
+            rh++;
+            leftR = leftR.left;
+        }
+        while (rightR != null) {
+            lh++;
+            rightR = rightR.right;
+        }
+        if(lh == rh) return (int)Math.pow(2, lh) - 1;
+
+        return 1 + countNodesAnother(root.left) + countNodesAnother(root.right);
+    }
+
+
     public int countNodes(TreeNode root) {
+        if(root == null) return 0;
+
         int h = height(root);
-        return h < 0 ? 0 : height(root.right) == h -1 ?
-                (1 << h) + countNodes(root.right)
-                : (1 << h-1) + countNodes(root.left);
+        if(h == 0) return 1;
+
+        int right = (int)Math.pow(2, h) - 1;
+        int left = 1;
+        while (left <= right){
+            int mid = left + (right - left) / 2;
+            if(exist(mid, h, root)) left = mid  + 1;
+            else right = mid - 1;
+        }
+        return (int)Math.pow(2, h) - 1 + left;
+    }
+
+    private boolean exist(int mid, int h, TreeNode root) {
+        int left = 0, right = (int)Math.pow(2, h) - 1;
+        int pivot;
+        for (int i = 0; i < h; i++){
+            pivot = (left + (right - left)) / 2;
+            if(mid <= pivot){
+                right = pivot;
+                root = root.left;
+            }else{
+                root = root.right;
+                left = pivot + 1;
+            }
+        }
+        return root != null;
     }
 
     public int height(TreeNode root) {
-        return root == null ? -1 : 1 + height(root.left);
+        int d = 0;
+        while (root.left != null){
+            root = root.left;
+            d++;
+        }
+        return d;
     }
 
     public int countRec(TreeNode root) {
@@ -1792,6 +1844,5 @@ public class AugustW3 {
         }
         return 1 + countRec(root.left) + countRec(root.right);
     }
-
 
 }

@@ -12,25 +12,10 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
+import java.util.stream.Stream;
 
 public class MayW4 {
 
-    // TODO: 5/15/2020  
-    /* https://leetcode.com/problems/minimum-cost-for-tickets/ */
-
-    /* https://leetcode.com/problems/couples-holding-hands/ */
-    /* https://leetcode.com/problems/minimum-distance-to-type-a-word-using-two-fingers/*/
-    /* https://www.codechef.com/problems/COUPON */
-    /* https://leetcode.com/problems/brick-wall/ */
-
-    /* DP on trees */
-    /* 
-       https://codeforces.com/blog/entry/20935
-       https://www.spoj.com/problems/PT07X/
-       https://leetcode.com/problems/sum-of-distances-in-tree/ 
-       https://leetcode.com/problems/minimum-cost-tree-from-leaf-values/
-       https://leetcode.com/problems/unique-binary-search-trees-ii/
-    */
 
     public static void main(String[] args) {
         MayW4 test = new MayW4();
@@ -64,6 +49,50 @@ public class MayW4 {
         int[][] queries = new int[][]{{0,1},{0,3},{2,3},{3,0},{2,0},{0,2}};
         test.checkIfPrerequisite(5, prerequisites, queries);
         //System.out.println("score = " + score);
+    }
+
+    /*
+    LC : 802
+    https://leetcode.com/problems/find-eventual-safe-states/
+    Reverse Topological sorting
+    */
+    public List<Integer> eventualSafeNodes(int[][] edges) {
+        int n = edges.length;
+        LinkedList<Integer>[] graph = new LinkedList[n];
+        for (int i = 0; i < n; i++) {
+            graph[i] = new LinkedList<>();
+        }
+        int[] outdegree = new int[n];
+        for (int i = 0; i < n; i++) {
+            int[] curr = edges[i];
+            for (int j : curr) {
+                graph[j].add(i);
+                outdegree[i]++;
+            }
+        }
+        Queue<Integer> q = new LinkedList<>();
+        for (int i = 0; i < n; i++) {
+            if(outdegree[i] == 0){
+                q.offer(i);
+            }
+        }
+        List<Integer> res = new ArrayList<>();
+
+        while (!q.isEmpty()){
+            int size = q.size();
+            while (size-- > 0){
+                int curr = q.poll();
+                res.add(curr);
+                for (int next : graph[curr]) {
+                    outdegree[next]--;
+                    if (outdegree[next] == 0) {
+                        q.offer(next);
+                    }
+                }
+            }
+        }
+        Collections.sort(res);
+        return res;
     }
 
     /*
@@ -379,7 +408,7 @@ public class MayW4 {
         return true;
     }
 
-    /* LC :
+    /* LC : 1461
        https://leetcode.com/problems/check-if-a-string-contains-all-binary-codes-of-size-k/
      */
     public boolean hasAllCodes(String s, int k) {

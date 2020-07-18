@@ -16,18 +16,6 @@ import java.util.Set;
 import java.util.Stack;
 
 class JuneW2 {
-    /* https://leetcode.com/problems/minimum-distance-to-type-a-word-using-two-fingers/*/
-    /* https://www.codechef.com/problems/COUPON */
-    /* https://leetcode.com/problems/brick-wall/ */
-
-    /* DP on trees */
-    /*
-       https://codeforces.com/blog/entry/20935
-       https://www.spoj.com/problems/PT07X/
-       https://leetcode.com/problems/sum-of-distances-in-tree/
-       https://leetcode.com/problems/minimum-cost-tree-from-leaf-values/
-       https://leetcode.com/problems/unique-binary-search-trees-ii/
-    */
 
     public static void main(String[] args) {
         JuneW2 obj = new JuneW2();
@@ -47,23 +35,6 @@ class JuneW2 {
         System.out.println("treeAncestor.getKthAncestor(3,1) = " + treeAncestor.getKthAncestor(3,1));
         System.out.println("treeAncestor.getKthAncestor(5,2) = " + treeAncestor.getKthAncestor(5,2));
         System.out.println("treeAncestor.getKthAncestor(6,3) = " + treeAncestor.getKthAncestor(6,3));*/
-    }
-
-    /* https://leetcode.com/problems/maximum-average-subtree/ */
-
-    /* https://leetcode.com/problems/maximum-xor-of-two-numbers-in-an-array/ */
-
-    /*
-    LC : 920
-    https://leetcode.com/problems/number-of-music-playlists/
-    */
-    public int numMusicPlaylists(int N, int L, int K) {
-        return 0;
-    }
-
-    /* https://leetcode.com/problems/minimum-number-of-days-to-make-m-bouquets/ */
-    public int minDays(int[] bloomDay, int m, int k) {
-        return 0;
     }
 
     /*
@@ -273,7 +244,7 @@ class JuneW2 {
         double[] disTo = new double[N];
         Arrays.fill(disTo, Double.POSITIVE_INFINITY);
         disTo[K - 1] = 0;
-        for (int i = 1; i < N; i++) {
+        for (int i = 1; i <= N; i++) {
             for (int[]edges : time){
                 int u = edges[0] - 1, v = edges[1] - 1, w = edges[2];
                 if(disTo[u] + w < disTo[v]){

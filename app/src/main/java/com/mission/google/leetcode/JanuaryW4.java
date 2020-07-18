@@ -1,7 +1,5 @@
 package com.mission.google.leetcode;
 
-import com.mission.google.TreeNode;
-
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,7 +14,6 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.function.IntConsumer;
 
 public class JanuaryW4 extends BaseHelper {
 
@@ -677,6 +674,26 @@ public class JanuaryW4 extends BaseHelper {
     * https://en.wikipedia.org/wiki/H-index
     * */
     public int hIndex(int[] arr) {
+        return hIndexLogarithmic(arr);
+    }
+
+    public int hIndexLogarithmic(int[] arr){
+        int n = arr.length;
+        int low = 0, high = arr.length - 1;
+        while(low <= high) {
+            int mid = low + (high - low) / 2;
+            if(n - mid == arr[mid]){
+                return n - mid;
+            }else if(n - mid > arr[mid]){
+                low = mid + 1;
+            }else{
+                high = mid - 1;
+            }
+        }
+        return n - low;
+    }
+
+    public int hIndexLinearTime(int[] arr){
         int n = arr.length;
         int[] bucket = new int[n + 1];
         for (int a : arr){

@@ -6,6 +6,7 @@ import com.mission.google.datastructures.ListNode;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,33 +14,7 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
-import javax.swing.text.Caret;
-
-import sun.reflect.generics.tree.Tree;
-
 class JulyW1 {
-
-    /* https://leetcode.com/problems/minimum-distance-to-type-a-word-using-two-fingers/*/
-    /* https://www.codechef.com/problems/COUPON */
-    /* https://leetcode.com/problems/brick-wall/ */
-
-    /* DP on trees */
-    /*
-       https://codeforces.com/blog/entry/20935
-       https://www.spoj.com/problems/PT07X/
-       https://leetcode.com/problems/sum-of-distances-in-tree/
-       https://leetcode.com/problems/minimum-cost-tree-from-leaf-values/
-       https://leetcode.com/problems/unique-binary-search-trees-ii/
-    */
-    /* Binary search problems*/
-    /* https://leetcode.com/problems/sum-of-mutated-array-closest-to-target/ */
-    /* https://leetcode.com/problems/k-th-smallest-prime-fraction/ */
-    /* https://leetcode.com/problems/preimage-size-of-factorial-zeroes-function/ */
-
-
-    /* https://leetcode.com/problems/divide-chocolate/ */
-    /* https://leetcode.com/problems/integer-replacement/ */
-    /* https://leetcode.com/problems/maximum-xor-of-two-numbers-in-an-array/ */
 
     public static void main(String[] args) {
         JulyW1 curr = new JulyW1();
@@ -48,10 +23,188 @@ class JulyW1 {
 
         double[] suc = new double[]{0.5,0.5,0.2};
         int start = 0 , end = 2;
-        curr.numSub("00111010");
+        char[][] board = new char[][]{
+                {'X','.','.','X'},
+                {'.','.','.','X'},
+                {'.','.','.','X'},
+        };
+        String[] src = new String[]{"int /*Test program ","int*/ main()", "{ ", "  // variable declaration ", "int a, b, c;",
+                "/* This is a test", "   multiline  ", "   comment for ", "   testing */", "a = b + c;", "}"};
+        curr.removeComments(src);
     }
 
-    /* https://leetcode.com/problems/the-maze-iii/ */
+    /*
+    LC : 365. Water and Jug Problem
+    https://leetcode.com/problems/water-and-jug-problem/ */
+    public boolean canMeasureWater(int x, int y, int z) {
+        if(x + y < z) return false;
+        if(x == z || y == z || x + y == z) return true;
+        return z % gcd(x, y) == 0;
+    }
+
+    public int gcd(int a, int b){
+        while (b != 0){
+            int temp = b;
+            b = a % b;
+            a = temp;
+        }
+        return a;
+    }
+
+    /*
+    LC : 722 Remove Comments
+    https://leetcode.com/problems/remove-comments/ */
+    public List<String> removeComments(String[] source) {
+        List<String> res = new ArrayList<>();
+        StringBuilder out = new StringBuilder();
+        boolean mode = false;
+        for(String s :  source){
+            int n = s.length();
+            for(int i = 0; i < n; i++) {
+                if(mode){
+                    if(s.charAt(i) == '*' && i < n - 1 && s.charAt(i + 1) == '/'){
+                        mode = false;
+                        i++;
+                    }
+                }else{
+                    if(s.charAt(i) == '/' && i < n - 1 && s.charAt(i + 1) == '/'){
+                        break;
+                    }else if(s.charAt(i) == '/' && i < n - 1 && s.charAt(i + 1) == '*'){
+                        mode = true;
+                        i++;
+                    }else{
+                        out.append(s.charAt(i));
+                    }
+                }
+            }
+            if(!mode && out.length() > 0){
+                res.add(out.toString());
+                out = new StringBuilder();
+            }
+        }
+        System.out.println("res = " + res);
+        return res;
+    }
+
+    /*
+    * 419. Battleships in a Board
+    * https://leetcode.com/problems/battleships-in-a-board/
+    * */
+    public int countBattleships(char[][] board) {
+        int m = board.length;
+        int n = board[0].length;
+
+        if(m == 0) return 0;
+
+        int count = 0;
+        for(int i = 0; i < m; i++){
+            for(int j = 0; j < n; j++){
+                if(board[i][j] == '.') continue;
+                if(i > 0 && board[i-1][j] == 'X')continue;
+                if(j > 0 && board[i][j-1] == 'X')continue;
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /*
+    LC : 499. The Maze III
+    https://leetcode.com/problems/the-maze-iii/ 
+    Sol: https://leetcode.com/problems/the-maze-iii/discuss/741652/JAVA-BFS-Solution
+    */
+    class Next {
+        int curr_x, curr_y, steps;
+        String next_d;
+        public Next(int curr_x, int curr_y, int steps, String next_d){
+            this.next_d = next_d;
+            this.curr_x = curr_x;
+            this.curr_y = curr_y;
+            this.steps = steps;
+        }
+    }
+    
+    public String findShortestWay(int[][] maze, int[] ball, int[] hole) {
+        int[][] dirs = new int[][] { {1,0}/*d*/, {0,1}/*r*/, {-1,0}/*u*/, {0,-1}/*l*/ };
+        
+        PriorityQueue<Next> pq = new PriorityQueue<>( (a,b) -> Integer.compare(a.steps, b.steps));
+        
+        List<String> res = new ArrayList<>();
+        int m = maze.length;
+        int n = maze[0].length;
+        
+        int[][] dist = new int[m][n];
+        boolean[][] visited = new boolean[m][n];
+        
+        pq.offer(new Next(ball[0], ball[1], 0, ""));
+        
+        int shortestDist = Integer.MAX_VALUE;
+        while(!pq.isEmpty()){
+            Next curr = pq.poll();
+            if(curr.curr_x == hole[0] && curr.curr_y == hole[1]){
+                if(shortestDist >= curr.steps){
+                    shortestDist = curr.steps;
+                    res.add(curr.next_d.toString());
+                }
+                continue;
+            }
+            visited[curr.curr_x][curr.curr_y] = true;
+            
+            for(int i = 0; i < dirs.length; i++){
+                int[] dir = dirs[i];
+                
+                int[] next = roll(curr.curr_x, curr.curr_y, dir[0], dir[1], maze, curr.steps, hole);
+                int next_x = next[0];
+                int next_y = next[1];
+                
+                if(visited[next_x][next_y]) continue;
+                
+                String next_d = curr.next_d;
+                switch(i){
+                    case 0:
+                        next_d += "d";
+                        break;
+                    case 1:
+                        next_d += "r";
+                        break;
+                    case 2:
+                        next_d += "u";
+                        break;
+                    case 3:
+                        next_d += "l";
+                        break;
+                }
+                if(dist[next_x][next_y] == 0 || dist[next_x][next_y] >= next[2]){
+                    dist[next_x][next_y] = next[2];
+                    pq.offer(new Next(next[0], next[1], next[2], next_d));
+                }
+            }
+        }
+        Collections.sort(res);
+        System.out.println(res.toString());
+        return res.isEmpty() ? "impossible" : res.get(0);
+    }
+    
+    public int[] roll(int curr_x, int curr_y, int next_x, int next_y, int[][] maze, int steps, int[] hole){
+        while(canRoll(curr_x + next_x, curr_y + next_y, maze)){
+            curr_x += next_x;
+            curr_y += next_y;
+            steps++;
+            if(hole[0] == curr_x && hole[1] == curr_y){
+                break;
+            }
+        }
+        return new int[]{curr_x, curr_y, steps};
+    }
+    
+    public boolean canRoll(int curr_x, int curr_y, int[][] maze){
+        int m = maze.length;
+        int n = maze[0].length;
+        if(curr_x >= 0 && curr_x < m && curr_y >= 0 && curr_y < n && maze[curr_x][curr_y] == 0 ){
+            return true;
+        }
+        return false;
+    }
 
     /* 
     157. Read N Characters Given Read4
@@ -91,26 +244,15 @@ class JulyW1 {
     /*
     605. Can Place Flowers
     https://leetcode.com/problems/can-place-flowers/ */
-    public boolean canPlaceFlowers(int[] flowerbed, int n) {
-        int len = flowerbed.length;
-        for(int i = 0; i < flowerbed.length ;){
-            if(i < len && flowerbed[i] == 0 ){
-                if(i+1 < len && flowerbed[i+1] == 0){
-                    flowerbed[i] = 1;
-                    --n;
-                    i += 2;
-                }else if(i == len -1){
-                    flowerbed[i] = 1;
-                   --n;
-                    i++;
-                }else{
-                    i += 3;
-                }
-            }else{
-                i += 2;
+    public boolean canPlaceFlowers(int[] bed, int n) {
+        int len = bed.length;
+        for(int i = 0; i < bed.length ; i++){
+            if(bed[i] == 0 && (i == 0 || bed[i-1] == 0) && (i == len - 1 || bed[i+1] == 0) ){
+                bed[i] = 1;
+                --n;    
             }
         }
-        System.out.println(Arrays.toString(flowerbed));
+        //System.out.println(Arrays.toString(flowerbed));
         return n <= 0;
     }
 
@@ -118,6 +260,24 @@ class JulyW1 {
     541. Reverse String II
     https://leetcode.com/problems/reverse-string-ii/ */
     public String reverseStr(String s, int k) {
+        char[] arr = s.toCharArray();
+        int i = 0, n = s.length();
+        while(i < n){
+            int j = Math.min(i + k - 1, n - 1);
+            swap(arr, i, j);
+            i += 2 * k;
+        }
+        return new String(arr);
+    }
+    public void swap(char[] arr, int i, int j){
+        while(i < j){
+            char temp = arr[i];
+            arr[i++] = arr[j];
+            arr[j--] = temp;
+        }
+    }
+
+    public String reverseStrSlow(String s, int k) {
         int twiceK = 2*k;
         StringBuilder res = new StringBuilder();
         for(int i = 0; i < s.length(); i += twiceK ){

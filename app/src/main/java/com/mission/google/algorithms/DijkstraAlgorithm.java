@@ -40,18 +40,12 @@ public class DijkstraAlgorithm {
 		public void dijkstra(int[][] graph, int src) {
 			Boolean[] visitedVertices = new Boolean[V];
 			int dist[] = new int[V];
-			
 			Arrays.fill(visitedVertices, false);
 			Arrays.fill(dist, Integer.MAX_VALUE);
-			
 			dist[0] = 0;
-			
 			for(int count = 0; count < V-1; count++) {
-				
 				int u = minDistance(visitedVertices, dist);
-				
 				visitedVertices[u] = true;
-				
 				for(int v=0; v < V;v++) {
 					
 					if(!visitedVertices[v] && graph[u][v] != 0 && dist[u] != Integer.MAX_VALUE
@@ -60,7 +54,6 @@ public class DijkstraAlgorithm {
 					}
 				}
 			}
-			
 			printSolution(dist, V);
 		}
 		
@@ -69,7 +62,6 @@ public class DijkstraAlgorithm {
 				System.out.println(i +" tt " + dist[i]);
 			}
 		}
-		
 	}
 
 }

@@ -241,6 +241,8 @@ class JuneW2 {
     public int findMaxBellmanFord(int[][] time, int N, int K){
         // Bellman-Ford O(N*E)
         // Runs N-1 times for relaxation
+        // Single source shortest path
+        // Can be used to detect negative cycles regardless of the starting node.
         double[] disTo = new double[N];
         Arrays.fill(disTo, Double.POSITIVE_INFINITY);
         disTo[K - 1] = 0;

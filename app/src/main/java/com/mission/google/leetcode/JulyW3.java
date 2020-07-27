@@ -4,40 +4,160 @@ import com.mission.google.datastructures.ListNode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+import java.util.Stack;
+import java.util.TreeMap;
 
 /*
 * Created on 19/July/2020
 * */
 class JulyW3 {
-    /* https://leetcode.com/problems/minimum-distance-to-type-a-word-using-two-fingers/*/
-    /* https://www.codechef.com/problems/COUPON */
-    /* https://leetcode.com/problems/brick-wall/ */
 
-    /* DP on trees */
-    /*
-       https://codeforces.com/blog/entry/20935
-       https://www.spoj.com/problems/PT07X/
-       https://leetcode.com/problems/sum-of-distances-in-tree/
-       https://leetcode.com/problems/minimum-cost-tree-from-leaf-values/
-       https://leetcode.com/problems/unique-binary-search-trees-ii/
-    */
-    /* Binary search problems*/
-    /* https://leetcode.com/problems/sum-of-mutated-array-closest-to-target/ */
-    /* https://leetcode.com/problems/k-th-smallest-prime-fraction/ */
-    /* https://leetcode.com/problems/preimage-size-of-factorial-zeroes-function/ */
-
-
-    /* https://leetcode.com/problems/divide-chocolate/ */
-    /* https://leetcode.com/problems/integer-replacement/ */
-    /* https://leetcode.com/problems/maximum-xor-of-two-numbers-in-an-array/ */
     public static void main(String[] args) {
         JulyW3 curr = new JulyW3();
         int[][] edges = new int[][]{{0,1}, {1,2}, {0,3}};
         curr.maxNumOfSubstrings("adefaddaccc");
+    }
+
+    /* 
+    LC : 1019 Next Greater Node In Linked List
+    Similar : https://leetcode.com/problems/next-greater-element-ii/
+    https://leetcode.com/problems/next-greater-node-in-linked-list/ 
+    */
+    public int[] nextLargerNodes(ListNode head) {
+        ArrayList<Integer> list = new ArrayList<>();
+        while(head != null){
+            list.add(head.val);
+            head = head.next;
+        }
+        
+        Stack<Integer> stack = new Stack<>();
+        int[] ans = new int[list.size()];
+        for(int i = 0; i < list.size(); i++) {
+            while(!stack.isEmpty() && list.get(stack.peek()) < list.get(i)) {
+                int idx = stack.pop();
+                ans[idx] = list.get(i);
+            }
+            stack.push(i);
+        }
+        return ans;
+    }
+
+    /*
+    LC : 1133. Largest Unique Number
+    https://leetcode.com/problems/largest-unique-number/ */
+    public int largestUniqueNumber(int[] A) {
+        TreeMap<Integer, Integer> map = new TreeMap<>(Collections.reverseOrder());
+        for(int a : A){
+            map.put(a, map.getOrDefault(a, 0) + 1);
+        }
+        
+        for(Map.Entry<Integer, Integer> entry : map.entrySet()){
+            if(entry.getValue() == 1){
+                return entry.getKey();
+            }
+        }
+        return -1;
+    }
+
+    /*
+    LC : 1381
+    https://leetcode.com/problems/design-a-stack-with-increment-operation/
+    */
+    class CustomStack {
+        int[] inc;
+        Stack<Integer> stack;
+        final int n;
+        public CustomStack(int n) {
+            inc = new int[n];
+            stack = new Stack<>();
+            this.n = n;
+        }
+
+        public void push(int x) {
+            if(stack.size() >= n) {
+                return;
+            }
+            stack.push(x);
+        }
+
+        public int pop() {
+            int i = stack.size() - 1;
+            if(i < 0) return -1;
+            if(i > 0) {
+                inc[i-1] += inc[i];
+            }
+            int res = stack.pop() + inc[i];
+            inc[i] = 0;
+            return res;
+        }
+
+        public void increment(int k, int val) {
+            int i = Math.min(stack.size(), k) - 1;
+            if(i >= 0) inc[i] += val;
+        }
+    }
+
+    /* 
+    LC : 346
+    https://leetcode.com/problems/moving-average-from-data-stream/
+    */
+    class MovingAverage {
+
+        /** Initialize your data structure here. */
+        final int size;
+        int count = 0;
+        Queue<Integer> list;
+        public MovingAverage(int size) {
+            this.size = size;
+            list = new LinkedList<>();
+        }
+        
+        int sum = 0;
+        public double next(int val) {
+            if(count != size) {
+                ++count;
+                sum += val;
+                list.add(val);
+            }else{
+                sum -= list.poll();
+                list.add(val);
+                sum += val;
+            }
+            return (double)sum / count;
+        }
+    }
+
+    /* 
+    LC : 714. Best Time to Buy and Sell Stock with Transaction Fee
+    https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/
+    Revisit
+    */
+    public int maxProfit(int[] prices, int fee) {
+        return maxProfitI(prices, fee);
+    }
+    
+    public int maxProfitI(int[] prices, int fee ){
+        int n = prices.length;
+        int profit = 0;
+        
+        int cash = 0; // max profit when stock is not held
+        int hold = -prices[0]; // max profit when stock is held
+        for(int i = 1; i < n; i++) {
+            /* If I'm holding the stock after today, either I decided to continue holding the stock from yesterday 
+            or that I held no stock */
+            hold = Math.max(hold, cash - prices[i]); //continue holding the share from yesterday or buy the stock i
+
+            /* If I'm not holding the stock after today, either I did not hold from yesterday
+            or I had stock from yeterday and decided to sell it today */
+            cash = Math.max(cash, hold + prices[i] - fee); 
+        }
+        return cash;
     }
 
     /*
@@ -160,8 +280,7 @@ class JulyW3 {
         return num;
     }
 
-    /* https://leetcode.com/problems/android-unlock-patterns/ */
-    /* https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/ */
+
 
     /*
     309. Best Time to Buy and Sell Stock with Cooldown

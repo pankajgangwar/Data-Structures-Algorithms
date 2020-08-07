@@ -25,28 +25,6 @@ import java.util.stream.IntStream;
  */
 class JulyW4 {
 
-    /* https://leetcode.com/problems/minimum-distance-to-type-a-word-using-two-fingers/*/
-    /* https://www.codechef.com/problems/COUPON */
-    /* https://leetcode.com/problems/brick-wall/ */
-
-    /* DP on trees */
-    /*
-       https://codeforces.com/blog/entry/20935
-       https://www.spoj.com/problems/PT07X/
-       https://leetcode.com/problems/sum-of-distances-in-tree/
-       https://leetcode.com/problems/minimum-cost-tree-from-leaf-values/
-       https://leetcode.com/problems/unique-binary-search-trees-ii/
-    */
-    /* Binary search problems*/
-    /* https://leetcode.com/problems/sum-of-mutated-array-closest-to-target/ */
-    /* https://leetcode.com/problems/k-th-smallest-prime-fraction/ */
-    /* https://leetcode.com/problems/preimage-size-of-factorial-zeroes-function/ */
-
-
-    /* https://leetcode.com/problems/divide-chocolate/ */
-    /* https://leetcode.com/problems/integer-replacement/ */
-    /* https://leetcode.com/problems/maximum-xor-of-two-numbers-in-an-array/ */
-
     public static void main(String[] args) {
         JulyW4 w4 = new JulyW4();
         String res = w4.largestTimeFromDigits(new int[]{1,5,2,5});
@@ -64,81 +42,29 @@ class JulyW4 {
         return helper(arr, new StringBuilder(), new boolean[arr.length], new HashSet<>());
     }
 
+    /*
+    LC : 949. Largest Time for Given Digits
+    https://leetcode.com/problems/largest-time-for-given-digits/ */
     public String largestTimeFromDigits(int[] arr) {
-        StringBuilder res = new StringBuilder();
+        String ans = "";
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                for (int k = 0; k < 4; k++) {
+                    for (int l = 0; l < 4; l++) {
+                        if(i == j || j == k || i == k) continue;
+                        if(i == l || k == l || j == l) continue;
 
-        List<Integer> list = Arrays.stream(arr).mapToObj(i -> i).collect(Collectors.toList());
-
-        for(int i = 2; i >=0; --i) {
-            int j = 0;
-            boolean flag = false;
-            for(; j < list.size(); j++) {
-                if(list.get(j) == i) {
-                    flag = true;
-                    break;
+                        String hr = arr[i]+""+arr[j];
+                        String min = arr[k] + "" + arr[l];
+                        String t = hr + ":" + min;
+                        if(hr.compareTo("24") < 0 && min.compareTo("60") < 0 && ans.compareTo(t) < 0){
+                            ans = t;
+                        }
+                    }
                 }
             }
-            if(flag){
-                list.remove(j);
-                res.append(i);
-                break;
-            }
         }
-        if(res.length() == 0) return res.toString();
-
-        for(int i = 3; i >=0 ; --i){
-            int j = 0;
-            boolean flag = false;
-            for(; j < list.size(); j++) {
-                if(list.get(j) == i) {
-                    flag = true;
-                    break;
-                }
-            }
-            if(flag){
-                list.remove(j);
-                res.append(i);
-                break;
-            }
-        }
-        if(res.length() != 2 ) return "";
-
-        for(int i = 5; i >=0 ; --i){
-            int j = 0;
-            boolean flag = false;
-            for(; j < list.size(); j++) {
-                if(list.get(j) == i) {
-                    flag = true;
-                    break;
-                }
-            }
-            if(flag){
-                list.remove(j);
-                res.append(":");
-                res.append(i);
-                break;
-            }
-        }
-        if(res.length() != 3) return "";
-
-        for(int i = 9; i >=0 ; --i){
-            int j = 0;
-            boolean flag = false;
-            for(; j < list.size(); j++) {
-                if(list.get(j) == i) {
-                    flag = true;
-                    break;
-                }
-            }
-            if(flag){
-                list.remove(j);
-                res.append(i);
-                break;
-            }
-        }
-        if(res.length() != 4) return "";
-        System.out.println("res.toString() = " + res.toString());
-        return res.toString();
+        return ans;
     }
 
     public boolean helper(char[] arr, StringBuilder out, boolean[] visited, HashSet<String> vis){

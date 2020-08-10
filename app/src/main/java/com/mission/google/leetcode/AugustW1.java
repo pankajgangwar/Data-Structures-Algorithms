@@ -2,6 +2,8 @@ package com.mission.google.leetcode;
 
 import com.mission.google.TreeNode;
 
+import java.lang.reflect.Array;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -18,8 +20,11 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.Stack;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import sun.reflect.generics.tree.Tree;
 
 /**
  * Created by Pankaj Kumar on 3/Aug/2020
@@ -39,14 +44,424 @@ class AugustW1 {
        https://leetcode.com/problems/unique-binary-search-trees-ii/
     */
     /* Binary search problems*/
-    /* https://leetcode.com/problems/sum-of-mutated-array-closest-to-target/ */
+
     /* https://leetcode.com/problems/k-th-smallest-prime-fraction/ */
-    /* https://leetcode.com/problems/preimage-size-of-factorial-zeroes-function/ */
+    /* https://leetcode.com/problems/preimage-size-of-factorial-zeroes-function/
+    *  https://leetcode.com/problems/the-earliest-moment-when-everyone-become-friends/
+    */
 
-    /* https://leetcode.com/problems/divide-chocolate/ */
+    public static void main(String[] args) {
+        AugustW1 w1 = new AugustW1();
+        //boolean status = w1.canConvertString("atmtxzjkz","tvbtjhvjd", 35);
+        int status = w1.maxNonOverlapping(new int[]{1,1,1,1,1}, 2);
+        System.out.println(status);
+    }
 
+    /* LC  Weekly Contest 201
+    * https://leetcode.com/contest/weekly-contest-201
+    */
+
+    /*1547. Minimum Cost to Cut a Stick
+    * https://leetcode.com/problems/minimum-cost-to-cut-a-stick/
+    * */
+    public int minCost(int n, int[] cuts) {
+        List<Integer> list = new ArrayList<>();
+        for(int a : cuts){
+            list.add(a);
+        }
+        list.add(0);
+        list.add(n);
+        Collections.sort(list);
+
+        int[][] memo = new int[102][102];
+
+        for(int i = 0; i < 102; i++) {
+            Arrays.fill(memo[i], -1);
+        }
+
+        return helper(list, 0, list.size() -1, memo);
+    }
+
+    public int helper(List<Integer> cuts, int i, int j, int[][] memo){
+        if(j - i <= 1) return 0;
+        if(memo[i][j] == -1) {
+            memo[i][j] = Integer.MAX_VALUE;
+            for(int k = i + 1; k < j; k++) {
+                memo[i][j] = Math.min(memo[i][j], cuts.get(j) - cuts.get(i) + helper(cuts, i, k, memo) +
+                        helper(cuts, k, j, memo));
+            }
+        }
+        return memo[i][j];
+    }
+
+    /*
+    * 1546. Maximum Number of Non-Overlapping Subarrays With Sum Equals Target
+    * https://leetcode.com/problems/maximum-number-of-non-overlapping-subarrays-with-sum-equals-target/
+    * */
+    public int maxNonOverlapping(int[] nums, int target){
+        return solution2(nums, target);
+    }
+
+    public int solution2(int[] nums, int target){
+        Map<Integer, Integer> map = new HashMap<>();
+        map.put(0, 0);
+
+        int res = 0;
+        int sum = 0;
+
+        for (int i = 0; i < nums.length; ++i) {
+            sum += nums[i];
+            if (map.containsKey(sum - target)) {
+                res = Math.max(res, map.get(sum - target) + 1);
+            }
+            map.put(sum, res);
+        }
+        return res;
+    }
+
+    public int solution1(int[] nums, int target) {
+        HashMap<Integer, Integer> map = new HashMap<>();
+        map.put(0, -1);
+        int prefSum = 0;
+        int res = 0;
+        TreeSet<Integer> sets = new TreeSet<>();
+        for (int i = 0; i < nums.length; i++) {
+            prefSum += nums[i];
+            if(map.containsKey(prefSum - target)){
+                int prevIdx = map.get(prefSum - target) + 1;
+                if(!sets.isEmpty()){
+                    int first = sets.first();
+                    int last = sets.last();
+                    if(prevIdx > first && prevIdx > last) {
+                        sets.add(prevIdx);
+                        sets.add(i);
+                        res++;
+                    }
+                }else{
+                    sets.add(prevIdx);
+                    sets.add(i);
+                    res++;
+                }
+            }
+            map.put(prefSum, i);
+        }
+        return res;
+    }
+
+    /*
+    * 1545. Find Kth Bit in Nth Binary String
+    * https://leetcode.com/problems/find-kth-bit-in-nth-binary-string/
+    * */
+    public char findKthBit(int n, int k) {
+        if(n <= 1){
+            return '0';
+        }
+        String res = helper(n);
+        return res.charAt(k - 1);
+    }
+
+    public String helper(int n){
+        if(n == 1){
+            return "0";
+        }
+        StringBuilder out = new StringBuilder();
+        String prev = helper(n - 1);
+        out.append(prev).append("1");
+        StringBuilder inv = new StringBuilder();
+        for (int i = 0; i < prev.length(); i++) {
+            inv.append(prev.charAt(i) == '0' ? '1' : '0');
+        }
+        inv.reverse();
+        out.append(inv.toString());
+        return out.toString();
+    }
+
+
+    /*
+    * 1544. Make The String Great
+    * https://leetcode.com/problems/make-the-string-great/
+    */
+    public String makeGood(String s) {
+        Stack<Character> stack = new Stack<>();
+        char[] arr = s.toCharArray();
+        for (int i = 0; i < arr.length ; i++) {
+            if(!stack.isEmpty() && Math.abs(stack.peek() - arr[i]) == 32 ){
+                stack.pop();
+            }else{
+                stack.push(arr[i]);
+            }
+        }
+        char[] res = new char[stack.size()];
+        int index = stack.size() - 1;
+        while (!stack.isEmpty()){
+            res[index--] = stack.pop();
+        }
+        return new String(res);
+    }
+
+
+    public int minInsertions(String s) {
+        char[] arr = s.toCharArray();
+        int res = 0;
+        int open = 0;
+        int close = 0;
+        for (int i = 0; i < arr.length; i++) {
+            if(arr[i] == '('){
+                res += 2;
+            }else if(res <= 0){
+                if(arr[i] == arr[i+1]){
+                    res--;
+                }
+            }
+        }
+        if(res < 0) {
+            if(Math.abs(res) % 2 == 0 ){
+                return Math.abs(res) / 2;
+            }else{
+                int ans = Math.abs(res);
+                while (ans > 0){
+                    if(ans >= 2){
+                        ans = ans - 2;
+                        open++;
+                    }else{
+                        ans = ans - 1;
+                        open++;
+                        close++;
+                    }
+                }
+                return open + close;
+            }
+        }else{
+            return res;
+        }
+    }
+
+    public boolean canConvertString(String s, String t, int k) {
+        int n = s.length();
+        int m = t.length();
+        if(m != n) return false;
+        int[] count = new int[26];
+        for (int i = 0; i < n; i++) {
+            int x = ( t.charAt(i) - s.charAt(i) + 26 ) % 26;
+            if(x > 0 && x + count[x] * 26 > k ){
+                return false;
+            }
+            ++count[x];
+        }
+        return s.length() == t.length();
+    }
+
+    /*
+    1539. Kth Missing Positive Number
+    https://leetcode.com/problems/kth-missing-positive-number/ */
+    public int findKthPositive(int[] arr, int k) {
+        List<Integer> list = new ArrayList<>();
+        for (int i = 1, start = 0; i < 1000 && start < arr.length; i++) {
+            if(arr[start] == i){
+                start++;
+            }else{
+                list.add(i);
+            }
+        }
+        if(k > list.size()){
+            k = k - list.size();
+            int last = list.get(list.size() - 1);
+            return last + k;
+        }else{
+            return list.get(k + 1);
+        }
+    }
+
+    /*
+    LC : 1300. Sum of Mutated Array Closest to Target
+    https://leetcode.com/problems/sum-of-mutated-array-closest-to-target/ */
+    public int findBestValue(int[] arr, int target) {
+        int max = Arrays.stream(arr).max().getAsInt();
+        int sum = Arrays.stream(arr).sum();
+        if(sum == target) return max;
+
+        int low = 0;
+        int high = max;
+        int n = arr.length;
+        int res = 1;
+        int diff = Integer.MAX_VALUE;
+        while (low <= high ){
+            int mid = low + (high - low) / 2;
+            int [] copy = Arrays.copyOf(arr, n);
+            for (int i = 0; i < n; i++) {
+                if(copy[i] > mid){
+                    copy[i] = mid;
+                }
+            }
+            int currsum = Arrays.stream(copy).sum();
+            if(currsum > target) {
+                high = mid - 1;
+            }else{
+                low = mid + 1;
+            }
+
+            if((Math.abs(currsum - target) < diff || (Math.abs(currsum - target) == diff) )
+                    && mid < res){
+                res = mid;
+                diff = Math.abs(currsum - target);
+            }
+        }
+        return res;
+    }
 
     /* 
+    900. RLE Iterator
+    https://leetcode.com/problems/rle-iterator/
+    Sol: https://leetcode.com/problems/rle-iterator/discuss/779590/JAVA-O(1)-lookup-using-ArrayDeque
+    */
+    class RLEIterator {
+        /*ArrayDeque<Integer> qNumber;
+        ArrayDeque<Integer> qOccurance;*/
+        int[] arr;
+        public RLEIterator(int[] arr) {
+            this.arr = arr;
+            /*qNumber = new ArrayDeque<>();
+            qOccurance = new ArrayDeque<>();
+            for(int i = 0; i < arr.length - 1; i += 2) {
+                int times = arr[i];
+                int num = arr[i+1];
+
+                qNumber.add(num);
+                qOccurance.add(times);
+            }*/
+        }
+
+        int start = 0;
+        public int next(int n) {
+            while(n > 0 && start < arr.length ) {
+                int occ = arr[start];
+                if(n > occ){
+                    n = n - occ;
+                    start += 2;
+                }else{
+                    occ = occ - n;
+                    arr[start] = occ;
+                    return arr[start+1];
+                }
+            }
+            return -1;
+            /*if(qOccurance.isEmpty()) return -1;
+
+            while(n > 0 && !qNumber.isEmpty()) {
+                int number = qNumber.pollFirst();
+                int occ = qOccurance.pollFirst();
+
+                if(n > occ){
+                    n = n - occ;// n is bigger than occ, check next occ with remaining n
+                }else{
+                    occ = occ - n;//Add the remaining occ back to queue
+                    qOccurance.addFirst(occ);
+                    qNumber.addFirst(number);
+                    return number;
+                }
+            }
+            return -1;*/
+        }
+    }
+
+
+    /*
+     1493. Longest Subarray of 1's After Deleting One Element
+     https://leetcode.com/problems/longest-subarray-of-1s-after-deleting-one-element/
+     Similar : https://leetcode.com/problems/max-consecutive-ones-iii/
+     Sliding Window
+     */
+    public int longestSubarray(int[] nums) {
+        int n = nums.length;
+        int max = 0;
+        int count = 1;
+        int start = 0;
+        
+        for(int i = 0; i < n; i++){
+            if(nums[i] == 0) count--;
+            
+            while(count < 0){
+                if(nums[start] == 0){
+                    count++;            
+                }
+                start++;
+            }
+            max = Math.max(max, i - start);
+        }
+        return max;
+    }
+
+    /*
+     1231. Divide Chocolate
+     https://leetcode.com/problems/divide-chocolate/
+     Binary search
+     */
+    public int maximizeSweetness(int[] arr, int k) {
+        //return maximizeSweetnessDP(arr, k + 1);
+        return maximizeSweetnessBinarySearch(arr, k + 1);
+    }
+
+    public int maximizeSweetnessBinarySearch(int[] nums, int k){
+        int min = Arrays.stream(nums).min().getAsInt();
+        int sum = Arrays.stream(nums).sum();
+
+        long left = min;
+        long right = sum;
+        while(left < right) { // Binary search over sweetness value
+            long mid = (right + left + 1) / 2;
+            if(valid(mid, nums, k) < k ) {
+                right = mid - 1;
+            }else{
+                left = mid;
+            }
+        }
+        return (int)left;
+    }
+
+    public int valid(long minSweet, int[] arr, int k) {
+        int people = 0;
+        int sweet = 0;
+        for(int a : arr){
+            sweet += a;
+            if((sweet ) >= minSweet){
+                sweet = 0;
+                if(++people > k) break;
+            }
+        }
+        return people;
+    }
+
+    /*
+    Similar https://leetcode.com/problems/split-array-largest-sum/
+    TLE
+    */
+    public int maximizeSweetnessDP(int[] nums, int m) {
+        int n = nums.length;
+        int[][] f = new int[n + 1][m + 1];
+        int sub[] = new int[n + 1];
+
+        for(int i = 0; i <= n; i++){
+            for (int j = 0; j <= m; j++) {
+                f[i][j] = Integer.MIN_VALUE;
+            }
+        }
+        for(int i = 0; i < n; i++){
+            sub[i+1] = sub[i] + nums[i];
+        }
+
+        f[0][0] = Integer.MAX_VALUE;
+
+        for(int i = 1; i <= n; i++){
+            for(int j = 1; j <= m; j++){
+                for(int k = 0; k < i; k++){
+                    f[i][j] = Math.max(f[i][j], Math.min(f[k][j-1], sub[i] - sub[k]));
+                }
+            }
+        }
+        return f[n][m];
+    }
+
+    /*
     421. Maximum XOR of Two Numbers in an Array
     https://leetcode.com/problems/maximum-xor-of-two-numbers-in-an-array/ */
     public int findMaximumXOR(int[] nums) {

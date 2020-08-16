@@ -3,6 +3,7 @@ package com.mission.google.leetcode;
 import com.mission.google.TreeNode;
 import com.mission.google.datastructures.ListNode;
 
+import java.lang.reflect.Array;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -187,7 +188,7 @@ public class DecemberW2 {
                 new String[]{"a"});
     }
 
-    /*
+    /*  410. Split Array Largest Sum
         https://leetcode.com/problems/split-array-largest-sum/
         To-Do: Revisit, Important
     */
@@ -215,6 +216,38 @@ public class DecemberW2 {
             }
         }
         return f[n][m];
+    }
+
+    public int splitArrayBinarySearch(int[] nums, int n){
+        int max = Arrays.stream(nums).max().getAsInt();
+        int sum = Arrays.stream(nums).sum();
+
+        long left = max;
+        long right = sum;
+        while(left <= right){
+            long mid = left + (right - left) / 2;
+            if(valid(mid, nums, n)){
+                right = mid - 1;
+            }else{
+                left = mid + 1;
+            }
+        }
+        return (int)left;
+    }
+
+    public boolean valid(long target, int[] arr, int m){
+        int count = 1;
+        int curr = 0;
+        for(int a : arr){
+            curr += a;
+            if(curr > target){
+                count++;
+                if(count > m){
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /*
@@ -464,17 +497,13 @@ public class DecemberW2 {
         int n = string.length();
 
         Set<String> dict = new HashSet<>(wordDict);
-
         Queue<Integer> q = new LinkedList<>();
-
         q.offer(0);
         
         int[] visited = new int[n];
 
         while(!q.isEmpty()){
-
             int start = q.poll();
-
             if(visited[start] == 0){
                 for(int end = start + 1; end < n; end++){
                     if(dict.contains(string.substring(start, end))){
@@ -488,59 +517,6 @@ public class DecemberW2 {
             visited[start] = 1;
         }
         return false;
-    }
-
-    /*
-        ToDo: Revisit this problem, Important
-        https://leetcode.com/problems/shortest-path-in-a-grid-with-obstacles-elimination/
-    */
-    public int shortestPath(int[][] grid, int k) {
-        int m = grid.length;
-        int n = grid[0].length;
-
-        if(grid[0][0] == 1 || grid[m -1][n-1] == 1){
-            return -1;
-        }
-        int[][] paths = new int[][]{{1,0},{0,1},{-1,0},{0,-1}};
-
-        Queue<int[]> mQueue = new LinkedList<>();
-
-        mQueue.offer(new int[]{0,0,0});
-
-        boolean visited[][][] = new boolean[m][n][k+1];
-        int min_distance = 0;
-
-        visited[0][0][0] = true;
-
-        while (!mQueue.isEmpty()){
-            int size = mQueue.size();
-
-            for (int i = 0; i < size; i++) {
-                int[] curr = mQueue.poll();
-                if(curr[0] == m - 1 && curr[1] == n -1){
-                    return min_distance;
-                }
-                for (int j = 0; j < paths.length; j++) {
-                    int next_x = paths[j][0] + curr[0];
-                    int next_y = paths[j][1] + curr[1];
-                    if(next_x >= 0 && next_x < m && next_y >= 0 && next_y < n){
-
-                        if(grid[next_x][next_y] == 0 && !visited[next_x][next_y][curr[2]]){
-
-                            mQueue.offer(new int[]{next_x,next_y, curr[2]});
-                            visited[next_x][next_y][curr[2]] = true;
-
-                        }else if(grid[next_x][next_y] == 1 && curr[2] < k && !visited[next_x][next_y][curr[2]+1]){
-
-                            mQueue.offer(new int[]{next_x,next_y, curr[2]+1});
-                            visited[next_x][next_y][curr[2]+1] = true;
-                        }
-                    }
-                }
-            }
-            min_distance++;
-        }
-        return -1;
     }
 
         /*

@@ -2,6 +2,7 @@ package com.mission.google.datastructures;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -19,168 +20,88 @@ public class StringProblems {
 
 	public static void main(String[] args) {
 		//printPermutn("ab", "");
-		
-		String str = "ab";
-		//System.out.println(str.substring(0,1));
-		char []arr = str.toCharArray();
-		String s = new String(arr);
-		
-		Solution solution =  new Solution();
-		//System.out.println(System.currentTimeMillis());
-		String s1 = "abc";
-		String s2 ="dinitrophenylhydrazinetrinitrophenylmethylnitramine";
-		
-		solution.checkInclusion(s1, s2);
-		//System.out.println(System.currentTimeMillis());
-		String ab = "pankaj";
-		//System.out.println("Final String -> " + solution.removeDuplicatesRec(ab));
-		
-		//char[] result = removeAdjDup(ab.toCharArray(), ab.length());
-		
-		//String resStr = new String(result);
-		//System.out.println( " ------->" + resStr + "--- len -- > " + result.length);
-		
-		//Solution1 solution1 =  new Solution1();
-		//solution1.removeDuplicates("\"zbfibwbrz")
-		
-		//int index = search();
-		//System.out.println("Binary search index: " + index);
-		
-		//String output = mergeStrings("", "");
-		//System.out.println(" Final String: " + output);
-		
-		//gcdOfStrings("ABABABABAB", "AB");
-		
-		StringProblems stringProblems = new StringProblems();
-		//int occurances = stringProblems.numberOfoccurrences();
-		//System.out.println(occurances);
-		
-		//stringProblems.repeatedSubstringPattern("");
-		//stringProblems.reverseWords("");
-		
-		String text = "ABCABCABCABCABC";
-		String pattern = "ABC";
-		
-		//stringProblems.KMP(text.toCharArray(), pattern.toCharArray());
-		//boolean isValidPalindrome = stringProblems.validPalindrome("");
-		//System.out.println(" isValidPalindrome "  + isValidPalindrome);
-		//stringProblems.addBinary("", "");
-		
-		stringProblems.findOcurrences("", "", "");
-		
+
 	}
 	
 	//https://leetcode.com/problems/permutation-in-string/
-	static class Solution {
+	public boolean checkInclusion(String s1, String s2) {
+			return findAnagrams(s2, s1).size() > 0;
+		}
 
-	 List<String> allPermutations = new ArrayList<>();
-	    
-	    public void checkInclusion(String s1, String s2) {
-	        
-	       /* boolean checkFrequency = isCharFrequencySame(s2, s1);
-	        System.out.println("Frequency: " + checkFrequency);
-	        if(!checkFrequency){
-	        	System.out.println("False");
-	            return ;
-	        }else if(s1.length() == s2.length() && checkFrequency){
-	        	System.out.println("True");
-	            return;
-	        }*/
-	        
-	        findPermutations(s1,"");
-	        
-	        for(String perm : allPermutations){
-	        	System.out.println(perm);
-	            /*if(s2.contains(perm)){
-	            	System.out.println(perm);
-	                return;
-	            }*/
-	        }
-	        
-	        System.out.println("False");
-	        
-	    }
-	    
-	    public boolean isCharFrequencySame(String s1, String s2){
-	        int[] letters = new int[128];
-	        char s_array[] = s1.toCharArray();
-	        
-	        for(char ch : s_array) {
-	            letters[ch]++;
-	        }
-	        
-	        for(int i = 0; i < s2.length(); i++){
-	            int c = (int)s2.charAt(i);
-	            letters[c]--;
-	            if(letters[c] < 0){
-	                return false;
-	            }
-	        }
-	        return true;
-	    }
-	    
-	    Set<String> hashSet = new HashSet<>();
-	    
-	    public void findPermutations(String str,String ans){
-	        if(str.length() == 0){
-	            //System.out.print(ans + " ");
-	            allPermutations.add(ans);
-	            return;
-	        }
-	        
-	        for(int i = 0 ; i < str.length(); i++){
-	            char ch = str.charAt(i);
-	            
-	            String res = str.substring(0,i) + str.substring(i + 1);
-	            char[] res_c = new char[] {'a','a'};
-	            findPermutations(res, ans + ch);
-	        }
-	    }
-	    
-	    //https://leetcode.com/problems/remove-all-adjacent-duplicates-in-string/
-		public  String removeDuplicatesRec(String inputString) {
-			for (int i = 0; i < inputString.length() - 1; i++) {
-				if (inputString.charAt(i) == inputString.charAt(i + 1)) {
-					inputString = inputString.substring(0, i) + inputString.substring(i + 2);
-					return removeDuplicatesRec(inputString);
-				}
+	public List<Integer> findAnagrams(String s, String p) {
+		int plen = p.length();
+		int slen = s.length();
+
+		HashMap<Character, Integer> p_map = new HashMap<>();
+
+		for(char ch : p.toCharArray()){
+			p_map.put(ch, p_map.getOrDefault(ch, 0) + 1);
+		}
+
+		int counter = p_map.size();
+		int begin = 0;
+		List<Integer> result = new ArrayList<>();
+		for (int end = 0; end < slen; end++) {
+			char ch = s.charAt(end);
+			if (p_map.containsKey(ch)) {
+				p_map.put(ch, p_map.get(ch) - 1);
+				if (p_map.get(ch) == 0) counter--;
 			}
-			return inputString;
+			while (counter == 0) {
+				char tempch = s.charAt(begin);
+				if (p_map.containsKey(tempch)) {
+					p_map.put(tempch, p_map.get(tempch) + 1);
+					if (p_map.get(tempch) > 0) counter++;
+				}
+				if (end - begin + 1 == plen)
+					result.add(begin);
+
+				begin++;
+			}
 		}
-		
-		//https://leetcode.com/problems/robot-return-to-origin/
-		class Solution1 {
-		    public boolean judgeCircle(String moves) {
-		        
-		    	int x = 0, y = 0;
-		    	//int currentDirection = 1;//Four possible directions 1 - N, 2 -S, 3 -E, 4 -W
-		    	
-		        char[] arr = moves.toCharArray();
-		        for(int i = 0; i < arr.length; i++) {
-		        	switch (arr[i]) {
-					case 'L':
-						x--;
-						break;
-					case 'R':
-						x++;
-						break;
-					case 'U':
-						y++;
-						break;
-					case 'D':
-						y--;
-						break;
-						
-					default:
-						break;
-					}
-		        }
-		        if(x == 0 && y == 0) return true;
-		        return false;
-		    }
-		}
+		return result;
 	}
-	
+
+	//https://leetcode.com/problems/remove-all-adjacent-duplicates-in-string/
+	public String removeDuplicatesRec(String inputString) {
+		for (int i = 0; i < inputString.length() - 1; i++) {
+			if (inputString.charAt(i) == inputString.charAt(i + 1)) {
+				inputString = inputString.substring(0, i) + inputString.substring(i + 2);
+				return removeDuplicatesRec(inputString);
+			}
+		}
+		return inputString;
+	}
+
+	//https://leetcode.com/problems/robot-return-to-origin/
+	public boolean judgeCircle(String moves) {
+		int x = 0, y = 0;
+		//int currentDirection = 1;//Four possible directions 1 - N, 2 -S, 3 -E, 4 -W
+
+		char[] arr = moves.toCharArray();
+		for (int i = 0; i < arr.length; i++) {
+			switch (arr[i]) {
+				case 'L':
+					x--;
+					break;
+				case 'R':
+					x++;
+					break;
+				case 'U':
+					y++;
+					break;
+				case 'D':
+					y--;
+					break;
+
+				default:
+					break;
+			}
+		}
+		if (x == 0 && y == 0) return true;
+		return false;
+	}
+
 	//https://leetcode.com/problems/binary-search/
 	 public static int search() {
 		 	int[] nums = new int[] {-1,0,3,5,9,12,17};

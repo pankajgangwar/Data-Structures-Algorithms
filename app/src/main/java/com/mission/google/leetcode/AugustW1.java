@@ -7,6 +7,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -23,6 +24,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import sun.reflect.generics.tree.Tree;
 
@@ -31,30 +33,52 @@ import sun.reflect.generics.tree.Tree;
  */
 class AugustW1 {
 
-    /* https://leetcode.com/problems/minimum-distance-to-type-a-word-using-two-fingers/*/
-    /* https://www.codechef.com/problems/COUPON */
-    /* https://leetcode.com/problems/brick-wall/ */
-
-    /* DP on trees */
-    /*
-       https://codeforces.com/blog/entry/20935
-       https://www.spoj.com/problems/PT07X/
-       https://leetcode.com/problems/sum-of-distances-in-tree/
-       https://leetcode.com/problems/minimum-cost-tree-from-leaf-values/
-       https://leetcode.com/problems/unique-binary-search-trees-ii/
-    */
-    /* Binary search problems*/
-
-    /* https://leetcode.com/problems/k-th-smallest-prime-fraction/ */
-    /* https://leetcode.com/problems/preimage-size-of-factorial-zeroes-function/
-    *  https://leetcode.com/problems/the-earliest-moment-when-everyone-become-friends/
-    */
-
     public static void main(String[] args) {
         AugustW1 w1 = new AugustW1();
         //boolean status = w1.canConvertString("atmtxzjkz","tvbtjhvjd", 35);
         int status = w1.maxNonOverlapping(new int[]{1,1,1,1,1}, 2);
         System.out.println(status);
+    }
+
+    /*
+    950. Reveal Cards In Increasing Order
+    https://leetcode.com/problems/reveal-cards-in-increasing-order/
+    */
+    public int[] deckRevealedIncreasing(int[] deck) {
+        LinkedList<Integer> q = new LinkedList<>();
+        Arrays.sort(deck);
+        
+        int n = deck.length;
+        int[] res = new int[n];
+        for(int i = 0; i < deck.length; i++){
+            q.add(i);
+        }
+        
+        for(int i = 0; i < deck.length; i++){
+            res[q.poll()] = deck[i];
+            q.offer(q.poll());
+        }
+        return res;
+    }
+
+    /*
+    624. Maximum Distance in Arrays
+    https://leetcode.com/problems/maximum-distance-in-arrays/ */
+    public int maxDistance(List<List<Integer>> arrays) {
+        List<Integer> first = arrays.get(0);
+        int max = first.get(first.size()-1);
+        int min = first.get(0);
+        int res = 0;
+        for(int i = 1; i < arrays.size(); i++) {
+            List<Integer> a = arrays.get(i);
+
+            res = Math.max(res, Math.abs(a.get(a.size() - 1) - min));
+            res = Math.max(res, Math.abs(max - a.get(0)));
+
+            min = Math.min(min, a.get(0));
+            max = Math.max(max, a.get(a.size()-1));
+        }
+        return res;
     }
 
     /* LC  Weekly Contest 201

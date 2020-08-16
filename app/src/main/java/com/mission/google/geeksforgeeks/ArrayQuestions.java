@@ -1,4 +1,4 @@
-package com.mission.google.problems.geeksforgeeks;
+package com.mission.google.geeksforgeeks;
 
 import java.util.Stack;
 
@@ -170,7 +170,6 @@ public static void main(String[] args) {
     }
 	
 	public void printSpiral(int arr[][]){
-		
 		int length = arr.length;
 		System.out.println("Length: " + length);
 		for(int i=0; i<length; i++){

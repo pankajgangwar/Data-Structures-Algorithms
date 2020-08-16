@@ -40,7 +40,6 @@ public class Main {
                 //out.write("NO".getBytes());
                 System.out.print("No");
             }
-
         }
 
         //out.flush();

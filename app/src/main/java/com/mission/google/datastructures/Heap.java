@@ -816,42 +816,110 @@ public class Heap {
 		return 13.
 	  * **/
 	 public int kthSmallest(int[][] matrix, int k) {
-		 /*PriorityQueue<Integer> mMaxHeap = new PriorityQueue<>(Collections.reverseOrder());
-		 for(int rows = 0; rows < matrix.length; rows++) {
-			 for(int columns = 0; columns < matrix[0].length; columns++) {
-				 System.out.println("Matrix ele: " + matrix[rows][columns]);
-				 mMaxHeap.offer(matrix[rows][columns]);
+		//return kthSmallestBest(matrix, k);
+		 double[][] mat = new double[matrix.length][matrix[0].length];
+		 for (int i = 0; i < matrix.length; i++) {
+			 for (int j = 0; j < matrix[i].length; j++) {
+				 mat[i][j] = (double) matrix[i][j];
 			 }
 		 }
-		 
-		 while(mMaxHeap.size() > k && !mMaxHeap.isEmpty()) {
-			 int removed = mMaxHeap.poll();
-			 System.out.println("Removed " + removed);
+		 for (int i = 0; i < mat.length; i++) {
+			 System.out.println(Arrays.toString(mat[i]));
 		 }
-		 return mMaxHeap.peek(); */
-         PriorityQueue<int[]> mMinHeap = new PriorityQueue<>((a,b) -> a[0] - b[0]);
-         for (int i = 0; i < matrix[0].length; i++) {
-                mMinHeap.offer(new int[]{matrix[0][i], 0, i});
-         }
-         int[] curr = new int[3];
-         while (k > 0){
-             curr = mMinHeap.poll();
-             int next_ele = 0;
-             int row = curr[1]+1;
-             int col = curr[2];
-             System.out.println("Next location " + row  + "," + col);
-             if(row > matrix.length) {
-                 next_ele = Integer.MAX_VALUE;
-             }else{
-                 next_ele = matrix[row][col];
-             }
-
-             mMinHeap.offer(new int[]{next_ele, row, col});
-             k--;
-         }
-
-         return curr[0];
+		 double res = kthSmallestBest(mat, k);
+		 System.out.println("res = " + res);
+		 return (int)res;
 	 }
+
+	public double kthSmallestBest(double[][] matrix, int k) {
+		int m = matrix.length;
+		int n = matrix[0].length;
+
+		double low = matrix[0][0];
+		double high = matrix[m-1][n-1];
+
+		while(low < high) {
+			double mid = low + (high - low) / 2;
+
+			int j = n - 1;
+			int count = 0;
+			for(int i = 0; i < m; i++) {
+				while(j >= 0 && matrix[i][j] > mid) {
+					j--;
+				}
+				count += (j + 1);//Count the number of elements less than mid
+			}
+			if(count < k) low = mid + 1; // if smaller elements are less than k, increase the range
+			else high = mid; // otherwise smaller elements are more than k, reduce the range
+		}
+		return low;
+	}
+
+
+	public int kthSmallestBest(int[][] matrix, int k) {
+		int m = matrix.length;
+		int n = matrix[0].length;
+
+		int low = matrix[0][0];
+		int high = matrix[m-1][n-1];
+
+		while(low < high) {
+			int mid = low + (high - low) / 2;
+
+			int j = n - 1;
+			int count = 0;
+			for(int i = 0; i < m; i++) {
+				while(j >= 0 && matrix[i][j] > mid) {
+					j--;
+				}
+				count += (j + 1);//Count the number of elements less than mid
+			}
+			if(count < k) low = mid + 1; // if smaller elements are less than k, increase the range
+			else high = mid; // otherwise smaller elements are more than k, reduce the range
+		}
+		return low;
+	}
+
+
+	public int kthSmallestBetter(int[][] matrix, int k) {
+		PriorityQueue<int[]> mMinHeap = new PriorityQueue<>((a,b) -> a[0] - b[0]);
+		for (int i = 0; i < matrix[0].length; i++) {
+			mMinHeap.offer(new int[]{matrix[0][i], 0, i});
+		}
+		int[] curr = new int[3];
+		while (k > 0){
+			curr = mMinHeap.poll();
+			int next_ele = 0;
+			int row = curr[1]+1;
+			int col = curr[2];
+			System.out.println("Next location " + row  + "," + col);
+			if(row >= matrix.length) {
+				next_ele = Integer.MAX_VALUE;
+			}else{
+				next_ele = matrix[row][col];
+			}
+			mMinHeap.offer(new int[]{next_ele, row, col});
+			k--;
+		}
+		return curr[0];
+	}
+
+	public int kthSmallestWorst(int[][] matrix, int k) {
+		PriorityQueue<Integer> mMaxHeap = new PriorityQueue<>(Collections.reverseOrder());
+		for(int rows = 0; rows < matrix.length; rows++) {
+			for(int columns = 0; columns < matrix[0].length; columns++) {
+				System.out.println("Matrix ele: " + matrix[rows][columns]);
+				mMaxHeap.offer(matrix[rows][columns]);
+			}
+		}
+
+		while(mMaxHeap.size() > k && !mMaxHeap.isEmpty()) {
+			int removed = mMaxHeap.poll();
+			System.out.println("Removed " + removed);
+		}
+
+		return mMaxHeap.peek();
+	}
 	 
 
 	static class LRUCache {

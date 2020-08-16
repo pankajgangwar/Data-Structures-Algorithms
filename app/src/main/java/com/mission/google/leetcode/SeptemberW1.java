@@ -1,7 +1,6 @@
 package com.mission.google.leetcode;
 
 import com.mission.google.TreeNode;
-import com.mission.google.datastructures.LinkedList;
 import com.mission.google.datastructures.ListNode;
 
 import java.lang.reflect.Array;
@@ -16,8 +15,10 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
 
@@ -1045,42 +1046,65 @@ public class SeptemberW1 {
         return dummy.next;
     }
 
-    /** Important
-     * https://leetcode.com/problems/perfect-squares/
-     * */
+    /* 
+       279. Perfect Squares
+       https://leetcode.com/problems/perfect-squares/
+    */
     public int numSquares(int n) {
-        int[] memo = new int[n + 1];
+       // return numSquaresRec(n);
+        /*int[] memo = new int[n + 1];
         Arrays.fill(memo, -1);
-        return numSquaresMemo(n , memo);
+        return numSquaresMemo(n , memo);*/
+
+        return numSquaresDP(n);
+        //return numSquaresBfs(n);
     }
 
+   public int numSquaresBfs(int n){
+        Queue<Integer> queue = new LinkedList<>();
+        queue.offer(n);
+
+        int res = 0;
+        while(!queue.isEmpty()) {
+            int size = queue.size();
+            while(size-- > 0 ) {
+                int curr = queue.poll();
+                for(int i = 1; i * i <= n; i++ ) {
+                    int rem = curr - (i * i);
+                    if(rem < 0) continue;
+
+                    if(rem == 0) return res + 1;
+
+                    queue.offer(rem);
+                }
+            }
+            res++;
+        }
+        return res;
+    }
+    
     public int numSquaresDP(int n){
         if(n <= 3){
             return n;
         }
+        
         int[] dp = new int[n + 1];
         dp[0] = 0;
         dp[1] = 1;
         dp[2] = 2;
         dp[3] = 3;
-
-
+        
         for (int i = 4; i <= n ; i++) {
-
-            dp[i] = i;
-
-            for (int x = 1; x <= Math.ceil(Math.sqrt(i)); x++) {
+            int min = Integer.MAX_VALUE;
+            for (int x = 1; x * x <= i; x++) {
                 int temp = x * x;
-                if(temp > i){
-                    break;
-                }else {
-                    dp[i] = Math.min(dp[i], 1 + dp[i - temp] );
-                }
+                min = Math.min( min, 1 + dp[i - temp] );
             }
+            dp[i] = min;
         }
         return dp[n];
     }
-
+    
     public int numSquaresMemo(int n, int[] memo){
         if(n <= 3){
             return n;
@@ -1091,12 +1115,9 @@ public class SeptemberW1 {
         }
 
         int res = n;
-        for (int i = 1; i <= n; i++) {
+        for (int i = 1; i * i <= n; i++) {
             int temp =  i * i;
-            if(temp > n){
-                break;
-            }
-            res = Math.min(res, 1 + numSquares(n - temp));
+            res = Math.min(res, 1 + numSquaresMemo(n - temp, memo));
         }
         memo[n] = res;
         return memo[n];
@@ -1113,7 +1134,7 @@ public class SeptemberW1 {
             if(temp > n){
                 break;
             }
-            res = Math.min(res, 1 + numSquares(n - temp));
+            res = Math.min(res, 1 + numSquaresRec(n - temp));
         }
         return res;
     }

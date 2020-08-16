@@ -17,72 +17,7 @@ import java.util.Stack;
 
 public class DecemberW3 {
     
-    /*  399. Evaluate Division
-        https://leetcode.com/problems/evaluate-division/
 
-        Given a / b = 2.0, b / c = 3.0.
-        queries are: a / c = ?, b / a = ?, a / e = ?, a / a = ?, x / x = ? .
-        return [6.0, 0.5, -1.0, 1.0, -1.0 ]
-
-        equations = [ ["a", "b"], ["b", "c"] ],
-        values = [2.0, 3.0]
-        queries = [ ["a", "c"], ["b", "a"], ["a", "e"], ["a", "a"], ["x", "x"] ]. 
-    */
-    public double[] calcEquation(List<List<String>> e, double[] v, List<List<String>> q) {
-        double[] result = new double[q.size()];
-        HashMap<String, Double> dist = new HashMap<>();
-        HashMap<String, String> root = new HashMap<>();      
-
-        for(int i = 0; i < e.size(); i++){
-            List<String> curr = e.get(i);
-            String a = curr.get(0);
-            String b = curr.get(1);
-
-            String parent_a = findParent(a, dist, root);
-            String parent_b = findParent(b, dist, root);
-
-            root.put(parent_a, parent_b);
-            dist.put(parent_a, dist.get(b) * v[i] / dist.get(a));
-        }
-
-        for(int i =0; i < q.size(); i++){
-            List<String> curr = q.get(i);
-            
-            String a = curr.get(0);
-            String b = curr.get(1);
-
-            if(!root.containsKey(a) || !root.containsKey(b)){
-                result[i] = -1.0;
-                continue;
-            }
-
-            String parent_a = findParent(a, dist, root);
-            String parent_b = findParent(b, dist, root);
-
-            if(!parent_a.equals(parent_b)){ //Not in same set
-                result[i] = -1.0;
-                continue;
-            }
-
-            result[i] = (double) dist.get(a) / dist.get(b);
-        }
-
-        return result;
-    }
-
-    public String findParent(String s, HashMap<String, Double> dist, HashMap<String, String> root){
-        if(!root.containsKey(s)){
-            dist.put(s, 1.0);
-            root.put(s, s);
-            return s;
-        }
-        if(root.get(s).equals(s)) return s;
-        String last_parent = root.get(s);
-        String parent = findParent(last_parent, dist, root);
-        root.put(s, parent);
-        dist.put(s, dist.get(s) * dist.get(last_parent));
-        return parent;
-    }
 
     public static void main(String[] args) {
 
@@ -348,103 +283,16 @@ public class DecemberW3 {
     }
 
     /* 
-        https://leetcode.com/problems/sequence-reconstruction/
-
-        Topological Sort
-
-        Input:
-        org: [1,2,3], seqs: [[1,2],[1,3]]
-    */
-    public boolean sequenceReconstruction(int[] org, List<List<Integer>> seqs) {
-
-        Map<Integer, Integer> indegree = new HashMap<Integer, Integer>();
-
-        Map<Integer, HashSet<Integer>> dep = new HashMap<Integer, HashSet<Integer>>();
-
-        Set<Integer> unique = new HashSet<>();
-
-        if(seqs.isEmpty()) return false;
-        if(org.length == 0) return false;
-
-        for(List<Integer> list : seqs){
-
-            if(list.isEmpty()) continue;
-
-            int first_ele = list.get(0);
-
-            unique.add(first_ele);
-
-            if(!indegree.containsKey(first_ele)){
-                indegree.put(first_ele, 0);
-            }
-            for(int i = 1; i < list.size(); i++){
-                HashSet<Integer> sets = new HashSet<>();
-                int curr = list.get(i);
-                int prev = list.get(i - 1);
-
-                unique.add(curr);
-                unique.add(prev);
-
-                if(dep.containsKey(prev)){
-                    sets = dep.get(prev);
-                }
-                if(!sets.contains(curr)){
-                    sets.add(curr);
-                    dep.put(prev, sets);
-
-                    indegree.put(curr, indegree.getOrDefault(curr, 0) + 1);
-                }
-            }
-        }
-
-        Queue<Integer> q = new LinkedList<>();
-
-        for(Integer curr : indegree.keySet()){
-            if(indegree.get(curr) == 0){
-                q.offer(curr);
-            }
-        }
-
-        int idx = 0;
-        while(!q.isEmpty()){
-            int size = q.size();
-            if(size > 1) return false;
-            while(size-- > 0){
-                int curr = q.poll();
-
-                if(idx == org.length || curr != org[idx++]) return false;
-
-                HashSet<Integer> dependencies = dep.get(curr);
-                if(dependencies == null) continue;
-                for(Integer next : dependencies){
-                    int degree = indegree.get(next);
-                    degree--;
-                    indegree.put(next, degree);
-                    if(degree == 0){
-                        q.offer(next);
-                    }
-                }
-            }
-        }
-        return idx == org.length && idx == unique.size();
-    }
-
-    
-
-    /* 
         https://leetcode.com/problems/maximum-number-of-occurrences-of-a-substring/ 
 
         Revisit: To understand how bit shifting is working here.. !!
     */
     public int maxFreq(String s, int maxLetters, int minSize, int maxSize) {
         int n = s.length();
-
         Map<String, Integer> map = new HashMap<>();
-
         for(int i = 0; i < n; i++){
             for(int j = minSize; j <= maxSize && i+j <= n; j++ ){
                 String ss = s.substring(i, i+j);
-
                 Set<Character> set = new HashSet<>();
                 int f = 0;
                 for(char ch : ss.toCharArray()){
@@ -472,9 +320,7 @@ public class DecemberW3 {
 
     public int maxFreqFailed(String s, int maxLetters, int minSize, int maxSize) {
         int n = s.length();
-
         int maxsub = 0;
-
         for(int i = 0 ; i < n; i++){
             int maxAllowed = maxSize;
             Set<Character> set = new HashSet<>();
@@ -550,94 +396,8 @@ public class DecemberW3 {
         }
     }
 
-    public boolean isPossibleDivide(int[] nums, int k) {
-        if(nums == null || nums.length == 0 || k == 0)
-            return false;
-        
-        if(nums.length % k != 0){
-            return false;
-        }
-        Arrays.sort(nums);
-        boolean[] visited = new boolean[nums.length];
-        
-        List<Integer> res = new ArrayList<>();
-        for(int i = 0; i < nums.length; i++){
-            if(!visited[i]){
-                if(!helper(nums, k, i, visited, res)){
-                     //stem.out.println("Returning false !!");
-                     return false;
-                }else{
-                    res = new ArrayList<>();    
-                }
-            }
-        }
-        return true;
-    }
-
     /*
-        https://leetcode.com/problems/divide-array-in-sets-of-k-consecutive-numbers/
-    */
-
-    public boolean isPossibleDivideSol(int[] nums, int k) {
-        if(nums == null || nums.length == 0 || k == 0)
-            return false;
-
-        if(nums.length % k != 0){
-            return false;
-        }
-        Arrays.sort(nums);
-
-        Map<Integer, Integer> freq = new HashMap<>();
-
-        for(int ele : nums){
-            freq.put(ele, freq.getOrDefault(ele, 0) + 1 );
-        }
-
-        for(int i = 0; i < nums.length; i++){
-            if(freq.get(nums[i]) > 0){
-                for(int j = 0; j < k; j++){
-                    if(!freq.containsKey(nums[i] + j)){
-                        return false;
-                    }
-                    if(freq.get(nums[i] + j) <= 0){
-                        return false;
-                    }
-                    freq.put(nums[i] + j, freq.get(nums[i] + j) -1);
-                }
-            }
-        }
-        return true;
-    }
-    
-    public boolean helper(int[] nums, int k, int i, boolean[] visited, List<Integer> res){
-        if(res.size() == k){
-            return true;
-        }
-        
-        if(i == nums.length){
-            return false;
-        }
-        
-        if(res.isEmpty()){
-            res.add(nums[i]);
-            visited[i] = true;
-            i++;
-        }
-        
-        if(i == nums.length){
-            return false;
-        }
-        
-        if(res.get(res.size()-1)+1 == nums[i] && !visited[i]){
-            res.add(nums[i]);
-            visited[i] = true;
-        }
-        
-        return helper(nums, k, i+1, visited, res);
-    }
-
-    /* 
-        https://leetcode.com/problems/element-appearing-more-than-25-in-sorted-array/ 
+     https://leetcode.com/problems/element-appearing-more-than-25-in-sorted-array/
     */
     public int findSpecialInteger(int[] arr) {
         Map<Integer, Integer> map = new HashMap<>();
@@ -664,48 +424,7 @@ public class DecemberW3 {
         return -1;
     }
 
-    /* 
-        https://leetcode.com/problems/remove-covered-intervals/
-        Line-Sweeping
-        Intervals
-    */
-    public int removeCoveredIntervalsPass(int[][] intervals) {
-        Arrays.sort(intervals, (a,b) -> (a[0] - b[0]));
-
-        int left = -1, right = -1;
-        int uncovered = 0;
-
-        for(int[] interval : intervals){
-            if(interval[0] > left && interval[1] > right) {
-                uncovered++;
-                left = interval[0];
-            }
-            right = Math.max(right, interval[1]);
-        }
-
-        return uncovered;
-    }
-    
-    public int removeCoveredIntervals(int[][] intervals){
-        Arrays.sort(intervals, (a,b) -> a[0] - b[0]);
-
-        int n = intervals.length;
-
-        int[] curr = intervals[0];
-        int removals = 0;
-        for(int[] interval : intervals){
-            if(curr[0] <= interval[0] && curr[1] >= interval[1]){
-                removals++;
-            }else{
-                curr = interval;    
-            }
-        }
-
-        return n - removals + 1;//First interval is also removed
-    }
-
-    /* 
-        https://leetcode.com/problems/remove-interval/ 
+    /* https://leetcode.com/problems/remove-interval/
     */
     public List<List<Integer>> removeInterval(int[][] intervals, int[] toBeRemoved) {
         List<List<Integer>> res = new ArrayList<>();

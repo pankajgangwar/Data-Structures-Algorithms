@@ -753,13 +753,9 @@ public class NovemberW3 {
             return head;
 
         ListNode remaining = head.next.next;
-
         ListNode newhead = head.next;
-        
         head.next.next = head;
-        
         head.next = swapRecursion(remaining);
-        
         return newhead;
     }
 

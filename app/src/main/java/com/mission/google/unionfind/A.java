@@ -10,13 +10,97 @@ import java.util.List;
  * Created by Pankaj Kumar on 12/August/2020
  */
 class A {
-    /*
-    * https://leetcode.com/problems/optimize-water-distribution-in-a-village/ 
-    */
 
-    /* https://leetcode.com/problems/path-with-maximum-minimum-value/
-     *  Maximum points collections
-     *  Dijkstra's algo
+    /* 1562. Find Latest Group of Size M
+    * https://leetcode.com/problems/find-latest-group-of-size-m/
+    * */
+    int[] parent, groups, count, rank;
+    public int findLatestStep(int[] arr, int m) {
+        int n = arr.length;
+        groups = new int[n + 1]; // Bucket of size of each group
+        parent = new int[n + 1];
+        rank = new int[n + 1];
+        for (int i = 1; i <= n ; i++) {
+            parent[i] = i;
+        }
+        count = new int[n + 1];
+        Arrays.fill(count, 1);// By default all groups are of size 1
+        boolean[] visited = new boolean[n + 1];
+        int lastStep = -1, currStep = 1;
+        for(int x : arr){
+            int curr = x;
+            groups[1]++;// We first add x to group of size 1
+            if(curr - 1 > 0 && visited[curr - 1]){
+                union(curr, curr - 1);
+            }
+            if(curr + 1 <= n && visited[curr + 1]){
+                union(curr, curr + 1);
+            }
+            visited[curr] = true;
+            if(groups[m] > 0){
+                lastStep = currStep;
+            }
+            currStep++;
+        }
+        return lastStep;
+    }
+
+    public void union(int x, int y){
+        int xRoot = find(parent, x);
+        int yRoot = find(parent, y);
+        if(xRoot != yRoot){
+            groups[count[xRoot]]--;
+            groups[count[yRoot]]--;
+            count[xRoot] += count[yRoot];
+            count[yRoot] = count[xRoot];
+            groups[count[xRoot]]++;
+            if(rank[xRoot] < rank[yRoot]){
+                parent[xRoot] = yRoot;
+            }else{
+                parent[yRoot] = xRoot;
+            }
+            if(rank[xRoot] == rank[yRoot]){
+                rank[xRoot]++;
+            }
+        }
+    }
+
+    /* 1168. Optimize Water Distribution in a Village
+    * https://leetcode.com/problems/optimize-water-distribution-in-a-village/
+    * Kruskal's Algorithm : Time : O(nlogn)
+    */
+    public int minCostToSupplyWater(int n, int[] wells, int[][] pipes) {
+        List<int[]> edges = new ArrayList<>();
+        int res = 0;
+        int[] parent = new int[n + 1];
+        for(int i = 0; i < n; i++) {
+            parent[i + 1] = i + 1;
+            edges.add(new int[]{0, i + 1, wells[i]});
+        }
+
+        for(int[] pipe : pipes){
+            edges.add(pipe);
+        }
+        Collections.sort(edges, (a,b) -> a[2] - b[2]);
+        for(int[] pipe : edges){
+            int a = pipe[0];
+            int b = pipe[1];
+            int cost = pipe[2];
+            int aRoot = find(parent, a);
+            int bRoot = find(parent, b);
+
+            if(aRoot != bRoot){
+                parent[aRoot] = bRoot;
+                res += cost;
+            }
+        }
+        return res;
+    }
+
+    /* 1102. Path With Maximum Minimum Value
+     * https://leetcode.com/problems/path-with-maximum-minimum-value/
+     * Maximum points collections
+     * Dijkstra's algo
      * */
     public int maximumMinimumPath(int[][] matrix) {
         return maximumMinimumPathUnionFind(matrix);

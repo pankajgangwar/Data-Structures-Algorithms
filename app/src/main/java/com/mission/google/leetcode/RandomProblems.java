@@ -173,7 +173,6 @@ public class RandomProblems {
 		if (S.length() == 0) {
 			return "";
 		}
-
 		StringBuilder s = new StringBuilder();
 		int opened = 0;
 		for (char c : S.toCharArray()) {
@@ -183,8 +182,6 @@ public class RandomProblems {
 				s.append(c);
 		}
 		return s.toString();
-		
-		
         /*char[] seq = S.toCharArray();
         LinkedList<Character> mQueue = new LinkedList<>();
         
@@ -212,7 +209,6 @@ public class RandomProblems {
         		}
         	}
         }
-        
         return output.toString();*/
     }
 	
@@ -221,9 +217,7 @@ public class RandomProblems {
 		s = "{{[[(())]]}}";
 		String allCloseChar = ")]}";
 		String allOpenChar = "([{";
-		
 		Stack<Character> mStack = new Stack<>();
-		
 		/*for(int i=0; i < s.length(); i++ ) {
 			if(allCloseChar.contains('a')){
 				
@@ -231,7 +225,6 @@ public class RandomProblems {
 			mStack.push(s.charAt(i));
 		}*/
 		return null;
-
     }
 	
 	public static boolean divisorGame() {
@@ -257,8 +250,6 @@ public class RandomProblems {
            }
         }*/
         return AliceChance;
-        
-        
     }
 	
 	 public static void recoverFromPreorder() {
@@ -334,23 +325,10 @@ public class RandomProblems {
         return A;
     }
 	
-	public int[] sortedSquares(int[] A) {
-		int[] result = new int[A.length];
-		for (int i = 0; i < A.length; i++) {
-			int square = A[i] * A[i];
-			result[i] = square;
-		}
-
-		Arrays.sort(result);
-		return result;
-	}
-	
 	class Node {
 	    public int val;
 	    public List<Node> children;
-
 	    public Node() {}
-
 	    public Node(int _val,List<Node> _children) {
 	        val = _val;
 	        children = _children;

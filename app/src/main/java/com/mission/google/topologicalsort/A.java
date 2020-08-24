@@ -1,5 +1,6 @@
 package com.mission.google.topologicalsort;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -12,6 +13,24 @@ import java.util.Set;
  * Created by Pankaj Kumar on 14/August/2020
  */
 class A {
+    /* 1557. Minimum Number of Vertices to Reach All Nodes
+    * https://leetcode.com/problems/minimum-number-of-vertices-to-reach-all-nodes/
+    * */
+    public List<Integer> findSmallestSetOfVertices(int n, List<List<Integer>> edges) {
+        int[] indegree = new int[n];
+        for(List<Integer> edge : edges){
+            int src = edge.get(0);
+            int dst = edge.get(1);
+            ++indegree[dst];
+        }
+        List<Integer> res = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            if(indegree[i] == 0){
+                res.add(i);
+            }
+        }
+        return res;
+    }
 
     /*  1293. Shortest Path in a Grid with Obstacles Elimination
         https://leetcode.com/problems/shortest-path-in-a-grid-with-obstacles-elimination/

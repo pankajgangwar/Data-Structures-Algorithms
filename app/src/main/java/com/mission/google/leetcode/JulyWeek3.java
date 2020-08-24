@@ -373,54 +373,8 @@ public class JulyWeek3 {
         return 0;
     }
 
-    /***
-     * https://leetcode.com/problems/shortest-path-in-binary-matrix/
-     * https://leetcode.com/problems/shortest-path-in-binary-matrix/discuss/312706/JAVA-BFS
-     * https://www.geeksforgeeks.org/shortest-path-in-a-binary-maze/
-     * **/
-    public int shortestPathBinaryMatrix(int[][] grid) {
-        int m = grid.length;
-        int n = grid[0].length;
-
-        if(grid[0][0] == 1 || grid[m -1][n-1] == 1){
-            return -1;
-        }
-        int[][] paths = new int[][]{{1,0},{1,1},{0,1},{-1,1},{-1,0},{-1,-1},{0,-1},{1,-1}};
-
-        Queue<int[]> mQueue = new LinkedList<>();
-        mQueue.offer(new int[]{0,0});
-        boolean visited[][] = new boolean[m][n];
-        int min_distance = 0;
-
-        while (!mQueue.isEmpty()){
-            int size = mQueue.size();
-
-            for (int i = 0; i < size; i++) {
-                int[] curr = mQueue.poll();
-                if(curr[0] == m - 1 && curr[1] == n -1){
-                    return min_distance +  1;
-                }
-                for (int j = 0; j < paths.length; j++) {
-                    int next_x = paths[j][0] + curr[0];
-                    int next_y = paths[j][1] + curr[1];
-                    if(next_x >= 0 && next_x < m && next_y >= 0 && next_y < n && !visited[next_x][next_y]
-                    && grid[next_x][next_y] == 0){
-                        mQueue.offer(new int[]{next_x,next_y});
-                        visited[next_x][next_y] = true;
-                    }
-                }
-            }
-            min_distance++;
-        }
-        return -1;
-    }
-
     public static void main(String args[]){
-
         JulyWeek3 julyWeek3 = new JulyWeek3();
-        //int[][] possiblePairs = julyWeek3.merge(intervals);
-        //System.out.println(" Total Pairs " + possiblePairs.length);
-
         int[] result = julyWeek3.diStringMatch("IDID");
         for (int i : result) {
             System.out.print(i);
@@ -431,53 +385,12 @@ public class JulyWeek3 {
             {8,10},{15,18},{2,6},{1,3}
     };
 
-    /***
-     * 56. Merge Intervals
-     *
-     * https://leetcode.com/problems/merge-intervals/
-     * https://leetcode.com/discuss/interview-question/338948/Facebook-or-Onsite-or-Schedule-of-Tasks
-     *
-     * Input: [[1,3],[2,6],[8,10],[15,18]]
-     * Output: [[1,6],[8,10],[15,18]]
-     * Explanation: Since intervals [1,3] and [2,6] overlaps, merge them into [1,6].
-     *
-     * Input: [[1,4],[4,5]]
-     * Output: [[1,5]]
-     * Explanation: Intervals [1,4] and [4,5] are considered overlapping.
-     * */
-
-    public int[][] merge(int[][] intervals) {
-        if(intervals.length <= 1){
-            return intervals;
-        }
-
-        Arrays.sort(intervals, (i1,i2) -> Integer.compare(i1[0],i2[0]));
-
-        List<int[]> result = new ArrayList<>();
-
-        int[] newInterval = intervals[0];
-        result.add(newInterval);
-
-        for (int[] interval: intervals) {
-            if (interval[0] <= newInterval[1]) {
-                newInterval[1] = Math.max(newInterval[1], interval[1]);
-            } else {
-                newInterval = interval;
-                result.add(newInterval);
-            }
-        }
-
-        return result.toArray(new int[result.size()][]);
-    }
-
     /**
      * https://leetcode.com/problems/binary-tree-paths/
      * **/
     public List<String> binaryTreePaths(TreeNode root) {
-
         ArrayList<String> all_unique_paths = new ArrayList<>();
         allPathBinaryTree(root,"",all_unique_paths);
-
         return all_unique_paths;
     }
 

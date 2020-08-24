@@ -1,11 +1,110 @@
 package com.mission.google.dfs;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * Created by Pankaj Kumar on 15/August/2020
  */
 class A {
+    /* 38. Count and Say
+    * https://leetcode.com/problems/count-and-say/
+    * */
+    public String countAndSay(int n) {
+        if(n == 1) return "1";
+
+        String prev = countAndSay(n - 1);
+        StringBuilder out = new StringBuilder();
+        int len = prev.length();
+        int i = 0;
+        while(i < len){
+            int a = 0;
+            char ch = prev.charAt(i);
+            while(i < len && prev.charAt(i) == ch){
+                i++;
+                a++;
+            }
+            out.append(String.valueOf(a));
+            out.append(ch);
+        }
+        return out.toString();
+    }
+
+    /* 1559. Detect Cycles in 2D Grid
+    * https://leetcode.com/problems/detect-cycles-in-2d-grid/
+    * */
+    public boolean containsCycle(char[][] grid) {
+        int[][] dirs = new int[][]{{1,0},{0,1},{-1,0},{0,-1}};
+        int m = grid.length;
+        int n = grid[0].length;
+        boolean[][] visited = new boolean[m][n];
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[i].length; j++) {
+                if(visited[i][j]) continue;
+                if(helper(grid, dirs, i, j,-1, -1, grid[i][j], visited)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean helper(char[][] grid, int[][] dirs, int curr_x, int curr_y,
+                          int prev_x, int prev_y, char color, boolean[][] visited){
+
+        visited[curr_x][curr_y] = true;
+        for (int[] dir : dirs) {
+            int next_x = dir[0] + curr_x;
+            int next_y = dir[1] + curr_y;
+            if(isValid(next_x, next_y, grid, color)){
+                if (!(prev_x == next_x && prev_y == next_y)) {
+                    if (visited[next_x][next_y]) {
+                        return true;
+                    } else {
+                        if(helper(grid, dirs, next_x, next_y, curr_x, curr_y, color, visited)){
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean isValid(int x, int y, char[][] grid, char search){
+        if(x >= 0 && x < grid.length && y >= 0 && y < grid[x].length && search == grid[x][y]){
+            return true;
+        }
+        return false;
+    }
+
+    /* 582. Kill Process
+    * https://leetcode.com/problems/kill-process/
+    * */
+    public List<Integer> killProcess(List<Integer> pid, List<Integer> ppid, int kill) {
+        HashMap<Integer, List<Integer>> graph = new HashMap<>();
+        for(int i = 0; i < pid.size(); i++){
+            int parent = ppid.get(i);
+            int child = pid.get(i);
+            graph.putIfAbsent(parent, new ArrayList<>());
+            graph.get(parent).add(child);
+        }
+        List<Integer> killed = new ArrayList<>();
+        dfs(graph, kill, killed);
+        return killed;
+    }
+
+    public void dfs(HashMap<Integer, List<Integer>> graph, int src, List<Integer> killed) {
+        killed.add(src);
+        if(!graph.containsKey(src)) return;
+        for(int pid : graph.get(src)){
+            dfs(graph, pid, killed);
+        }
+    }
+
     /*
     * LC : 473. Matchsticks to Square
     * https://leetcode.com/problems/matchsticks-to-square/

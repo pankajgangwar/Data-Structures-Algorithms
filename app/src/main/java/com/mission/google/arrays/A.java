@@ -1,11 +1,135 @@
 package com.mission.google.arrays;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by Pankaj Kumar on 15/August/2020
  */
 class A {
+    /* 1560. Most Visited Sector in a Circular Track
+    * https://leetcode.com/problems/most-visited-sector-in-a-circular-track/
+    * */
+    public List<Integer> mostVisited(int n, int[] rounds) {
+        List<Integer> res = new ArrayList<>();
+        int start = rounds[0];
+        int end = rounds[rounds.length - 1];
+        for( int i = start ;;) {
+            res.add(i);
+            if(i == end) break;
+            i++;
+            if(i == n + 1) i = 1;
+        }
+        Collections.sort(res);
+        return  res;
+    }
+
+    /* 1561. Maximum Number of Coins You Can Get
+    * https://leetcode.com/problems/maximum-number-of-coins-you-can-get/
+    * */
+    public int maxCoins(int[] piles) {
+        Arrays.sort(piles);
+        int i = 0, k = piles.length -1, j = k - 1;
+        int max = 0;
+        while (i < j){
+            max += piles[j];
+            i++;
+            j -= 2;
+            k -= 2;
+        }
+        return max;
+    }
+
+    /* 56. Merge Intervals
+    * https://leetcode.com/problems/merge-intervals/
+    * */
+    public int[][] merge(int[][] intervals) {
+        if(intervals.length <= 1){
+            return intervals;
+        }
+        Arrays.sort(intervals, (i1,i2) -> Integer.compare(i1[0],i2[0]));
+        List<int[]> result = new ArrayList<>();
+        int[] newInterval = intervals[0];
+        result.add(newInterval);
+
+        for (int[] interval: intervals) {
+            if (interval[0] <= newInterval[1]) {
+                newInterval[1] = Math.max(newInterval[1], interval[1]);// updated max end of interval
+            } else {
+                newInterval = interval;
+                result.add(newInterval);//update end of this interval later
+            }
+        }
+        return result.toArray(new int[result.size()][]);
+    }
+
+    /* 1497. Check If Array Pairs Are Divisible by k
+    * https://leetcode.com/problems/check-if-array-pairs-are-divisible-by-k/
+    */
+    public boolean canArrange(int[] arr, int k) {
+        int[] freq = new int[k];
+        for(int x : arr){
+            int idx = (((x % k) + k) % k );
+            freq[idx]++;
+        }
+        for(int i = 1; i <= k / 2; i++){
+            if(freq[i] != freq[k - i]) return false;
+        }
+        return freq[0] % 2 == 0;
+    }
+
+    /* 1299. Replace Elements with Greatest Element on Right Side
+    * https://leetcode.com/problems/replace-elements-with-greatest-element-on-right-side/
+    * */
+    public int[] replaceElements(int[] arr) {
+        int n = arr.length;
+        int max = arr[n-1];
+        for(int i = n - 2; i >= 0; i--) {
+            int temp = arr[i];
+            arr[i] = max;
+            max = Math.max(max, temp);
+        }
+        arr[n-1] = -1;
+        return arr;
+    }
+    
+    public int[] replaceElements1(int[] arr) {
+        int n = arr.length;
+        int max = Integer.MIN_VALUE;
+        for(int i = n - 1; i >= 0; i--){
+            max = Math.max(max, arr[i]);
+            arr[i] = max;
+        }
+        int[] res = new int[n];
+        for(int i = 0; i < n - 1; i++){
+            res[i] = arr[i+1];
+        }
+        res[n-1] = -1;
+        return res;
+    }
+
+    /* 941. Valid Mountain Array
+    * https://leetcode.com/problems/valid-mountain-array/
+    * */
+    public boolean validMountainArray(int[] arr) {
+        boolean incr = false;
+        boolean decr = false;
+        for(int i = 0; i < arr.length -1 ; i++){
+            if(arr[i] < arr[i + 1] && !decr){
+                incr = true;
+            }else if(arr[i] == arr[i+1]){
+                return false;
+            }else if(incr && arr[i] > arr[i+1]) {
+                decr = true;
+            }else{
+                return false;
+            }
+        }
+        return incr && decr;
+    }
+
     /*
     * 1551. Minimum Operations to Make Array Equal
     * https://leetcode.com/problems/minimum-operations-to-make-array-equal/

@@ -686,36 +686,6 @@ public class NovemberW2 {
         return false;
     }
 
-    /*
-       https://leetcode.com/problems/set-matrix-zeroes/
-    */
-    public void setZeroes(int[][] matrix) {
-        int[][] clonedMatrix = new int[matrix.length][matrix[0].length];
-
-        for (int i = 0; i < matrix.length ; ++i) {
-            for (int j = 0; j < matrix[0].length ; ++j ) {
-                clonedMatrix[i][j] = matrix[i][j];
-            }
-        }
-
-        for(int i = 0; i < matrix.length; ++i){
-            for (int j = 0; j < matrix[i].length ; ++j ) {
-                if(clonedMatrix[i][j] == 0){
-                    setRowColToZero(matrix, i, j);
-                }
-            }
-        }
-    }
-
-    public void setRowColToZero(int[][] matrix,  int x, int y){
-        for(int i = 0; i < matrix.length; ++i){
-            matrix[i][y] = 0;
-        }
-
-        for(int j = 0; j < matrix[x].length; ++j){
-            matrix[x][j] = 0;
-        }
-    }
 
     /**
      https://leetcode.com/problems/longest-valid-parentheses/

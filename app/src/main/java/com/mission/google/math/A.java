@@ -1,9 +1,67 @@
 package com.mission.google.math;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 /**
  * Created by Pankaj Kumar on 19/August/2020
  */
 class A {
+    public static void main(String[] args) {
+        A cur = new A();
+        cur.fractionAddition("1/3-1/2");
+        HashMap<Integer, Integer> map = new HashMap<>();
+        map.put(1,1);
+        Integer res =  map.get(2);
+    }
+
+    /* 592. Fraction Addition and Subtraction
+    * https://leetcode.com/problems/fraction-addition-and-subtraction/
+    * */
+    public String fractionAddition(String exp) {
+        String[] fracs = exp.split("(?=[-+])");
+        List<Long> num = new ArrayList<>();
+        List<Long> den = new ArrayList<>();
+        for (int i = 0; i < fracs.length; i++) {
+            String[]frac = fracs[i].split("/");
+            long a = Long.parseLong(frac[0]);
+            long b = Long.parseLong(frac[1]);
+            num.add(a);
+            den.add(b);
+        }
+
+        long lcm = (long)den.get(0);
+        for(int j = 1; j < den.size(); j++){
+            long second = (long)den.get(j);
+            lcm  = lcm(lcm, second);
+        }
+        long denominator = lcm;
+        long numerator = 0;
+        for(int j = 0; j < num.size(); j++){
+            long b = denominator / (long)den.get(j);
+            numerator = (numerator + num.get(j) * b);
+        }
+        long commonFactor = gcd(Math.abs(numerator), denominator);
+        numerator = numerator / commonFactor;
+        denominator = denominator /commonFactor;
+        StringBuilder out = new StringBuilder();
+        out.append(numerator);
+        out.append("/");
+        out.append(denominator);
+        return out.toString();
+    }
+
+    private long lcm(long a, long b) {
+        return a * b / gcd(a, b);
+    }
+
+    private long gcd(long a, long b) {
+        if(a == 0){
+            return b;
+        }
+        return gcd(b % a, a);
+    }
 
     /* 1041. Robot Bounded In Circle
     * https://leetcode.com/problems/robot-bounded-in-circle/

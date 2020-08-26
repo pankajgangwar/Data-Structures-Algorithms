@@ -770,45 +770,7 @@ public class NovemberW4 {
         return result;
     }
 
-    /*
-        https://leetcode.com/problems/maximum-width-of-binary-tree/
-    */
-    public int widthOfBinaryTree(TreeNode root) {
-        if(root == null) return 0;
-        
-        Queue<TreeNode> q = new LinkedList<>();
-        
-        Map<TreeNode, Integer> map = new HashMap<>();
-        
-        map.put(root, 1);
-        q.offer(root);
-        
-        int maxWidth = 0;
-        while(!q.isEmpty()){
-            int size = q.size();
-            int start = 0;
-            int end = 0;
 
-            for(int i = 0; i < size; i++){
-                TreeNode curr = q.poll();
-                if(i == 0) start = map.get(curr);
-                if(i == size - 1) end = map.get(curr);
-                if(curr.left != null) {
-                    q.offer(curr.left);
-                    map.put(curr.left, 2*map.get(curr));
-                }
-                if(curr.right != null) {
-                    q.offer(curr.right);
-                    map.put(curr.right, 2*map.get(curr) + 1);
-                }
-
-                int currMax = end - start + 1;
-
-                maxWidth = Math.max(currMax, maxWidth);
-            }
-        }
-        return maxWidth;
-    }
 
     /*
         https://leetcode.com/problems/vertical-order-traversal-of-a-binary-tree/

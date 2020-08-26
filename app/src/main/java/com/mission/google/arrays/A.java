@@ -9,6 +9,45 @@ import java.util.List;
  * Created by Pankaj Kumar on 15/August/2020
  */
 class A {
+
+    /* 73. Set Matrix Zeroes
+    *  https://leetcode.com/problems/set-matrix-zeroes/
+    */
+    public void setZeroes(int[][] matrix) {
+        boolean fc = false, fr = false;
+        int m = matrix.length, n = matrix[0].length;
+        for (int i = 0; i < m; i++) {
+            if(matrix[i][0] == 0) fc = true;
+        }
+        for (int i = 0; i < n; i++) {
+            if(matrix[0][i] == 0) fr = true;
+        }
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                if(matrix[i][j] == 0){
+                    matrix[i][0] = matrix[0][j] = 0;
+                }
+            }
+        }
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                if(matrix[i][0] == 0 || matrix[0][j] == 0){
+                    matrix[i][j] = 0;
+                }
+            }
+        }
+        if(fr){
+            for (int i = 0; i < n; i++) {
+                matrix[0][i] = 0;
+            }
+        }
+        if(fc){
+            for (int i = 0; i < m; i++) {
+                matrix[i][0] = 0;
+            }
+        }
+    }
+
     /* 1560. Most Visited Sector in a Circular Track
     * https://leetcode.com/problems/most-visited-sector-in-a-circular-track/
     * */

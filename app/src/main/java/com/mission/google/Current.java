@@ -1,24 +1,11 @@
 package com.mission.google;
 
-import java.lang.reflect.Array;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
-import java.util.TreeMap;
 
 /**
  * Created by Pankaj Kumar on 14/August/2020
  */
-class Current
-{
+class Current {
     /* https://leetcode.com/problems/minimum-distance-to-type-a-word-using-two-fingers/*/
     /* https://www.codechef.com/problems/COUPON */
     /* https://leetcode.com/problems/brick-wall/ */
@@ -33,15 +20,13 @@ class Current
     */
     /* Binary search problems*/
     // https://leetcode.com/problems/preimage-size-of-factorial-zeroes-function/
-
-    public static void main(String[] args)    {
+    // https://leetcode.com/problems/max-points-on-a-line
+    public static void main(String[] args) {
         Current current = new Current();
-        //current.maxDistance(new int[]{1,2,3,4,7}, 3);
-        //current.mostVisited(4, new int[]{1,3,1,2});
+        //current.numTriplets(a,b);
+        //String s = "bbbaaa";
+        //int[] cost = {4,9,3,8,8,9};
     }
-
-    // https://leetcode.com/problems/binary-tree-pruning/
-    // https://leetcode.com/problems/total-hamming-distance/
 
     /*
     * 801. Minimum Swaps To Make Sequences Increasing
@@ -71,6 +56,5 @@ class Current
         }
         return cost;
     }
-
 
 }

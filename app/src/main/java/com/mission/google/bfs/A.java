@@ -5,6 +5,7 @@ import com.mission.google.TreeNode;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -13,6 +14,43 @@ import java.util.Queue;
  * Created by Pankaj Kumar on 16/August/2020
  */
 class A {
+
+    /* 815. Bus Routes
+     * https://leetcode.com/problems/bus-routes/
+     */
+    public int numBusesToDestination(int[][] routes, int s, int t) {
+        if(s == t) return 0;
+        HashMap<Integer, List<Integer>> map = new HashMap<>();
+        for (int i = 0; i < routes.length; i++) {
+            for (int j = 0; j < routes[i].length; j++) {
+                int a = routes[i][j];
+                map.putIfAbsent(a, new ArrayList<>());
+                map.get(a).add(i);
+            }
+        }
+        Queue<Integer> q = new LinkedList<>();
+        q.offer(s);
+        HashSet<Integer> visited = new HashSet<>();
+        int res = 0;
+        while (!q.isEmpty()){
+            int size = q.size();
+            res++;
+            while (size-- > 0){
+                int stop = q.poll();
+                List<Integer> buses = map.get(stop);
+                for(int b : buses){
+                    if(visited.contains(b))continue;
+                    visited.add(b);
+                    for (int i = 0; i < routes[b].length; i++) {
+                        if(routes[b][i] == t ) return res;
+                        q.offer(routes[b][i]);
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+
     /* 1559. Detect Cycles in 2D Grid
     * https://leetcode.com/problems/detect-cycles-in-2d-grid/
     */

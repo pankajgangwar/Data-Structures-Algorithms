@@ -1,6 +1,7 @@
 package com.mission.google.math;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -11,9 +12,35 @@ class A {
     public static void main(String[] args) {
         A cur = new A();
         cur.fractionAddition("1/3-1/2");
-        HashMap<Integer, Integer> map = new HashMap<>();
-        map.put(1,1);
-        Integer res =  map.get(2);
+    }
+
+    /* 263. Ugly Number
+    * https://leetcode.com/problems/ugly-number/
+    */
+    public boolean isUgly(int n) {
+        return isUglyIterative(n);
+    }
+    public boolean isUglyIterative(int n) {
+        if(n <= 0) return false;
+        for(int i = 2; i <= 5; i++){
+            while(n % i == 0){
+                n = n / i;
+            }
+        }
+        return n == 1;
+    }
+
+    public boolean isUglyRecursive(int n) {
+        if(n <= 0) return false;
+        if(n == 1) return true;
+        if(n % 2 == 0){
+            return isUgly(n / 2);
+        }else if(n % 3 == 0){
+            return isUgly(n / 3);
+        }else if(n % 5 == 0){
+            return isUgly(n / 5);
+        }
+        return false;
     }
 
     /* 592. Fraction Addition and Subtraction

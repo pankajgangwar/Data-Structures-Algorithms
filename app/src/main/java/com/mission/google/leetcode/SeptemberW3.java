@@ -32,9 +32,7 @@ public class SeptemberW3 {
      * */
     public int maxNumberOfBalloons(String text) {
         String balloon = "balloon";
-
         int []freq = new int[26];
-
         for (int i = 0; i < text.length(); i++) {
             char curr = text.charAt(i);
             freq[curr - 'a']++;
@@ -179,54 +177,6 @@ public class SeptemberW3 {
         if(curr_x <= row && curr_y + 1 <= cols) {
             countPathsRec(row, cols, curr_x, curr_y + 1, paths);
         }
-    }
-
-    /**
-     * 18. 4Sum
-     * https://leetcode.com/problems/4sum/
-     *
-     * Given array nums = [1, 0, -1, 0, -2, 2], and target = 0.
-     *
-     * A solution set is:
-     * [
-     *   [-1,  0, 0, 1],
-     *   [-2, -1, 1, 2],
-     *   [-2,  0, 0, 2]
-     * ]
-     *
-     * */
-    public List<List<Integer>> fourSum(int[] nums, int target) {
-        Map<Integer, int[]> hashMap = new HashMap<>();
-        HashSet<List<Integer>> unique_res = new HashSet<>();
-
-        for (int i = 0; i < nums.length - 1; i++) {
-            for (int j = i + 1; j < nums.length; j++) {
-                int sum = nums[i] + nums[j];
-                hashMap.put(sum, new int[]{i, j});
-            }
-        }
-
-        for (int i = 0; i < nums.length - 1; i++) {
-            for (int j = i + 1 ; j < nums.length; j++) {
-                int sum = nums[i] + nums[j];
-                if(hashMap.containsKey(target - sum)){
-                    int[] indexes = hashMap.get(target - sum);
-                    if(indexes[0] != i && indexes[0] != j && indexes[1] != i && indexes[1] != j ){
-                        List<Integer> list = new ArrayList<>();
-                        list.add(nums[indexes[0]]);
-                        list.add(nums[indexes[1]]);
-                        list.add(nums[i]);
-                        list.add(nums[j]);
-                        Collections.sort(list);
-                        unique_res.add(list);
-                    }
-                }
-            }
-        }
-
-        List<List<Integer>> result = new ArrayList<>();
-        result.addAll(unique_res);
-        return result;
     }
 
     /**

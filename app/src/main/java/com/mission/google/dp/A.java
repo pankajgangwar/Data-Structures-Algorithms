@@ -13,6 +13,29 @@ class A {
         A curr = new A();
         curr.stoneGameV(new int[]{6,2,3,4,5,5});
     }
+
+
+
+    /* 1027. Longest Arithmetic Subsequence
+     * https://leetcode.com/problems/longest-arithmetic-subsequence/
+     * */
+    public int longestArithSeqLength(int[] arr) {
+        int n = arr.length;
+        int res = 2;
+        HashMap<Integer, Integer>[] dp = new HashMap[n];
+        dp[0] = new HashMap<>();
+        for (int j = 1; j < n; j++) {
+            dp[j] = new HashMap<>();
+            for (int i = 0; i < j; i++) {
+                int diff = arr[j] - arr[i];
+                dp[j].put(diff, dp[i].getOrDefault(diff, 1) + 1);
+                res = Math.max(res, dp[j].get(diff));
+            }
+        }
+        return res;
+    }
+
+
     /*
     * 1563. Stone Game V
     * https://leetcode.com/problems/stone-game-v/

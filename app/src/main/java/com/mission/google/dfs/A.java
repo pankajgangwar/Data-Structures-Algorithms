@@ -10,6 +10,202 @@ import java.util.List;
  * Created by Pankaj Kumar on 15/August/2020
  */
 class A {
+    int[][] dirs = new int[][]{{1,0},{0,1},{-1,0},{0,-1}};
+
+    /* 132. Palindrome Partitioning II
+    * https://leetcode.com/problems/palindrome-partitioning-ii/
+    * */
+    public int minCut(String s) {
+        int n = s.length();
+        boolean[][] palindrome = new boolean[n][n];
+        int[] cuts = new int[n];
+        char[] arr = s.toCharArray();
+
+        int min = 0;
+        for (int i = 0; i < n; i++) {
+            min = i;
+            for (int j = 0; j <= i; j++) {
+                if(arr[j] == arr[i] && (j + 1 > i - 1 || palindrome[j + 1][i - 1]) ){
+                    palindrome[j][i] = true;
+                    min = j == 0 ? 0 : Math.min(min, cuts[j - 1] + 1);
+                }
+            }
+            cuts[i] = min;
+        }
+        return cuts[n-1];
+    }
+
+    /*
+     * 131. Palindrome Partitioning
+     * https://leetcode.com/problems/palindrome-partitioning/
+     */
+    List<List<String>> res = new ArrayList<>();
+    List<String> currList = new ArrayList<>();
+    public List<List<String>> partition(String s) {
+        helper(s, 0);
+        return res;
+    }
+
+    public void helper(String s, int start){
+        if(start >= s.length() && currList.size() > 0){
+            res.add(new ArrayList<>(currList));
+            return;
+        }
+        for(int i = start; i < s.length(); i++) {
+            if(isPalindrome(s, start, i)){
+                if(i == start){
+                    currList.add("" + s.charAt(i));
+                }else{
+                    currList.add(s.substring(start, i+1));
+                }
+                helper(s, i + 1);
+                currList.remove(currList.size()-1);
+            }
+        }
+    }
+
+    public boolean isPalindrome(String s, int start, int end){
+        if(start == end) return true;
+        while(start <= end){
+            if(s.charAt(start) == s.charAt(end)){
+                start++;
+                end--;
+            }else{
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public List<List<String>> partitionI(String s) {
+        int idx = 0;
+        int start = 0;
+        helperI(s, 0, new ArrayList<String>(), new StringBuilder());
+        return res;
+    }
+
+    List<List<String>> result = new ArrayList<>();
+    public void helperI(String s, int start, List<String> ans, StringBuilder builder){
+        if(start == s.length()){
+            res.add(new ArrayList<>(ans));
+            return;
+        }
+
+        for(int i = start; i < s.length(); i++){
+            ans.add(""+s.charAt(i));
+            builder.append(s.charAt(i));
+            helperI(s, i + 1, ans, builder);
+            ans.remove(ans.size()-1);
+        }
+    }
+
+
+    /*
+     * https://leetcode.com/problems/number-of-ways-to-reorder-array-to-get-same-bst/
+     * 1569. Number of Ways to Reorder Array to Get Same BST
+     */
+    public int numOfWays(int[] nums) {
+        int n = nums.length;
+        List<Integer> a = new ArrayList<>();
+        for(int x : nums){
+            a.add(x);
+        }
+        return (int)dfs(a, getPascalTriangle(n)) - 1;
+    }
+
+    public long dfs(List<Integer> nums, long[][] triangle){
+        long mod = 1000_000_000 + 7;
+        if(nums.size() <= 2){
+            return 1;
+        }
+        int root = nums.get(0);
+        List<Integer> left = new ArrayList<>();
+        List<Integer> right = new ArrayList<>();
+        for (int n : nums){
+            if(n < root){
+                left.add(n);
+            }else if( n > root){
+                right.add(n);
+            }
+        }
+        long leftRes = dfs(left, triangle) % mod;
+        long rightRes = dfs(right, triangle) % mod;
+        return (((triangle[left.size() + right.size()][left.size()] * leftRes) % mod ) * rightRes ) % mod;
+    }
+
+    public long[][] getPascalTriangle(int n){
+        n = n + 1;
+        long mod = 1000_000_000 + 7;
+        //Combination of 4C2 = triangle[4][2] = 6;
+        long[][] triangle = new long[n][n];
+        for (int i = 0; i < n; i++) {
+            triangle[i][0] = triangle[i][i] = 1;
+        }
+        for (int i = 2; i < n; i++) {
+            for (int j = 1; j < i; j++) {
+                triangle[i][j] = (triangle[i-1][j-1] + triangle[i-1][j]) % mod;
+            }
+        }
+        return triangle;
+    }
+
+
+    /* 1568. Minimum Number of Days to Disconnect Island
+     * https://leetcode.com/problems/minimum-number-of-days-to-disconnect-island/
+     * */
+    public int minDays(int[][] grid) {
+        int m = grid.length;
+        int n = grid[0].length;
+        int isLands = countIslands(grid);
+        if(isLands > 1 || isLands == 0) {
+            return 0;
+        }
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if(grid[i][j] == 1){
+                    grid[i][j] = 0;
+                    isLands = countIslands(grid);
+                    grid[i][j] = 1;
+                    if(isLands > 1 || isLands == 0) {
+                        return 1;
+                    }
+                }
+            }
+        }
+        return 2;
+    }
+
+    private int countIslands(int[][] grid) {
+        int m = grid.length;
+        int n = grid[0].length;
+        boolean[][] visited = new boolean[m][n];
+        int isLands = 0;
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if(grid[i][j] == 1 && !visited[i][j]){
+                    dfs(grid, i, j, visited);
+                    isLands++;
+                }
+            }
+        }
+        return isLands;
+    }
+
+    public void dfs(int[][] grid, int curr_x, int curr_y, boolean[][] visited){
+        int m = grid.length;
+        int n = grid[0].length;
+        if(curr_x < 0 || curr_x >= m || curr_y < 0 || curr_y >= n
+                || visited[curr_x][curr_y] || grid[curr_x][curr_y] == 0){
+            return;
+        }
+        visited[curr_x][curr_y] = true;
+        for (int i = 0; i < dirs.length; i++) {
+            int next_x = dirs[i][0] + curr_x;
+            int next_y = dirs[i][1] + curr_y;
+            dfs(grid, next_x, next_y, visited);
+        }
+    }
+
     /* 38. Count and Say
     * https://leetcode.com/problems/count-and-say/
     * */
@@ -36,8 +232,8 @@ class A {
     /* 1559. Detect Cycles in 2D Grid
     * https://leetcode.com/problems/detect-cycles-in-2d-grid/
     * */
+
     public boolean containsCycle(char[][] grid) {
-        int[][] dirs = new int[][]{{1,0},{0,1},{-1,0},{0,-1}};
         int m = grid.length;
         int n = grid[0].length;
         boolean[][] visited = new boolean[m][n];

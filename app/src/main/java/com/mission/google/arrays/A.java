@@ -10,6 +10,156 @@ import java.util.List;
  */
 class A {
 
+    public static void main(String[] args) {
+        A a = new A();
+        a.countBalancingElements(Arrays.asList(5, 5, 2, 5, 8));
+    }
+    /*
+    * https://www.interviewbit.com/problems/balance-array/
+    */
+    public int countBalancingElements(List<Integer> arr) {
+        int n = arr.size();
+        int[] oddPrefix = new int[n], evenPrefix = new int[n];
+        int[] oddSuffix = new int[n], evenSuffix = new int[n];
+        int odd = 0, even = 0;
+        for(int i = 0 ; i < n ; i++){
+            oddPrefix[i] = odd;
+            evenPrefix[i] = even;
+            if(i % 2 == 0) even += arr.get(i);
+            else odd += arr.get(i);
+        }
+        odd = 0;
+        even = 0;
+        for(int i = n - 1; i >= 0; i--){
+            oddSuffix[i] = odd;
+            evenSuffix[i] = even;
+            if(i % 2 == 0) even += arr.get(i);
+            else odd += arr.get(i);
+        }
+        int count = 0;
+        for(int i = 0; i < n; i++){
+            if(oddPrefix[i] + evenSuffix[i] == evenPrefix[i] + oddSuffix[i]){
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /* 1566. Detect Pattern of Length M Repeated K or More Times
+     * https://leetcode.com/problems/detect-pattern-of-length-m-repeated-k-or-more-times/
+     * */
+    public boolean containsPattern(int[] arr, int m, int k) {
+        int n = arr.length;
+        for (int i = 0; i + m * k - 1 < n ; i++) {
+            boolean found = true;
+            for (int j = 0; j < m * (k - 1); j++) {
+                if(arr[i + j] != arr[ i + (j + m)]){
+                    found = false;
+                    break;
+                }
+            }
+            if(found) return true;
+        }
+        return false;
+    }
+
+    /* 400. Nth Digit
+    * https://leetcode.com/problems/nth-digit/
+    */
+    public int findNthDigit(int n) {
+        //return sol2(n);
+        return sol1(n);
+    }
+
+    public int sol2(int n){
+        int start = 1, len = 1;
+        long count = 9;
+
+        while (n  > len * count){
+            n = (int) (n - (len * count));
+            len += 1;
+            count *= 10;
+            start *= 10;
+        }
+        start += (n - 1) / len;
+        String s = String.valueOf(start);
+        return Character.getNumericValue(s.charAt((n - 1) % len));
+    }
+
+    public int sol1(int n){
+        StringBuilder out = new StringBuilder("9");
+        long len = 9;
+        long start = 1, end = 9;
+        long intLen = String.valueOf(end).length();
+        long longn = (long) n;
+        while(longn > len){
+            longn = longn - len;
+            start = end + 1;
+            out.append("9");
+            end = Long.parseLong(out.toString());
+            intLen = String.valueOf(end).length();
+            long totalInt = end - start + 1;
+            len = totalInt * intLen;
+        }
+        for (long i = start; i <= end ; i++) {
+            if(longn <= intLen){
+                int a = (int)longn - 1;
+                return String.valueOf(i).charAt(a) - '0';
+            }else {
+                longn = longn - intLen;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * 18. 4Sum
+     * https://leetcode.com/problems/4sum/
+     * */
+    public List<List<Integer>> fourSum(int[] nums, int target) {
+        Arrays.sort(nums);
+        return  findKSum(nums, 4, target, 0);
+    }
+
+    public List<List<Integer>> findKSum(int[] nums, int k, int target, int index){
+        List<List<Integer>> result = new ArrayList<>();
+        int len = nums.length;
+        if(index >= len) return result;
+        if(k == 2){
+            int i = index, j = nums.length - 1;
+            while (i < j){
+                if(target - nums[i] == nums[j]){
+                    List<Integer> temp = new ArrayList<>();
+                    temp.add(nums[i]);
+                    temp.add(target - nums[i]);
+                    result.add(temp);
+                    while (i < j && nums[i] == nums[i+1]) i++;
+                    while (i < j && nums[j-1] == nums[j]) j--;
+                    i++;
+                    j--;
+                }else if(target - nums[i] > nums[j]){
+                    i++;
+                }else{
+                    j--;
+                }
+            }
+        }else{
+            for (int i = index; i < len - k + 1; i++) {
+                List<List<Integer>> res = findKSum(nums, k - 1, target - nums[i], i + 1);
+                if(res != null) {
+                    for(List<Integer> t : res){
+                        t.add(0, nums[i]);
+                    }
+                    result.addAll(res);
+                }
+                while (i < len - 1 && nums[i] == nums[i+1]){
+                    i++;
+                }
+            }
+        }
+        return result;
+    }
+
     /* 73. Set Matrix Zeroes
     *  https://leetcode.com/problems/set-matrix-zeroes/
     */

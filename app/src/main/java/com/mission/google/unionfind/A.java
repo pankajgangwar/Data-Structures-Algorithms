@@ -3,13 +3,75 @@ package com.mission.google.unionfind;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
  * Created by Pankaj Kumar on 12/August/2020
  */
 class A {
+
+    /* 1579. Remove Max Number of Edges to Keep Graph Fully Traversable
+     * https://leetcode.com/problems/remove-max-number-of-edges-to-keep-graph-fully-traversable/
+     *  n = 4, edges = [[3,1,2],[3,2,3],[1,1,3],[1,2,4],[1,1,2],[2,3,4]]
+     */
+    public int maxNumEdgesToRemove(int n, int[][] edges) {
+        int[] parentA = new int[n];
+        int[] rankA = new int[n];
+        int[] parentB = new int[n];
+        int[] rankB = new int[n];
+        int edgesAdded = 0;
+
+        for (int i = 0; i < n; i++) {
+            parentA[i] = i;
+            parentB[i] = i;
+        }
+        Arrays.sort(edges, (a, b) -> (b[0] - a[0]));
+        for (int i = 0; i < edges.length; i++) {
+            int type = edges[i][0];
+            int src = edges[i][1] - 1;
+            int dst = edges[i][2] - 1;
+            if(type == 1){
+                if(addRoute(parentA, rankA, src, dst)){
+                    edgesAdded++;
+                }
+            }else if(type == 2){
+                if(addRoute(parentB, rankB, src, dst)){
+                    edgesAdded++;
+                }
+            }else {
+                if(addRoute(parentA, rankA, src, dst) && addRoute(parentB, rankB, src, dst)){
+                    edgesAdded++;
+                }
+            }
+        }
+        int connectedA = 0, connectedB = 0;
+        for (int i = 0; i < n; i++) {
+            if(parentA[i] == i) connectedA++;
+            if(parentB[i] == i) connectedB++;
+        }
+        return connectedA == 1 && connectedB == 1 ? edges.length - edgesAdded : -1;
+    }
+
+    public boolean addRoute(int[] parent, int[] rank, int src, int dst){
+        int xRoot = find(parent, src);
+        int yRoot = find(parent, dst);
+        if (xRoot == yRoot) {
+            return false;
+        }
+        if (rank[xRoot] > rank[yRoot]) {
+            parent[xRoot] = yRoot;
+        }
+        else {
+            parent[xRoot] = yRoot;
+            if (rank[xRoot] == rank[yRoot]) {
+                rank[xRoot]++;
+            }
+        }
+        return true;
+    }
 
     /* 1562. Find Latest Group of Size M
     * https://leetcode.com/problems/find-latest-group-of-size-m/

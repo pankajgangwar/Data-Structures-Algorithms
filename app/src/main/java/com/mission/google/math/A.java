@@ -11,7 +11,9 @@ import java.util.List;
 class A {
     public static void main(String[] args) {
         A cur = new A();
-        cur.fractionAddition("1/3-1/2");
+        //cur.fractionAddition("1/3-1/2");
+        long num = Long.parseLong("53.5e93", 16);
+        System.out.println("num = " + num);
     }
 
     /* 263. Ugly Number

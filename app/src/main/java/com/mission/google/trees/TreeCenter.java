@@ -9,22 +9,21 @@ import java.util.Queue;
  */
 class TreeCenter {
     public static void main(String[] args) {
-        int n = 10;
-        LinkedList<Integer>[] graph = new LinkedList[n];
-        for (int i = 0; i < n; i++) {
-            graph[i] = new LinkedList();
-        }
         int[][] g1 = new int[][]{
                 {1}, {0,2}, {1,9,3,6}, {2,4,5},
                 {3}, {3}, {2,7,8}, {6}, {6}, {2}
         };
-
         int[][] g2 = new int[][]{
-                {1}, {0,2}, {1,9,3,6}, {2,4,5},
-                {3}, {3}, {2,7,8}, {6}, {6}, {2}
+                {1}, {3,4,0}, {3}, {2,6,7,1},
+                {1,5,8}, {4}, {3,9}, {3}, {4}, {6}
         };
+        int n = g2.length;
+        LinkedList<Integer>[] graph = new LinkedList[n];
         for (int i = 0; i < n; i++) {
-            for (int j : g1[i]) {
+            graph[i] = new LinkedList();
+        }
+        for (int i = 0; i < n; i++) {
+            for (int j : g2[i]) {
                 graph[i].add(j);
             }
         }
@@ -55,14 +54,15 @@ class TreeCenter {
                 visited.add(i);
             }
         }
+        int center = -1;
         while (!q.isEmpty()){
             int size = q.size();
             if(size <= 2){
-                return q.peek();
+                center = q.peek();
             }
             while(size-- > 0){
                 int a = q.poll();
-                --degree[a];
+                degree[a] = 0;
                 for(int adj : graph[a]){
                     if(--degree[adj] == 1){
                         if(visited.contains(adj)) continue;
@@ -72,6 +72,6 @@ class TreeCenter {
                 }
             }
         }
-        return -1;
+        return center;
     }
 }

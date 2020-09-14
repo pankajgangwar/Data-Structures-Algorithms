@@ -1,5 +1,6 @@
 package com.mission.google.greedy;
 
+import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,7 +10,35 @@ import java.util.Map;
  */
 class A {
     public static void main(String[] args) {
+        A curr = new A();
+        boolean status = curr.isTransformable("4941","1494");
+        System.out.println("status = " + status);
+    }
 
+    /*
+    * 1585. Check If String Is Transformable With Substring Sort Operations
+    * https://leetcode.com/problems/check-if-string-is-transformable-with-substring-sort-operations/
+    * */
+    public boolean isTransformable(String s, String t) {
+        ArrayDeque<Integer>[] dq = new ArrayDeque[10];
+        for (int i = 0; i < 10; i++) {
+            dq[i] = new ArrayDeque<>();
+        }
+        for (int i = 0; i < s.length(); i++) {
+            int x = s.charAt(i) - '0';
+            dq[x].addLast(i);
+        }
+        for(char ch : t.toCharArray()){
+            int x = ch - '0';
+            if(dq[x].isEmpty()) return false;
+            for (int i = 0; i < x; i++) {
+                if(!dq[i].isEmpty() && dq[i].peekFirst() < dq[x].peekFirst()){
+                    return false;
+                }
+            }
+            dq[x].pollFirst();
+        }
+        return true;
     }
 
     /* 1567. Maximum Length of Subarray With Positive Product

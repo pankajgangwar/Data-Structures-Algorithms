@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Pankaj Kumar on 06/September/2020
@@ -12,6 +13,38 @@ class A {
 
     public static void main(String[] args) {
 
+    }
+
+    /*
+     * 1583. Count Unhappy Friends
+     * https://leetcode.com/problems/count-unhappy-friends/
+     * */
+    public int unhappyFriends(int n, int[][] preferences, int[][] pairs) {
+        int res = 0;
+        int[] map = new int[n];
+        for (int i = 0; i < pairs.length; i++) {
+            int x = pairs[i][0];
+            int y = pairs[i][1];
+            map[x] = y;
+            map[y] = x;
+        }
+        Map<Integer, Integer>[] prefs = new HashMap[n];
+        for (int i = 0; i < preferences.length; i++) {
+            for (int j = 0; j < preferences[i].length; j++) {
+                if(prefs[i] == null) prefs[i] = new HashMap<>();
+                prefs[i].put(preferences[i][j], j);
+            }
+        }
+
+        for (int i = 0; i < n; i++) {
+            for(int j : preferences[i]){
+                if(prefs[j].get(i) < prefs[j].get(map[j]) && prefs[i].get(map[i]) > prefs[i].get(j)){
+                    res++;
+                    break;
+                }
+            }
+        }
+        return res;
     }
 
     /* 1577. Number of Ways Where Square of Number Is Equal to Product of Two Numbers

@@ -13,6 +13,82 @@ import java.util.List;
  */
 class A {
 
+    /* 1584. Min Cost to Connect All Points
+     * https://leetcode.com/problems/min-cost-to-connect-all-points/discuss/844025/JAVA-Union-find-Similar-to-1135
+     * https://leetcode.com/problems/min-cost-to-connect-all-points/
+     * */
+    public int minCostConnectPoints(int[][] points) {
+        int n = points.length;
+        List<List<Integer>> connections = new ArrayList<>();
+        HashMap<String, String> visited = new HashMap<>();
+        for (int i = 0; i < points.length; i++) {
+            for (int j = 0; j < points.length; j++) {
+                int x1 = points[i][0];
+                int y1 = points[i][1];
+
+                int x2 = points[j][0];
+                int y2 = points[j][1];
+                if(x1 == x2 && y1 == y2)continue;
+                if(i == j) continue;
+                String p1 = x1+""+y1;
+                String p2 = x2+""+y2;
+                if(visited.containsKey(p2))continue;
+                visited.put(p1, p2);
+                int val = Math.abs(x1 - x2) + Math.abs(y1 - y2);
+                List<Integer> curr = new ArrayList<>();
+                curr.add(i + 1);
+                curr.add(j + 1);
+                curr.add(val);
+                connections.add(curr);
+            }
+        }
+        int[][] newConn = new int[connections.size()][3];
+        for (int i = 0; i < connections.size(); i++) {
+            newConn[i] = new int[]{connections.get(i).get(0),
+                    connections.get(i).get(1),
+                    connections.get(i).get(2)};
+        }
+        return minimumCost(n, newConn);
+    }
+
+    public int minimumCost(int n, int[][] connections) {
+        Arrays.sort(connections, (a,b) -> a[2] - b[2]);
+        int[] parent = new int[n];
+        int[] rank = new int[n];
+        for (int i = 0; i < n; i++) {
+            parent[i] = i;
+        }
+        Arrays.fill(rank, -1);
+        int cost = 0;
+        for(int i = 0; i < connections.length; i++) {
+            int x = connections[i][0] - 1;
+            int y = connections[i][1] - 1;
+            int xroot = find(parent, x);
+            int yroot = find(parent, y);
+            if(xroot == yroot){
+                continue;
+            }
+            union(xroot, yroot, parent, rank);
+            cost += connections[i][2];
+        }
+        return cost;
+    }
+
+    public void union(int x, int y, int[] parent, int[] rank){
+        int xroot = find(parent, x);
+        int yroot = find(parent, y);
+        if(xroot == yroot) return;
+        if(rank[yroot] > rank[xroot]){
+            parent[xroot] = yroot;
+        }else{
+            parent[yroot] = xroot;
+            if(rank[xroot] == rank[yroot]){
+                rank[xroot]++;
+            }
+        }
+    }
+
+
     /* 1579. Remove Max Number of Edges to Keep Graph Fully Traversable
      * https://leetcode.com/problems/remove-max-number-of-edges-to-keep-graph-fully-traversable/
      *  n = 4, edges = [[3,1,2],[3,2,3],[1,1,3],[1,2,4],[1,1,2],[2,3,4]]

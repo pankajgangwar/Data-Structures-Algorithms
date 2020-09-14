@@ -12,6 +12,25 @@ class A {
         A w2 = new A();
         w2.kthSmallestPrimeFraction(new int[]{1, 2, 3, 5}, 3);
     }
+
+    /* 633. Sum of Square Numbers
+     * https://leetcode.com/problems/minimum-insertions-to-balance-a-parentheses-string/
+     */
+    public boolean judgeSquareSum(int c) {
+        int low = 0;
+        int high = (int)Math.sqrt(c);
+        while (low <= high){
+            int curr = low * low + high * high;
+            if(curr == c) return true;
+            if(curr < c){
+                low++;
+            }else{
+                high--;
+            }
+        }
+        return false;
+    }
+
     /*
     1552. Magnetic Force Between Two Balls
     https://leetcode.com/problems/magnetic-force-between-two-balls/

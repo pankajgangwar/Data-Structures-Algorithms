@@ -1,7 +1,9 @@
 package com.mission.google.trees;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 /**
@@ -17,19 +19,19 @@ class TreeCenter {
                 {1}, {3,4,0}, {3}, {2,6,7,1},
                 {1,5,8}, {4}, {3,9}, {3}, {4}, {6}
         };
-        int n = g2.length;
+        int n = g1.length;
         LinkedList<Integer>[] graph = new LinkedList[n];
         for (int i = 0; i < n; i++) {
             graph[i] = new LinkedList();
         }
         for (int i = 0; i < n; i++) {
-            for (int j : g2[i]) {
+            for (int j : g1[i]) {
                 graph[i].add(j);
             }
         }
         TreeCenter curr = new TreeCenter();
-        int center = curr.findCenter(graph);
-        System.out.println("center = " + center);
+        List<Integer> treeCenters = curr.findCenter(graph);
+        System.out.println("center = " + treeCenters.toString());
     }
 
     /*
@@ -40,7 +42,7 @@ class TreeCenter {
     *    until left with last layer, Similar to peeling an Onion outer layer
     *    until last layer is left.
     */
-    public int findCenter(LinkedList<Integer>[] graph){
+    public List<Integer> findCenter(LinkedList<Integer>[] graph){
         int n = graph.length;
         int[] degree = new int[n];
         Queue<Integer> q = new LinkedList<>();
@@ -54,13 +56,16 @@ class TreeCenter {
                 visited.add(i);
             }
         }
-        int center = -1;
+        List<Integer> centers = new ArrayList<>();
         while (!q.isEmpty()){
             int size = q.size();
             if(size <= 2){
-                center = q.peek();
+                centers.clear();
+                for(int x : q){
+                    centers.add(x);
+                }
             }
-            while(size-- > 0){
+            while(size-- > 0 && !q.isEmpty()){
                 int a = q.poll();
                 degree[a] = 0;
                 for(int adj : graph[a]){
@@ -72,6 +77,6 @@ class TreeCenter {
                 }
             }
         }
-        return center;
+        return centers;
     }
 }

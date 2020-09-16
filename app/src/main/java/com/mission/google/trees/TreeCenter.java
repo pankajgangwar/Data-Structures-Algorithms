@@ -44,6 +44,7 @@ class TreeCenter {
     */
     public List<Integer> findCenter(LinkedList<Integer>[] graph){
         int n = graph.length;
+
         int[] degree = new int[n];
         Queue<Integer> q = new LinkedList<>();
         HashSet<Integer> visited = new HashSet<>();

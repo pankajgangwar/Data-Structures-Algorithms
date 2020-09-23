@@ -2,6 +2,7 @@ package com.mission.google.trees;
 
 import com.mission.google.TreeNode;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -14,6 +15,105 @@ import java.util.Queue;
  * Created by Pankaj Kumar on 12/August/2020
  */
 class A {
+
+    /* 1469. Find All The Lonely Nodes
+    * https://leetcode.com/problems/find-all-the-lonely-nodes/
+    * */
+    public List<Integer> getLonelyNodes(TreeNode root) {
+        res = new ArrayList<>();
+        helper(root);
+        return res;
+    }
+
+    List<Integer> res;
+    public void helper(TreeNode root){
+        if(root == null) return;
+        if(root.left == null && root.right != null) {
+            res.add(root.right.val);
+        }else if(root.left != null && root.right == null) {
+            res.add(root.left.val);
+        }
+        helper(root.left);
+        helper(root.right);
+    }
+
+    /* 865. Smallest Subtree with all the Deepest Nodes
+    * https://leetcode.com/problems/smallest-subtree-with-all-the-deepest-nodes/
+    * */
+    public TreeNode subtreeWithAllDeepest(TreeNode root) {
+        ArrayDeque<TreeNode> queue = new ArrayDeque<>();
+        queue.offer(root);
+        ArrayDeque<TreeNode> lastLevel = new ArrayDeque<>();
+        while (!queue.isEmpty()){
+            int size = queue.size();
+            lastLevel.clear();
+            lastLevel.addAll(queue);
+            while (size-- > 0){
+                TreeNode curr = queue.poll();
+                if(curr.left != null) queue.offer(curr.left);
+                if(curr.right != null) queue.offer(curr.right);
+            }
+        }
+        if(lastLevel.size() == 1) return lastLevel.peek();
+        return findLowestCommonAncestor(root, lastLevel.peekFirst(), lastLevel.peekLast());
+    }
+
+    public TreeNode findLowestCommonAncestor(TreeNode root, TreeNode node1, TreeNode node2){
+        if(root == null) return null;
+        if(root.val == node1.val) return root;
+        if(root.val == node2.val) return root;
+        TreeNode left = findLowestCommonAncestor(root.left, node1, node2);
+        TreeNode right = findLowestCommonAncestor(root.right, node1, node2);
+        if(left == null && right == null) return null;
+        if(left != null && right == null) return left;
+        if(left == null && right != null) return right;
+        if(left != null && right != null) return root;
+
+        return null;
+    }
+
+    /* 919. Complete Binary Tree Inserter
+    * https://leetcode.com/problems/complete-binary-tree-inserter/
+    * */
+    class CBTInserter {
+        ArrayDeque<TreeNode> q;
+        TreeNode root;
+        public CBTInserter(TreeNode root) {
+            q = new ArrayDeque<>();
+            q.addLast(root);
+            while (true){
+                TreeNode curr = q.peekFirst();
+                if(curr.left != null){
+                    q.addLast(curr.left);
+                }
+                if(curr.right != null){
+                    q.addLast(curr.right);
+                    q.pollFirst();
+                }else{
+                    break;
+                }
+            }
+            this.root = root;
+        }
+        public int insert(int v) {
+            TreeNode first = q.peekFirst();
+            if(first.left == null){
+                first.left = new TreeNode(v);
+                q.addLast(first.left);
+                return first.val;
+            }else if(first.right == null){
+                first.right = new TreeNode(v);
+                q.addLast(first.right);
+                return first.val;
+            }
+            q.pollFirst();
+            return insert(v);
+        }
+
+        public TreeNode get_root() {
+            return root;
+        }
+    }
 
     /*
     * 662. Maximum Width of Binary Tree

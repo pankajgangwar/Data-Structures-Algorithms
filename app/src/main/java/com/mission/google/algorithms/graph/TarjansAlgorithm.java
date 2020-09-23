@@ -1,4 +1,4 @@
-package com.mission.google.graph;
+package com.mission.google.algorithms.graph;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -27,9 +27,14 @@ class TarjansAlgorithm {
                 {1}, {2}, {0}, {4,7},
                 {5}, {6,0}, {0,2,4}, {3,5}
         };
-        int n = g1.length;
+
+        int[][] g2 = new int[][]{
+                {1,2}, {0,2}, {0,1}, {1}
+        };
+
+        int n = g2.length;
         TarjansAlgorithm solver = new TarjansAlgorithm();
-        LinkedList<Integer>[] graph = solver.buildGraph(g1);
+        LinkedList<Integer>[] graph = solver.buildGraph(g2);
         int[] low = solver.solve(graph);
         Map<Integer, List<Integer>> multiMap = new HashMap<>();
         for (int i = 0; i < n; i++) {
@@ -108,11 +113,8 @@ class TarjansAlgorithm {
         Revisit: To again understand the algorithm
     */
     public List<List<Integer>> criticalConnections(int n, List<List<Integer>> connections) {
-        int[] low = new int[n];
-        int[] disc = new int[n];
         List<Integer>[] graph = new ArrayList[n];
         List<List<Integer>> res = new ArrayList<>();
-        Arrays.fill(disc, -1);
 
         for(int i = 0; i < n; i++){
             graph[i] = new ArrayList<>();
@@ -123,34 +125,45 @@ class TarjansAlgorithm {
             graph[from].add(to);
             graph[to].add(from);
         }
-        for(int i = 0; i < n; i++){
-            if(disc[i] == -1){
-                dfs(i, disc, graph, low, res, i);
+        ids = new int[n];
+        low = new int[n];
+        stack = new ArrayDeque<>();
+        onStack = new boolean[n];
+        Arrays.fill(ids, -1);
+        for (int i = 0; i < n; i++) {
+            if(ids[i] == -1){
+                dfs(i, ids, graph, low, res, i);
             }
         }
         return res;
     }
 
-    int time = 0;
-    public void dfs(int u, int[] disc, List<Integer>[] graph, int[] low, List<List<Integer>> res, int pre){
-        low[u] = disc[u] = ++time;
-        for(int i = 0; i < graph[u].size(); i++ ){
-            int v = graph[u].get(i);
-            if(v == pre){
-                continue;//We reach parent vertex
-            }
-            if(disc[v] == -1){//u is not discovered yet
-                dfs(v, disc, graph, low, res, u);
-                low[u] = Math.min(low[u], low[v]);
-
-                if(low[v] > disc[u]){
-                    // u ----- v is critical. It belongs to different connected component groups
-                    // There is no path for v to reach back to u or previous vertices of u
-                    res.add(Arrays.asList(u,v));
+    public void dfs(int nodeAt, int[] ids, List<Integer>[] graph, int[] low, List<List<Integer>> res, int pre){
+        stack.push(nodeAt);
+        onStack[nodeAt] = true;
+        ids[nodeAt] = low[nodeAt] = id++;
+        for (int nodeTo : graph[nodeAt]) {
+            if(nodeTo == pre)continue;
+            if(ids[nodeTo] == -1){
+                dfs(nodeTo, ids, graph, low, res, nodeAt);
+                low[nodeAt] = Math.min(low[nodeTo], low[nodeAt]);
+                if(low[nodeTo] > ids[nodeAt]){
+                    res.add(Arrays.asList(nodeAt, nodeTo));
                 }
-            }else {   // If v discovered and is not parent of u, update low[u], cannot use low[v] because u is not subtree of v
-                low[u] = Math.min(low[u], disc[v]);
+            }else if(onStack[nodeTo]){
+                low[nodeAt] = Math.min(ids[nodeTo], low[nodeAt]);
             }
+        }
+        if(ids[nodeAt] == low[nodeAt]){ //id and low-link value is same, this node starts the scc
+            while(!stack.isEmpty()){
+                int node = stack.pop();
+                // Assign low-link values for the nodes on the stack i.e for this scc
+                // with current low-link value.
+                low[node] = low[nodeAt];
+                onStack[node] = false;
+                if(node == nodeAt) break;
+            }
+            sscCount++;
         }
     }
 }

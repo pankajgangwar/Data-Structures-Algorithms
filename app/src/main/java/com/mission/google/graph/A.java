@@ -1,12 +1,166 @@
 package com.mission.google.graph;
 
+import com.mission.google.TreeNode;
+
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.PriorityQueue;
 
 /**
  * Created by Pankaj Kumar on 14/August/2020
  */
 class A {
+
+    /* 841. Keys and Rooms
+    *  https://leetcode.com/problems/keys-and-rooms/
+    * */
+    public boolean canVisitAllRooms(List<List<Integer>> rooms) {
+        int n = rooms.size();
+        LinkedList<Integer>[] graph = new LinkedList[n];
+        for (int i = 0; i < n; i++) {
+            graph[i] = new LinkedList<>();
+        }
+        for (int i = 0; i < rooms.size(); i++) {
+            for (int j = 0; j < rooms.get(i).size(); j++) {
+                graph[i].add(rooms.get(i).get(j));
+            }
+        }
+        HashSet<Integer> visited = new HashSet<>();
+        helper(graph, visited, 0);
+        return visited.size() == n;
+    }
+
+    public void helper(LinkedList<Integer>[] graph, HashSet<Integer> visited, int src){
+        if(visited.contains(src)) return;
+        visited.add(src);
+        for (int i = 0; i < graph[src].size(); i++) {
+            int adj = graph[src].get(i);
+            helper(graph, visited, adj);
+        }
+    }
+
+    /* 1135. Connecting Cities With Minimum Cost
+     * https://leetcode.com/problems/connecting-cities-with-minimum-cost/
+     * Kruskals Algorithm
+     * Minimum Spanning tree
+     * */
+    public int minimumCost(int n, int[][] connections) {
+        Arrays.sort(connections, (a, b) -> a[2] - b[2]);
+        int[] parent = new int[n];
+        int[] rank = new int[n];
+        for (int i = 0; i < n; i++) {
+            parent[i] = i;
+        }
+        Arrays.fill(rank, -1);
+        int cost = 0;
+        for(int i = 0; i < connections.length; i++) {
+            int x = connections[i][0] - 1;
+            int y = connections[i][1] - 1;
+            int xroot = find(parent, x);
+            int yroot = find(parent, y);
+            if(xroot == yroot){
+                continue;
+            }
+            union(xroot, yroot, parent, rank);
+            cost += connections[i][2];
+        }
+        return cost;
+    }
+
+    public void union(int x, int y, int[] parent, int[] rank){
+        int xroot = find(parent, x);
+        int yroot = find(parent, y);
+        if(xroot == yroot) return;
+        if(rank[yroot] > rank[xroot]){
+            parent[xroot] = yroot;
+        }else{
+            parent[yroot] = xroot;
+            if(rank[xroot] == rank[yroot]){
+                rank[xroot]++;
+            }
+        }
+    }
+
+    public int find(int[] parent, int p) {
+        while(p != parent[p]) {
+            parent[p] = parent[parent[p]];
+            p = parent[p];
+        }
+        return p;
+    }
+
+    /*
+     * Prims Algorithm
+     * Minimum Spanning tree
+     * */
+    public int minCostConnectPointsPrims(int[][] points) {
+        int n = points.length, i = 0, connected = 0;
+        boolean[] visited = new boolean[n];
+        PriorityQueue<int[]> pq = new PriorityQueue<>((a,b) -> a[0] - b[0]);
+        int res = 0;
+        while (++connected < n){
+            visited[i] = true;
+            for (int j = 0; j < n; j++) {
+                int manhattan_dist = Math.abs(points[i][0] - points[j][0]) +
+                        Math.abs(points[i][1] - points[j][1]);
+                if(!visited[j]){
+                    pq.offer(new int[]{manhattan_dist, j});
+                }
+            }
+            while (!pq.isEmpty() && visited[pq.peek()[1]]){
+                pq.poll();
+            }
+            int[] curr = pq.poll();
+            res += curr[0];
+            i = curr[1];
+        }
+        return res;
+    }
+
+    /* Prims Algorithm
+     * https://leetcode.com/problems/connecting-cities-with-minimum-cost/
+     * https://leetcode.com/problems/connecting-cities-with-minimum-cost/discuss/859931/JAVA-Prim's-Algorithm-with-PriorityQueue
+     * */
+    public int minimumCostPrims(int n, int[][] connections) {
+        int i = 0, connected = 0;
+        boolean[] visited = new boolean[n];
+        PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> a[0] - b[0]);
+        HashMap<Integer, LinkedList<int[]>> map = new HashMap<>();
+        for (int j = 0; j < n; j++) {
+            map.put(j, new LinkedList<>());
+        }
+        for (int j = 0; j < connections.length; j++) {
+            int src = connections[j][0] - 1;
+            int dst = connections[j][1] - 1;
+            int cost = connections[j][2];
+            map.get(src).add(new int[]{cost, dst});
+            map.get(dst).add(new int[]{cost, src});
+        }
+        int res = 0;
+        while (++connected < n){
+            visited[i] = true;
+            LinkedList<int[]> adj = map.get(i);
+            for (int j = 0; j < adj.size(); j++) {
+                int cost = adj.get(j)[0];
+                int next = adj.get(j)[1];
+                if(!visited[next]){
+                    pq.offer(new int[]{cost, next});
+                }
+            }
+            while (!pq.isEmpty() && visited[pq.peek()[1]]){
+                pq.poll();
+            }
+            if(pq.isEmpty()) return -1;
+            int[] curr = pq.poll();
+            res += curr[0];
+            i = curr[1];
+        }
+        return res;
+    }
 
     /* https://leetcode.com/problems/path-with-maximum-minimum-value/
      *  Maximum points collections

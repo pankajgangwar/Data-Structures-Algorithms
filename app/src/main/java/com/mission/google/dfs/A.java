@@ -12,6 +12,84 @@ import java.util.List;
 class A {
     int[][] dirs = new int[][]{{1,0},{0,1},{-1,0},{0,-1}};
 
+    /* 980. Unique Paths III
+    * https://leetcode.com/problems/unique-paths-iii/
+    * */
+    public int uniquePathsIII(int[][] grid) {
+        int[][] dirs = new int[][]{ {1,0}, {0,1}, {-1,0}, {0,-1} };
+        int m = grid.length;
+        int n = grid[0].length;
+        int remPath = 0;
+        boolean[][] visited = new boolean[m][n];
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[i].length; j++) {
+                if(grid[i][j] == 0){
+                    remPath++;
+                }
+            }
+        }
+
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[i].length; j++) {
+                if(grid[i][j] == 1){
+                    helper(grid, i, j, visited, remPath + 1, dirs, "");
+                }
+            }
+        }
+        return paths;
+    }
+
+    int paths = 0;
+    public void helper(int[][] grid, int x, int y, boolean[][] visited, int remPath, int[][] dirs, String s){
+        int m = grid.length;
+        int n = grid[0].length;
+
+        if(grid[x][y] == 2){
+            if(remPath == 0){
+                paths++;
+            }
+            return;
+        }
+        for (int i = 0; i < dirs.length; i++) {
+            int next_x = dirs[i][0] + x;
+            int next_y = dirs[i][1] + y;
+            if(isValid(grid, next_x, next_y, visited)){
+                visited[next_x][next_y] = true;
+                helper(grid, next_x, next_y, visited, remPath - 1, dirs, s + i);
+                visited[next_x][next_y] = false;
+            }
+        }
+    }
+
+    public boolean isValid(int[][] grid, int x, int y, boolean[][] visited){
+        int m = grid.length;
+        int n = grid[0].length;
+        if(x >= m || x < 0 || y >= n || y < 0 || grid[x][y] == -1 || grid[x][y] == 1 || visited[x][y]){
+            return false;
+        }
+        return true;
+    }
+
+    /* 1593. Split a String Into the Max Number of Unique Substrings
+     * https://leetcode.com/problems/split-a-string-into-the-max-number-of-unique-substrings/
+     * */
+    public int maxUniqueSplit(String s) {
+        return helper(s, new HashSet<>());
+    }
+
+    public int helper(String s, HashSet<String> sets){
+        int max = 0;
+        for (int i = 1; i <= s.length(); i++) {
+            String sub = s.substring(0, i);
+            if(!sets.contains(sub)){
+                sets.add(sub);
+                max = Math.max(max, 1 + (helper(s.substring(i), sets)));
+                sets.remove(sub);
+            }
+        }
+        return max;
+    }
+
     /* 132. Palindrome Partitioning II
     * https://leetcode.com/problems/palindrome-partitioning-ii/
     * */

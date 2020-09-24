@@ -14,6 +14,75 @@ class A {
         curr.stoneGameV(new int[]{6,2,3,4,5,5});
     }
 
+    /* 1594. Maximum Non Negative Product in a Matrix
+     * https://leetcode.com/problems/maximum-non-negative-product-in-a-matrix/
+     * */
+    public int maxProductPath(int[][] grid) {
+        int m = grid.length;
+        int n = grid[0].length;
+        long[][] max = new long[m][n];
+        long[][] min = new long[m][n];
+        max[0][0] = min[0][0] = grid[0][0];
+        for (int i = 1; i < m; i++) {// first col
+            max[i][0] = min[i][0] = max[i-1][0] * grid[i][0];
+        }
+        for (int i = 1; i < n; i++) {// first row
+            max[0][i] = min[0][i] = max[0][i-1] * grid[0][i];
+        }
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                if(grid[i][j] < 0){
+                    max[i][j] = Math.min(min[i][j-1], min[i-1][j]) * grid[i][j];
+                    min[i][j] = Math.max(max[i][j-1], max[i-1][j]) * grid[i][j];
+                }else{
+                    min[i][j] = Math.min(min[i][j-1], min[i-1][j]) * grid[i][j];
+                    max[i][j] = Math.max(max[i][j-1], max[i-1][j]) * grid[i][j];
+                }
+            }
+        }
+        int mod = (int)1e9 + 7;
+        long ans = max[m - 1][n - 1] % mod;
+        return ans < 0 ? -1 : (int)ans;
+    }
+
+    public int maxProductPath1(int[][] grid) {
+        int m = grid.length;
+        int n = grid[0].length;
+        dfs(grid, 0, 0, grid[0][0] );
+        return maxprod < 0 ? -1 : (int)(maxprod % mod );
+    }
+    long maxprod = Long.MIN_VALUE;
+    int mod = (int)1e9 + 7;
+    public void dfs(int[][] grid, int curr_x, int curr_y, long prod){
+        int m = grid.length;
+        int n = grid[0].length;
+        if(curr_x == m - 1 && curr_y == n - 1 ){
+            maxprod = Math.max(maxprod, prod);
+            return;
+        }
+        int[][] dirs = new int[][]{{1,0},{0,1}};
+        for (int i = 0; i < dirs.length; i++) {
+            int next_x = dirs[i][0] + curr_x;
+            int next_y = dirs[i][1] + curr_y;
+            if(isValid(grid, next_x, next_y)){
+                if(grid[next_x][next_y] == 0){
+                    maxprod = Math.max(maxprod, 0);
+                    continue;
+                }
+                dfs(grid, next_x, next_y, prod * (long)grid[next_x][next_y] );
+            }
+        }
+    }
+
+    public boolean isValid(int[][] grid, int next_x, int next_y ){
+        int m = grid.length;
+        int n = grid[0].length;
+        if(next_x >= m || next_x < 0 || next_y >= n || next_y < 0 ){
+            return false;
+        }
+        return true;
+    }
+
 
 
     /* 1027. Longest Arithmetic Subsequence

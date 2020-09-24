@@ -1,12 +1,70 @@
 package com.mission.google.arrays;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 /**
  * Created by Pankaj Kumar on 05/September/2020
  */
 class B {
+
+    /* https://leetcode.com/problems/sum-of-all-odd-length-subarrays/
+     * 1588. Sum of All Odd Length Subarrays
+     * */
+    public int sumOddLengthSubarrays(int[] arr) {
+        int sum = 0;
+        sum += Arrays.stream(arr).sum();
+        int n = arr.length;
+        int prefixs[] =  new int[n];
+        prefixs[0] = arr[0];
+        for (int i = 1; i < n; i++) {
+            prefixs[i] = arr[i] + prefixs[i - 1];
+        }
+        int len = 3;
+        while (len <= n){
+            for (int i = 0; i + len - 1 < n; i++) {
+                if(i > 0){
+                    sum += prefixs[i + len - 1] - prefixs[i - 1];
+                }else{
+                    sum += prefixs[i + len - 1];
+                }
+            }
+            len += 2;
+        }
+        System.out.println("sum = " + sum);
+        return sum;
+    }
+
+    /* 1590. Make Sum Divisible by P
+     * https://leetcode.com/problems/make-sum-divisible-by-p/
+     * */
+    public int minSubarray(int[] nums, int p) {
+        int n = nums.length;
+        int mod = 0;
+        for(int x : nums){
+            mod = (mod + x) % p;
+        }
+        if(mod == 0) {
+            return 0;
+        }
+        int min = n;
+        HashMap<Integer,Integer> posMap = new HashMap<Integer,Integer>();
+        posMap.put(0, -1);
+        int r_mod = 0;
+        for(int i = 0; i < n; i++ ) {
+            r_mod = (r_mod + nums[i]) % p;
+            int comp = (p - mod + r_mod) % p;
+            if(posMap.containsKey(comp)){
+                min = Math.min(min, i - posMap.get(comp));
+            }
+            posMap.put(r_mod, i);
+        }
+        min = min >= n ? -1 : min;
+        System.out.println("mn = " + min);
+        return min;
+    }
 
     /* 1582. Special Positions in a Binary Matrix
      * https://leetcode.com/problems/special-positions-in-a-binary-matrix/

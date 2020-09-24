@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
 
 /**
  * Created by Pankaj Kumar on 12/August/2020
@@ -16,6 +17,7 @@ class A {
     /* 1584. Min Cost to Connect All Points
      * https://leetcode.com/problems/min-cost-to-connect-all-points/discuss/844025/JAVA-Union-find-Similar-to-1135
      * https://leetcode.com/problems/min-cost-to-connect-all-points/
+     * Kruskal's Algorithm
      * */
     public int minCostConnectPoints(int[][] points) {
         int n = points.length;
@@ -52,7 +54,7 @@ class A {
     }
 
     public int minimumCost(int n, int[][] connections) {
-        Arrays.sort(connections, (a,b) -> a[2] - b[2]);
+        Arrays.sort(connections, (a, b) -> a[2] - b[2]);
         int[] parent = new int[n];
         int[] rank = new int[n];
         for (int i = 0; i < n; i++) {
@@ -73,6 +75,7 @@ class A {
         }
         return cost;
     }
+
 
     public void union(int x, int y, int[] parent, int[] rank){
         int xroot = find(parent, x);

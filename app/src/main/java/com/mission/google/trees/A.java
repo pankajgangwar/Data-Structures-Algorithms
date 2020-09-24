@@ -16,6 +16,30 @@ import java.util.Queue;
  */
 class A {
 
+    /* 1145. Binary Tree Coloring Game
+     * https://leetcode.com/problems/shopping-offers/
+     */
+    public boolean btreeGameWinningMove(TreeNode root, int n, int x) {
+        if(root == null) return false;
+        if(root.val == x){
+            int leftNodes = countNodes(root.left);
+            int rightNodes = countNodes(root.right);
+            if(leftNodes > n / 2 || rightNodes > n / 2){
+                return true;
+            }else if(leftNodes + rightNodes + 1 < (n + 1) /2){
+                return true;
+            }else{
+                return false;
+            }
+        }
+        return btreeGameWinningMove(root.left, n, x) || btreeGameWinningMove(root.right, n, x);
+    }
+
+    public int countNodes(TreeNode root){
+        if(root == null) return 0;
+        return 1 + countNodes(root.left) + countNodes(root.right);
+    }
+
     /* 1469. Find All The Lonely Nodes
     * https://leetcode.com/problems/find-all-the-lonely-nodes/
     * */

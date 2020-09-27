@@ -12,6 +12,94 @@ import java.util.List;
 class A {
     int[][] dirs = new int[][]{{1,0},{0,1},{-1,0},{0,-1}};
 
+    /* 1601. Maximum Number of Achievable Transfer Requests
+     * https://leetcode.com/problems/maximum-number-of-achievable-transfer-requests/
+     * */
+    public int maximumRequests(int n, int[][] requests) {
+        int[] count = new int[n];
+        helper(0, 0, count, requests);
+        return res;
+    }
+    int res = 0;
+    public void helper(int index, int num, int[] count, int[][] request){
+        if(index == request.length){
+            for (int i = 0; i < count.length; i++) {
+                if(count[i] != 0){
+                    return;
+                }
+            }
+            res = Math.max(res, num);
+            return;
+        }
+        int from = request[index][0];
+        int to = request[index][1];
+        count[from]++;
+        count[to]--;
+        helper(index + 1, num + 1, count, request);
+        count[to]++;
+        count[from]--;
+        helper(index + 1, num, count, request);
+    }
+
+    /* 1600. Throne Inheritance
+     * https://leetcode.com/problems/throne-inheritance/
+     * */
+    static class Person{
+        String name;
+        boolean isAlive;
+        public Person(String s, boolean alive){
+            this.isAlive = alive;
+            this.name = s;
+        }
+    }
+
+    static class ThroneInheritance {
+        String kingName = "";
+        HashMap<Person, List<Person>> map = new HashMap<>();
+        HashMap<String, Person> personHashMap = new HashMap<>();
+        HashSet<Person> allP = new HashSet<>();
+        public ThroneInheritance(String kingName) {
+            this.kingName = kingName;
+            Person p = new Person(kingName, true);
+            personHashMap.put(kingName, p);
+            map.putIfAbsent(p, new ArrayList<>());
+        }
+
+        public void birth(String parentName, String childName) {
+            Person parent = personHashMap.get(parentName);
+            Person child = new Person(childName, true);
+            personHashMap.put(childName, child);
+
+            map.putIfAbsent(parent, new ArrayList<>());
+            map.putIfAbsent(child, new ArrayList<>());
+
+            map.get(parent).add(child);
+
+        }
+
+        public void death(String name) {
+            Person p = personHashMap.get(name);
+            p.isAlive = false;
+        }
+
+        List<String> res = new ArrayList<>();
+        public List<String> getInheritanceOrder() {
+            res = new ArrayList<>();
+            helper(kingName);
+            return res;
+        }
+
+        public void helper(String name){
+            Person cur = personHashMap.get(name);
+            if(cur.isAlive){
+                res.add(name);
+            }
+            for(Person p : map.get(cur)){
+                helper(p.name);
+            }
+        }
+    }
+
     /* 980. Unique Paths III
     * https://leetcode.com/problems/unique-paths-iii/
     * */

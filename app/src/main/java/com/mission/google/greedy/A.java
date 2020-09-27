@@ -15,6 +15,50 @@ class A {
         System.out.println("status = " + status);
     }
 
+    /* 1599. Maximum Profit of Operating a Centennial Wheel
+     * https://leetcode.com/problems/maximum-profit-of-operating-a-centennial-wheel/
+     * */
+    public int minOperationsMaxProfit(int[] customers, int boardingCost, int runningCost) {
+        int rotations = 0;
+        int cust_rem = 0;
+        int total_cust = 0;
+        int profit = Integer.MIN_VALUE;
+        int res = 0;
+        for (int i = 0; i < customers.length; i++) {
+            cust_rem += customers[i];
+            if(cust_rem >= 4){
+                total_cust += 4;
+                cust_rem -= 4;
+            }else{
+                total_cust += cust_rem;
+                cust_rem = 0;
+            }
+            int curr_profit = (total_cust * boardingCost - ++rotations * runningCost);
+            if(curr_profit > profit){
+                res = rotations;
+                profit = curr_profit;
+            }
+        }
+        while (cust_rem > 0){
+            if(cust_rem >= 4){
+                total_cust += 4;
+                cust_rem -= 4;
+            }else{
+                total_cust += cust_rem;
+                cust_rem = 0;
+            }
+            int curr_profit = (total_cust * boardingCost - ++rotations * runningCost);
+            if(curr_profit > profit){
+                res = rotations;
+                profit = curr_profit;
+            }
+        }
+        if(profit > 0){
+            return res;
+        }
+        return -1;
+    }
+
     /*
     * 1585. Check If String Is Transformable With Substring Sort Operations
     * https://leetcode.com/problems/check-if-string-is-transformable-with-substring-sort-operations/

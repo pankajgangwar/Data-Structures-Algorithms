@@ -3,12 +3,30 @@ package com.pkumar7.arrays;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 /**
  * Created by Pankaj Kumar on 05/September/2020
  */
 class B {
+
+    /*
+    * 1608. Special Array With X Elements Greater Than or Equal X
+    * https://leetcode.com/problems/special-array-with-x-elements-greater-than-or-equal-x/
+    * */
+    public int specialArray(int[] nums) {
+        Arrays.sort(nums);
+        int n = nums.length;
+        HashSet<Integer> sets = new HashSet<>();
+        for (int i = 0; i < nums.length ; i++) {
+            sets.add(nums[i]);
+            if(n - i <= nums[i] && !sets.contains(n - i)){
+                return n - i;
+            }
+        }
+        return -1;
+    }
 
     /* https://leetcode.com/problems/sum-of-all-odd-length-subarrays/
      * 1588. Sum of All Odd Length Subarrays

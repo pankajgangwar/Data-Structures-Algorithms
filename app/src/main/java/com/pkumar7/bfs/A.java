@@ -15,6 +15,48 @@ import java.util.Queue;
  */
 class A {
 
+    /*
+     * 1609. Even Odd Tree
+     * https://leetcode.com/problems/even-odd-tree/
+     * */
+    public boolean isEvenOddTree(TreeNode root) {
+        Queue<TreeNode> q = new LinkedList<>();
+        q.offer(root);
+        int level = 0;
+        while (!q.isEmpty()){
+            int size = q.size();
+            int prev = 0;
+            if(level % 2 == 0 ){
+                prev = Integer.MIN_VALUE;
+            }else{
+                prev = Integer.MAX_VALUE;
+            }
+            while (size-- > 0 ){
+                TreeNode curr = q.poll();
+                int val = curr.val;
+                if(level % 2 == 0){
+                    if(val % 2 == 0 || prev >= val){
+                        return false;
+                    }
+                    prev = val;
+                }else{
+                    if(val % 2 != 0 || prev <= val){
+                        return false;
+                    }
+                    prev = val;
+                }
+                if(curr.left != null){
+                    q.offer(curr.left);
+                }
+                if(curr.right != null){
+                    q.offer(curr.right);
+                }
+            }
+            level++;
+        }
+        return true;
+    }
+
     /* 815. Bus Routes
      * https://leetcode.com/problems/bus-routes/
      */

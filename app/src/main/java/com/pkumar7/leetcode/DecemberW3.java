@@ -910,7 +910,6 @@ public class DecemberW3 {
 
         for(int i = 0; i < n; i++){
             int inc = 1 << i;
-
             for(int j = result.size() -1 ; j >= 0; --j){
                 result.add(result.get(j) + inc);
             }
@@ -920,7 +919,6 @@ public class DecemberW3 {
     }
 
     public void grayCodeRec(int n, List<Integer> result) {
-
         if(n == 0){
             result.add(0);
             return;

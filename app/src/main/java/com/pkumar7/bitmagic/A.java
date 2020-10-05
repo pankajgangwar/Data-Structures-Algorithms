@@ -8,6 +8,18 @@ class A {
 
     }
 
+    /* 1611. Minimum One Bit Operations to Make Integers Zero
+     * https://leetcode.com/problems/minimum-one-bit-operations-to-make-integers-zero/
+     * */
+    public int minimumOneBitOperations(int n) {
+        if(n <= 1) return n;
+        int bit = 0;
+        while ((1 << bit) <= n){
+            bit++;
+        }
+        return ((1 << bit) - 1) - minimumOneBitOperations(n - (1 << bit - 1));
+    }
+
     /* 393. UTF-8 Validation
     * https://leetcode.com/problems/utf-8-validation/
     * */

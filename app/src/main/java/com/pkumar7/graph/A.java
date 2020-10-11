@@ -15,6 +15,39 @@ import java.util.PriorityQueue;
  */
 class A {
 
+    /*
+     * https://leetcode.com/problems/maximal-network-rank/
+     * 1615. Maximal Network Rank
+     * */
+    public int maximalNetworkRank(int n, int[][] roads) {
+        int[] degree = new int[n];
+        LinkedList<Integer>[] graph = new LinkedList[n];
+        for (int i = 0; i < n; i++) {
+            graph[i] = new LinkedList<>();
+        }
+
+        for (int i = 0; i < roads.length; i++) {
+            int src = roads[i][0];
+            int dst = roads[i][1];
+            graph[src].add(dst);
+            graph[dst].add(src);
+            degree[src]++;
+            degree[dst]++;
+        }
+        int res = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if(i == j) continue;
+                if(graph[i].contains(j)){
+                    res = Math.max(res, degree[i] + degree[j] - 1);
+                }else{
+                    res = Math.max(res, degree[i] + degree[j]);
+                }
+            }
+        }
+        return res;
+    }
+
     /* 841. Keys and Rooms
     *  https://leetcode.com/problems/keys-and-rooms/
     * */

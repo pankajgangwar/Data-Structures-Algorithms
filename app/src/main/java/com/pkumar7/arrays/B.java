@@ -18,10 +18,11 @@ class B {
     public int specialArray(int[] nums) {
         Arrays.sort(nums);
         int n = nums.length;
-        HashSet<Integer> sets = new HashSet<>();
         for (int i = 0; i < nums.length ; i++) {
-            sets.add(nums[i]);
-            if(n - i <= nums[i] && !sets.contains(n - i)){
+            if(n - i <= nums[i] ){
+                if(i > 0 && n - i <= nums[i - 1]){
+                    continue;
+                }
                 return n - i;
             }
         }

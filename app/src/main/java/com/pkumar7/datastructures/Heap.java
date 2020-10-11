@@ -883,6 +883,13 @@ public class Heap {
 
 	public int kthSmallestBetter(int[][] matrix, int k) {
 		PriorityQueue<int[]> mMinHeap = new PriorityQueue<>((a,b) -> a[0] - b[0]);
+		PriorityQueue<int[]> x = new PriorityQueue<>(new Comparator<int[]>() {
+			@Override
+			public int compare(int[] ints, int[] t1) {
+				return 0;
+			}
+		});
+
 		for (int i = 0; i < matrix[0].length; i++) {
 			mMinHeap.offer(new int[]{matrix[0][i], 0, i});
 		}

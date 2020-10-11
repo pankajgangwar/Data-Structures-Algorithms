@@ -6,13 +6,12 @@ import java.util.Arrays;
  * Created by Pankaj Kumar on 14/August/2020
  */
 class A {
-    /*
+
+    /* 1288. Remove Covered Intervals
         https://leetcode.com/problems/remove-covered-intervals/
-        Line-Sweeping
-        Intervals
     */
     public int removeCoveredIntervalsPass(int[][] intervals) {
-        Arrays.sort(intervals, (a, b) -> (a[0] - b[0]));
+        Arrays.sort(intervals, (a,b) -> a[0] == b[0] ? -a[1] + b[1] : a[0] - b[0]);
         int left = -1, right = -1;
         int uncovered = 0;
         for(int[] interval : intervals){
@@ -26,7 +25,7 @@ class A {
     }
 
     public int removeCoveredIntervals(int[][] intervals){
-        Arrays.sort(intervals, (a,b) -> a[0] - b[0]);
+        Arrays.sort(intervals, (a,b) -> a[0] == b[0] ? -a[1] + b[1] : a[0] - b[0]);
         int n = intervals.length;
         int[] curr = intervals[0];
         int removals = 0;

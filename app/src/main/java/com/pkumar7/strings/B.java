@@ -8,6 +8,54 @@ import java.util.List;
  */
 class B {
 
+    /* 1616. Split Two Strings to Make Palindrome
+     * https://leetcode.com/problems/split-two-strings-to-make-palindrome/
+     * */
+    public boolean checkPalindromeFormation(String a, String b) {
+        if(a.length() != b.length()) return false;
+        return helper(a, b) || helper(b, a);
+    }
+
+    public boolean helper(String a, String b){
+        int low = 0;
+        int high = b.length() - 1;
+        while(low <= high){
+            if(a.charAt(low) != b.charAt(high)) {
+                break;
+            }
+            low++;
+            --high;
+        }
+        return helper(a, low, high) || helper(b, low, high);
+    }
+    public boolean helper(String s, int low, int high){
+        while(low <= high){
+            if(s.charAt(low) != s.charAt(high)) {
+                return false;
+            }
+            low++;
+            --high;
+        }
+        return true;
+    }
+
+    /* https://leetcode.com/problems/maximum-nesting-depth-of-the-parentheses/
+     * 1614. Maximum Nesting Depth of the Parentheses
+     * */
+    public int maxDepth(String s) {
+        int res = 0;
+        int depth = 0;
+        for (int i = 0; i < s.length(); i++) {
+            if(s.charAt(i) == '('){
+                res = Math.max(res, ++depth);
+            }else if(s.charAt(i) == ')'){
+                depth--;
+            }
+        }
+        return res;
+    }
+
+
     /* 1592. Rearrange Spaces Between Words
      * https://leetcode.com/problems/rearrange-spaces-between-words/
      * */

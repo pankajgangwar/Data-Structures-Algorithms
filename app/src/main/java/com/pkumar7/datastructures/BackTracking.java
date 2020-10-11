@@ -13,10 +13,6 @@ public class BackTracking {
 	public static void main(String[] args) {
 		KnightTour knightTour = new KnightTour();
 		//knightTourRec.isTourPossible(8);
-		
-		SolutionNQ nq = new SolutionNQ();
-		//nq.solveNQueens();
-		
 		SolutionSubset subset = new SolutionSubset();
 		ArrayList<Integer> mList = new ArrayList<>();
 		mList.add(2);
@@ -187,118 +183,21 @@ public class BackTracking {
 			}
 		}
 	}
-	
-	static class SolutionNQ {
-		int N;
-		ArrayList<ArrayList<String>> mList = new ArrayList<ArrayList<String>>();
-		
-		public ArrayList<ArrayList<String>> solveNQueens() {
-			int n = 4;
-			this.N = n;
-			
-			int[][] board = new int[n][n];
 
-			for (int i = 0; i < n; i++) {
-				for (int j = 0; j < n; j++) {
-					board[i][j] = 0;
-				}
-			}
 
-			if (solveNQUtil(board, 0)) {
-				return mList;
-			}else {
-			    System.out.println("No Solution");
-			    return null;
-			}
-		}
-
-		boolean res = false;
-		public boolean solveNQUtil(int[][] board, int col) {
-			if (col == N) {
-				printSolution(board);
-				return true; // All queens are placed
-			}
-
-			for (int i = 0; i < N; i++) {
-				if (isSafeToMove(board, i, col)) {
-					board[i][col] = 1;
-					
-					res = solveNQUtil(board, col + 1) || res;
-					
-					board[i][col] = 0;
-				}
-			}
-
-			return res;
-
-		}
-
-		public boolean isSafeToMove(int[][] board, int rows, int cols) {
-			int i, j;
-			// all rows to left for this col
-			for(j = cols; j >= 0; j-- )
-	            if(board[rows][j] == 1)
-	                return false;
-
-			// All diagonal rows,col to the left and up
-			for (i = rows, j = cols; i >= 0 && j >= 0; i--, j--)
-				if (board[i][j] == 1)
-					return false;
-			// All diagonal rows,col to the left and down
-			for (i = rows, j = cols; i < N && j >= 0; i++, j--)
-				if (board[i][j] == 1)
-					return false;
-
-			return true;
-
-		}
-		
-		public void printSolution(int board[][]) {
-
-			System.out.println("");
-			System.out.println("********************");
-			
-			ArrayList<String> mcol = new ArrayList<>();
-			
-			for (int i = 0; i < N; i++) {
-				StringBuilder builder = new StringBuilder();
-				for (int j = 0; j < N; j++) {
-					if (board[i][j] == 1) {
-						builder.append("Q");
-						//System.out.print("Q");
-					} else {
-						builder.append(".");
-						//System.out.print(".");
-					}
-				}
-				System.out.print(builder.toString() + ",");
-				mcol.add(builder.toString());
-				
-			}
-			
-			mList.add(mcol);
-		}
-
-	}
-	
 	public static class SolutionSubset {
 		HashSet<ArrayList<Integer>> subsets = new HashSet<ArrayList<Integer>>();
-
 		public void subsetSums(ArrayList<Integer> mList, int requiredSum) {
-
 			int actualSum = 0;
 			for (int j = 0; j < mList.size(); j++) {
 				actualSum += mList.get(j);
 			}
-
 			if (requiredSum == actualSum) {
 				System.out.println("Required sum is 0 now !!");
 				subsets.add(mList);
 				return;
 			}
-
 			int i = 0;
-
 			for (; i < mList.size(); i++) {
 				ArrayList<Integer> newList = new ArrayList<>();
 				newList.addAll(mList);
@@ -687,6 +586,4 @@ public class BackTracking {
 		}
 
 	}
-	
-	
 }

@@ -4,6 +4,43 @@ package com.pkumar7.dfs;
  * Created by Pankaj Kumar on 08/October/2020
  */
 class B {
+    
+    /* 526. Beautiful Arrangement
+    * https://leetcode.com/problems/beautiful-arrangement/
+    * */
+    public int countArrangement(int n) {
+        int[] nums = new int[n];
+        
+        for(int i = 1; i <= n; i++){
+            nums[i-1] = i;
+        }
+        permute(nums, 0);
+        return count;
+    }
+    int count = 0;
+    
+    public void permute(int[] nums, int l){
+        int n = nums.length;
+        if(l == n ){
+            count++;
+            return;
+        }
+        
+        for(int i = l; i < n; i++){
+            swap(nums, i, l);
+            if(nums[l] % ( l + 1 ) == 0 || (l + 1) % nums[l] == 0){
+                permute(nums, l + 1);
+            }
+            swap(nums, i, l);
+        }
+    }
+    
+    public void swap(int[] nums, int i, int l){
+        int a = nums[i];
+        nums[i] = nums[l];
+        nums[l] = a;
+    }
+
     /* 87. Scramble String
      * https://leetcode.com/problems/scramble-string/
      * */

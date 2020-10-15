@@ -1,12 +1,19 @@
 package com.pkumar7.strings;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.List;
 
 /**
  * Created by Pankaj Kumar on 06/September/2020
  */
 class B {
+
+    public static void main(String[] args) {
+        B obj = new B();
+        boolean status = obj.checkPalindromeFormation("abdef","fecab");
+        System.out.println("status = " + status);
+    }
 
     /* 1616. Split Two Strings to Make Palindrome
      * https://leetcode.com/problems/split-two-strings-to-make-palindrome/

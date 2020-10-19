@@ -15,6 +15,54 @@ class A {
         curr.stoneGameV(new int[]{6,2,3,4,5,5});
     }
 
+    /*
+     * 650. 2 Keys Keyboard
+     * https://leetcode.com/problems/2-keys-keyboard/
+     */
+    public int minSteps(int n) {
+        if(n == 1) return 0;
+        for (int i = 2; i < n; i++) {
+            if(n % i == 0){
+                return i + minSteps(n / i);
+            }
+        }
+        return n;
+    }
+
+    /* 1626. Best Team With No Conflicts
+     * https://leetcode.com/problems/best-team-with-no-conflicts/
+     * Longest Increasing subsequence
+     * */
+    public int bestTeamScore(int[] scores, int[] ages) {
+        int[][] scoresByAge = new int[ages.length][2];
+        for (int i = 0; i < scores.length; i++) {
+            scoresByAge[i][0] = ages[i];
+            scoresByAge[i][1] = scores[i];
+        }
+        Arrays.sort(scoresByAge, (a,b) -> a[0] == b[0] ? a[1] - b[1] : a[0] - b[0]);
+        return findMaxScoreLIS(scoresByAge);
+    }
+
+    public int findMaxScoreLIS(int[][] nums) {
+        int n = nums.length;
+        int LIS[] = new int[n];
+        for(int i = 0; i < n; i++){
+            LIS[i] = nums[i][1];
+        }
+        int max_scores = 0;
+        for(int i = 1; i < n; i++){
+            for(int j = 0; j < i; j++){
+                if(nums[j][1] <= nums[i][1]){
+                    LIS[i] = Math.max(LIS[i], LIS[j] + nums[i][1]);
+                }
+            }
+        }
+        for(int score : LIS){
+            max_scores = Math.max(max_scores, score);
+        }
+        return max_scores;
+    }
+
     /* 871. Minimum Number of Refueling Stops
      * https://leetcode.com/problems/minimum-number-of-refueling-stops/
      * */

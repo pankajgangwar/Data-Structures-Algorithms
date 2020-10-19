@@ -14,6 +14,43 @@ import java.util.PriorityQueue;
  */
 class A {
 
+    /* 1627. Graph Connectivity With Threshold
+    * https://leetcode.com/problems/graph-connectivity-with-threshold/
+    * */
+    public List<Boolean> areConnected(int n, int threshold, int[][] queries) {
+        List<Boolean> res = new ArrayList<>();
+        int[] parent = new int[n + 1];
+        int[] rank = new int[n + 1];
+        Arrays.fill(rank, -1);
+        for (int i = 1; i <= n; i++) {
+            parent[i] = i;
+        }
+        buildGraph(threshold, n, parent, rank);
+        for(int[] q : queries){
+            int a = q[0];
+            int b = q[1];
+            int aRoot = find(parent, a);
+            int bRoot = find(parent, b);
+            if(aRoot == bRoot){
+                res.add(true);
+            }else{
+                res.add(false);
+            }
+        }
+        return res;
+    }
+
+    public void buildGraph(int t, int n, int[] parent, int[] rank){
+        for (int i = t + 1; i <= n; i++) {
+            int m = 1;
+            while (i * m <= n){
+                union(i, i*m, parent, rank);
+                m++;
+            }
+        }
+    }
+
+
     /* 1584. Min Cost to Connect All Points
      * https://leetcode.com/problems/min-cost-to-connect-all-points/discuss/844025/JAVA-Union-find-Similar-to-1135
      * https://leetcode.com/problems/min-cost-to-connect-all-points/

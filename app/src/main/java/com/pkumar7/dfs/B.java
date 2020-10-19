@@ -1,9 +1,50 @@
 package com.pkumar7.dfs;
 
+import java.util.HashSet;
+
 /**
  * Created by Pankaj Kumar on 08/October/2020
  */
 class B {
+
+    /*
+     *   1625. Lexicographically Smallest String After Applying Operations
+     *   https://leetcode.com/problems/lexicographically-smallest-string-after-applying-operations/
+     *   https://leetcode.com/problems/lexicographically-smallest-string-after-applying-operations/discuss/899507/JAVA-Brute-force-%2B-DFS
+     * */
+    public String findLexSmallestString(String s, int a, int b) {
+        res = s;
+        HashSet<String> visited = new HashSet<>();
+        helper(s, a, b, visited);
+        return res;
+    }
+
+    String res ;
+    public void helper(String s, int a, int b, HashSet<String> visited){
+        if(visited.contains(s)) return;
+        visited.add(s);
+        if(s.compareTo(res) < 0){
+            res = s;
+        }
+        int splitPoint = s.length() - b;
+        String rotated = s.substring(splitPoint) + s.substring(0, splitPoint);
+        StringBuilder out = new StringBuilder();
+        for (int i = 0; i < s.length(); i++) {
+            if(i % 2 != 0){
+                int d = s.charAt(i) - '0';
+                d = d + a;
+                if(d > 9){
+                    d = d % 10;
+                }
+                out.append(d);
+            }else{
+                out.append(s.charAt(i));
+            }
+        }
+        String added = out.toString();
+        helper(added, a, b, visited);
+        helper(rotated, a, b, visited);
+    }
     
     /* 526. Beautiful Arrangement
     * https://leetcode.com/problems/beautiful-arrangement/

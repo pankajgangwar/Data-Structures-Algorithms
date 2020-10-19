@@ -296,11 +296,23 @@ public class AugustW4 {
 
     public void quickSort(int[] arr, int low, int high){
         if(low < high){
-            int pivot = hoarePartition(arr, low, high);
-
+            int pivot = lomutoPartition(arr, low, high);
             quickSort(arr, pivot + 1, high);
             quickSort(arr, low, pivot - 1);
         }
+    }
+
+    public int lomutoPartition(int[] arr, int low, int high ){
+        int pivot = arr[high];
+        int i = low;
+        for (int j = low; j <= high; j++) {
+            if(arr[j] < pivot){
+                swap(arr, i, j);
+                i++;
+            }
+        }
+        swap(arr, i, high);
+        return i;
     }
 
     public int hoarePartition(int[] a, int low, int high){

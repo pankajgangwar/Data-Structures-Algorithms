@@ -19,7 +19,6 @@ public class JanuaryW4 extends BaseHelper {
 
     /* https://leetcode.com/problems/kth-largest-element-in-an-array/discuss/60294/Solution-explained */
     public int findKthLargest(int[] nums, int k) {
-
         k = nums.length - k;
         int lo = 0;
         int hi = nums.length - 1;
@@ -39,9 +38,7 @@ public class JanuaryW4 extends BaseHelper {
     public int quickSelect(int[] a, int k){
         int low = 0;
         int high = a.length - 1;
-
         k = a.length - k;
-
         while(low < high) {
             int pivot = hoaresPartition(a, low, high);
             if(pivot < k){
@@ -52,7 +49,6 @@ public class JanuaryW4 extends BaseHelper {
                 break;
             }
         }
-
         return a[k];
     }
 

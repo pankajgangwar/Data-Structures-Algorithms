@@ -4,6 +4,7 @@ import com.pkumar7.TreeNode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -14,6 +15,50 @@ import java.util.PriorityQueue;
  * Created by Pankaj Kumar on 14/August/2020
  */
 class A {
+
+    /*
+     * 1631. Path With Minimum Effort
+     * https://leetcode.com/problems/path-with-minimum-effort/
+     * */
+    public int minimumEffortPath(int[][] matrix) {
+        return minimumEffortPathDijikstra(matrix);
+    }
+
+    public int minimumEffortPathDijikstra(int[][] matrix) {
+        int[][] dirs = new int[][]{{-1,0},{1,0},{0,1},{0,-1}};
+        int m = matrix.length;
+        int n = matrix[0].length;
+        PriorityQueue<int[]> pq = new PriorityQueue<>(Comparator.comparingInt(a -> a[0]));
+        int[][] distance = new int[m][n];
+        for (int i = 0; i < m; i++) {
+            Arrays.fill(distance[i], Integer.MAX_VALUE);
+        }
+        pq.offer(new int[]{0, 0, 0});
+        while (!pq.isEmpty()){
+            int size = pq.size();
+            while (size-- > 0){
+                int[] curr = pq.poll();
+                int currD = curr[0];
+                int curr_x = curr[1];
+                int curr_y = curr[2];
+                if(curr_x == m - 1 && curr_y == n - 1) {
+                    return currD;
+                }
+                for (int[] d : dirs) {
+                    int next_x = d[0] + curr_x;
+                    int next_y = d[1] + curr_y;
+                    if(next_x >= 0 && next_x < m && next_y >= 0 && next_y < n){
+                        int newDistance = Math.max(currD, Math.abs(matrix[curr_x][curr_y] - matrix[next_x][next_y]));
+                        if(distance[next_x][next_y] > newDistance){
+                            distance[next_x][next_y] = newDistance;
+                            pq.offer(new int[]{newDistance, next_x, next_y});
+                        }
+                    }
+                }
+            }
+        }
+        return 0;
+    }
 
     /*
      * https://leetcode.com/problems/maximal-network-rank/

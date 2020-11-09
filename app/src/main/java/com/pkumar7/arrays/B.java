@@ -19,6 +19,141 @@ class B {
         ArrayChallenge(arr);
     }
 
+    /* 1018. Binary Prefix Divisible By 5
+     * https://leetcode.com/problems/binary-prefix-divisible-by-5/
+     * */
+    public List<Boolean> prefixesDivBy5(int[] arr) {
+        List<Boolean> res = new ArrayList<>();
+        int remainder = 0;
+        for (int i = 0; i < arr.length; i++) {
+            remainder = (2 * remainder + arr[i]) % 5;
+            if(remainder == 0){
+                res.add(true);
+            }else{
+                res.add(false);
+            }
+        }
+        return res;
+    }
+
+    /* 548. Split Array with Equal Sum
+     * https://leetcode.com/problems/split-array-with-equal-sum/
+     * */
+    public boolean splitArray(int[] nums) {
+        int n = nums.length;
+        if(n < 7) return false;
+        int[] sum = new int[n];
+        sum[0] = nums[0];
+        for (int i = 1; i < n; i++) {
+            sum[i] = sum[i - 1] + nums[i];
+        }
+        for (int j = 3; j < n - 3; j++) {
+            HashSet<Integer> sets = new HashSet<>();
+            for (int i = 1; i < j - 1; i++) {
+                if(sum[i - 1] == sum[j - 1] - sum[i] ){
+                    sets.add(sum[i - 1]);
+                }
+            }
+            for (int k = j + 2; k < n - 1; k++) {
+                int quaterSum = sum[k - 1] - sum[j];
+                if(sum[n -1] - sum[k] == quaterSum && sets.contains(quaterSum)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /* 1646. Get Maximum in Generated Array
+    * https://leetcode.com/problems/get-maximum-in-generated-array/
+    * */
+    public int getMaximumGenerated(int n) {
+        if(n == 0) return 0;
+        if(n == 1) return 1;
+        int[] nums = new int[n + 1];
+        nums[0] = 0;
+        nums[1] = 1;
+        for (int i = 1; (2 * i + 1) <= n; i++) {
+            nums[2 * i] = nums[i];
+            nums[2 * i + 1] = nums[i] + nums[i + 1];
+        }
+        int max = Arrays.stream(nums).max().getAsInt();
+        return max;
+    }
+
+    /* 682. Baseball Game
+     * https://leetcode.com/problems/baseball-game/
+     * */
+    public int calPoints(String[] ops) {
+        ArrayList<Integer> list = new ArrayList<>();
+        for (int i = 0; i < ops.length; i++) {
+            String op = ops[i];
+            switch (op){
+                case "+": {
+                    int last = list.size() - 1;
+                    int secondLast = last - 1;
+                    list.add(list.get(last) + list.get(secondLast));
+                    break;
+                }
+                case "C":
+                    list.remove(list.size() - 1);
+                    break;
+                case "D": {
+                    int last = list.size() - 1;
+                    list.add(list.get(last) * 2);
+                    break;
+                }
+                default:
+                    list.add(Integer.valueOf(op));
+            }
+        }
+        int sum = 0;
+        for (int x : list){
+            sum += x;
+        }
+        return sum;
+    }
+
+    /* 867. Transpose Matrix
+     * https://leetcode.com/problems/transpose-matrix/
+     * */
+    public int[][] transpose(int[][] grid) {
+        int i = 0, j = 0;
+        int rows = grid.length;
+        int cols = grid[0].length;
+        int[][] res = new int[cols][rows];
+        while (i < rows && j < cols){
+            int tempr = 0;
+            int tempc = 0;
+            while (tempr <= i && tempc <= j){
+                int first = grid[tempr][j];
+                int second = grid[i][tempc];
+                res[tempr][j] = second;
+                res[i][tempc] = first;
+                tempr++;
+                tempc++;
+            }
+            i++;
+            j++;
+        }
+        if(rows == cols){
+            return res;
+        }else{
+            res = new int[cols][rows];
+            int tempR = 0, tempC = 0;
+            for (int k = 0; k < rows; k++) {
+                for (int l = 0; l < cols; l++) {
+                    if(tempR == cols){
+                        tempR = 0;
+                        tempC++;
+                    }
+                    res[tempR++][tempC] = grid[k][l];
+                }
+            }
+        }
+        return res;
+    }
+
     /* 1624. Largest Substring Between Two Equal Characters
      * https://leetcode.com/problems/largest-substring-between-two-equal-characters/
      * */

@@ -21,10 +21,67 @@ public class AugustW2 {
 
         //searchRange(new int[]{1,2,3}, 2);
        // numRollsToTarget(30,30,500);
-        AugustW2 w2 = new AugustW2();
-        w2.findWords(new String[]{"Alaska"});
+        AugustW2 current = new AugustW2();
+        current.findWords(new String[]{"Alaska"});
+
+        String[][] codeList1 = { { "apple", "apple" }, { "banana", "anything", "banana" } };
+        String[] shoppingCart1 = {"orange", "apple", "apple", "banana", "orange", "banana"};
+        String[][] codeList2 = { { "apple", "apple" }, { "banana", "anything", "banana" } };
+        String[] shoppingCart2 = {"banana", "orange", "banana", "apple", "apple"};
+        String[][] codeList3 = { { "apple", "apple" }, { "banana", "anything", "banana" } };
+        String[] shoppingCart3 = {"apple", "banana", "apple", "banana", "orange", "banana"};
+        String[][] codeList4 = { { "apple", "apple" }, { "apple", "apple", "banana" } };
+        String[] shoppingCart4 = {"apple", "apple", "apple", "banana"};
+        String[][] codeList5 = { { "apple", "apple" }, { "banana", "anything", "banana" } };
+        String[] shoppingCart5 = {"orange", "apple", "apple", "banana", "orange", "banana"};
+        String[][] codeList6 = { { "apple", "apple" }, { "banana", "anything", "banana" }  };
+        String[] shoppingCart6 = {"apple", "apple", "orange", "orange", "banana", "apple", "banana", "banana"};
+        String[][] codeList7= { { "anything", "apple" }, { "banana", "anything", "banana" }  };
+        String[] shoppingCart7 = {"orange", "grapes", "apple", "orange", "orange", "banana", "apple", "banana", "banana"};
+        String[][] codeList8 = {{"apple", "orange"}, {"orange", "banana", "orange"}};
+        String[] shoppingCart8 = {"apple", "orange", "banana", "orange", "orange", "banana", "orange", "grape"};
+        String[][] codeList9= { { "anything", "anything", "anything", "apple" }, { "banana", "anything", "banana" }  };
+        String[] shoppingCart9 = {"orange", "apple", "banana", "orange", "apple", "orange", "orange", "banana", "apple", "banana"};
+
+        current.test(codeList1, shoppingCart1, 1);
+        current.test(codeList2, shoppingCart2, 0);
+        current.test(codeList3, shoppingCart3, 0);
+        current.test(codeList4, shoppingCart4, 0);
+        current.test(codeList5, shoppingCart5, 1);
+        current.test(codeList6, shoppingCart6, 1);
+        current.test(codeList7, shoppingCart7, 1);
+        current.test(codeList8, shoppingCart8, 1);
+        current.test(codeList9, shoppingCart9, 1);
 
     }
+
+    /*
+     * https://leetcode.com/playground/AyfL3bAQ
+     * */
+    public void test(String[][] codeList, String[] shoppingCart, int expect) {
+        System.out.println(isCustomerWinner(codeList, shoppingCart) == expect);
+    }
+
+    public int isCustomerWinner(String[][] codeList, String[] shoppingCart){
+        int i = 0, j = 0;
+        while (i < codeList.length && j + codeList[i].length <= shoppingCart.length){
+            boolean match = true;
+            for (int k = 0; k < codeList[i].length; k++) {
+                if(!codeList[i][k].equals("anything") && !codeList[i][k].equals(shoppingCart[j+k])){
+                    match = false;
+                    break;
+                }
+            }
+            if(match){
+                j += codeList[i].length;
+                i++;
+            }else{
+                j++;
+            }
+        }
+        return (i == codeList.length) ? 1 : 0;
+    }
+
 
     /****
      * 304. Range Sum Query 2D - Immutable

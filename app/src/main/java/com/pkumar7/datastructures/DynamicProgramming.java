@@ -157,10 +157,8 @@ public class DynamicProgramming {
     }
 	
 	//Longest common subsequence
-	
 	static int[] longestCommonSubsequence(int[] a, int[] b) {
 		int[] result = lcsRecursive(a, b, a.length, b.length);
-
 		for (int i = 0; i < result.length -1; i++) {
 			System.out.print(result[i] + " , " );
 		}
@@ -207,7 +205,6 @@ public class DynamicProgramming {
 	 Longest common subsequence
 	 */
 	public boolean isSubsequence(String s, String t) {
-
         //int length = subSequenceDP(s.toCharArray(), t.toCharArray());
         //return length == s.length();
 		boolean res = isSubSequence(s, t);

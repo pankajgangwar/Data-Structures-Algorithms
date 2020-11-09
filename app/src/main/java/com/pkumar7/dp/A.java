@@ -3,7 +3,9 @@ package com.pkumar7.dp;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.PriorityQueue;
+import java.util.Set;
 
 /**
  * Created by Pankaj Kumar on 16/August/2020
@@ -13,6 +15,60 @@ class A {
     public static void main(String[] args) {
         A curr = new A();
         curr.stoneGameV(new int[]{6,2,3,4,5,5});
+    }
+
+    /* 1531. String Compression II
+     * https://leetcode.com/problems/string-compression-ii/
+     * */
+    Integer[][][][]dp;
+    Set<Integer> add = new HashSet<>(Arrays.asList(1, 9, 99));
+    public int getLengthOfOptimalCompression(String s, int k) {
+        dp = new Integer[s.length() + 1][27][s.length() + 1][k + 1];
+        return dfs(s, 0, (char)('a' + 26), 0, k);
+    }
+    public int dfs(String s, int idx, char prevChar, int prevCharCount, int k){
+        if(k < 0) return Integer.MAX_VALUE;
+        if(idx >= s.length()) return 0;
+        if(dp[idx][prevChar - 'a'][prevCharCount][k] != null) return dp[idx][prevChar - 'a'][prevCharCount][k];
+        int res = 0;
+        if(s.charAt(idx) == prevChar) {
+            res = dfs(s, idx + 1, prevChar, prevCharCount + 1, k) +
+                    (add.contains(prevCharCount) ? 1 : 0);
+        }else{
+            res = Math.min(dfs(s, idx + 1, s.charAt(idx), 1, k) + 1,
+                    dfs(s, idx + 1, prevChar, prevCharCount, k - 1 ));
+        }
+        dp[idx][prevChar - 'a'][prevCharCount][k] = res;
+        return dp[idx][prevChar - 'a'][prevCharCount][k];
+    }
+
+    /* 651. 4 Keys Keyboard
+     * https://leetcode.com/problems/4-keys-keyboard/
+     * */
+    public int maxA(int n){
+        return dpMaxA(n);
+    }
+
+    public int dfs(int n){
+        if(n <= 6){
+            return n;
+        }
+        int max = n;
+        for(int i = 1; i < n - 2; i++){
+            max = Math.max(max, dfs(i) * (n - i - 1) );
+        }
+        return max;
+    }
+
+    public int dpMaxA(int n){
+        int[] dp = new int[n + 1];
+        for (int i = 1; i <= n; i++) {
+            dp[i] = i;
+            for (int j = 1; i <= i - 3 ; i++) {
+                dp[i] = Math.max(dp[i], dp[j] * ( i - j - 1));
+            }
+        }
+        return dp[n];
     }
 
     /*
@@ -284,12 +340,12 @@ class A {
     /*1553. Minimum Number of Days to Eat N Oranges
     * https://leetcode.com/problems/minimum-number-of-days-to-eat-n-oranges/
     * */
-    HashMap<Integer, Integer> dp = new HashMap<>();
+    HashMap<Integer, Integer> dpDays = new HashMap<>();
     public int minDaysDp(int n) {
         if(n <= 1) return n;
-        if(dp.containsKey(n)) return dp.get(n);
+        if(dpDays.containsKey(n)) return dpDays.get(n);
         int res = 1 + Math.min(n % 2 + minDaysDp(n / 2), n % 3 + minDaysDp(n / 3));
-        dp.put(n, res);
+        dpDays.put(n, res);
         return res;
     }
 }

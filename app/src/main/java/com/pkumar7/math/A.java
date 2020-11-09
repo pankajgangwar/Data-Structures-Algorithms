@@ -19,6 +19,24 @@ class A {
         System.out.println("num = " + num);
     }
 
+    /* 1180. Count Substrings with Only One Distinct Letter
+     * https://leetcode.com/problems/count-substrings-with-only-one-distinct-letter/
+     * */
+    public int countLetters(String s) {
+        int j = 0;
+        int res = 0;
+        for (int i = 0; i < s.length();) {
+            j = i;
+            while (j < s.length() && s.charAt(i) == s.charAt(j)){
+                j++;
+            }
+            int n = j - i;
+            res += (n * (n + 1) / 2);
+            i = j;
+        }
+        return res;
+    }
+
     /* 1610. Maximum Number of Visible Points
      * https://leetcode.com/problems/maximum-number-of-visible-points/
      */

@@ -1,13 +1,96 @@
 package com.pkumar7.heap;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 /**
  * Created by Pankaj Kumar on 29/August/2020
  */
 class A {
+
+    /* 1629. Slowest Key
+     * https://leetcode.com/problems/slowest-key/
+     * */
+
+    class Pair{
+        int time;
+        char ch;
+        public Pair(int time, char ch){
+            this.ch = ch;
+            this.time = time;
+        }
+    }
+    public char slowestKey(int[] releaseTimes, String keysPressed) {
+        int maxTime = releaseTimes[0];
+        PriorityQueue<Pair> pq = new PriorityQueue<>((a,b) -> a.time == b.time ? b.ch - a.ch : b.time - a.time);
+        pq.offer(new Pair(maxTime, keysPressed.charAt(0)));
+        char ch = 'a';
+        for (int i = 1; i < keysPressed.length(); i++) {
+            int curr = releaseTimes[i] - releaseTimes[i - 1];
+            if(curr >= maxTime){
+                pq.offer(new Pair(curr, keysPressed.charAt(i)));
+            }
+        }
+        return pq.peek().ch;
+    }
+
+
+    /* 1647. Minimum Deletions to Make Character Frequencies Unique
+    *https://leetcode.com/problems/minimum-deletions-to-make-character-frequencies-unique/
+    * */
+    class Entry {
+        int freq;
+        LinkedList<Character> charsList;
+        public Entry(int currF, LinkedList<Character> list){
+            this.freq = currF;
+            this.charsList = list;
+        }
+    }
+    public int minDeletions(String s) {
+        TreeMap<Integer, LinkedList<Character>> map = new TreeMap<>(Collections.reverseOrder());
+        HashMap<Character, Integer> freqMap = new HashMap<>();
+        for (int i = 0; i < s.length(); i++) {
+            freqMap.put(s.charAt(i), freqMap.getOrDefault(s.charAt(i), 0) + 1);
+        }
+        PriorityQueue<Entry> pq = new PriorityQueue<Entry>((a,b) -> b.freq - a.freq);
+
+        for (Map.Entry<Character, Integer> entry : freqMap.entrySet()) {
+            int fr = entry.getValue();
+            char ch = entry.getKey();
+            map.putIfAbsent(fr, new LinkedList<>());
+            map.get(fr).add(ch);
+        }
+        for(Map.Entry<Integer, LinkedList<Character>> entry : map.entrySet()){
+            pq.offer(new Entry(entry.getKey(), entry.getValue()));
+        }
+        int deletion = 0;
+        while (!pq.isEmpty()){
+            Entry highest = pq.poll();
+            int currFreq = highest.freq;
+            LinkedList<Character> chars = highest.charsList;
+            if(chars.size() > 1){
+                char removed = chars.pollFirst();
+                if(!pq.isEmpty() && pq.peek().freq == currFreq - 1){
+                    Entry second = pq.poll();
+                    second.charsList.add(removed);
+                    pq.offer(second);
+                }else if(currFreq > 1){
+                    LinkedList<Character> secList = new LinkedList<>();
+                    secList.add(removed);
+                    pq.offer(new Entry(currFreq - 1,  secList));
+                }
+                pq.offer(highest);
+                deletion++;
+            }
+        }
+        return deletion;
+    }
 
     /*
      * 1578. Minimum Deletion Cost to Avoid Repeating Letters

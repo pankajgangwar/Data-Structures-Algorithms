@@ -16,6 +16,103 @@ class A {
 
     }
 
+    /* 954. Array of Doubled Pairs
+     * https://leetcode.com/problems/array-of-doubled-pairs/
+     * */
+    public boolean canReorderDoubled(int[] arr) {
+        TreeMap<Integer, Integer> freqMap = new TreeMap<>();
+        for(int x : arr){
+            freqMap.put(x, freqMap.getOrDefault(x, 0) + 1);
+        }
+        for(int x : freqMap.keySet()){
+            if(freqMap.get(x) == 0) continue;
+            int need = x < 0 ? (x / 2) : (x * 2);
+            if(x < 0 && x % 2 != 0 || freqMap.get(x) > freqMap.getOrDefault(need, 0)){
+                return false;
+            }
+            freqMap.put(need, freqMap.get(need) - freqMap.get(x));
+        }
+        return true;
+    }
+
+
+    /* 1138. Alphabet Board Path
+     * https://leetcode.com/problems/alphabet-board-path/
+     * */
+    public String alphabetBoardPath(String target) {
+        char[][] board = new char[6][5];
+        char ch = 'a';
+        HashMap<Character, int[]> locMap = new HashMap<>();
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                board[i][j] = ch++;
+                locMap.put(board[i][j], new int[]{i, j});
+                if(ch > 'z')break;
+            }
+        }
+        StringBuilder in = new StringBuilder(target);
+        StringBuilder out = new StringBuilder();
+        int i = 0, j = 0;
+        while (in.length() > 0){
+            char cur = in.charAt(0);
+            in.deleteCharAt(0);
+            int[] dest = locMap.get(cur);
+            while (i != dest[0] || j != dest[1]){
+                while (i < dest[0] && isValid(i + 1, j, board) ){
+                    out.append("D");
+                    i++;
+                }
+                while (dest[0] < i && isValid(i - 1, j, board)){
+                    out.append("U");
+                    i--;
+                }
+                while (j < dest[1] && isValid(i, j + 1, board)){
+                    out.append("R");
+                    j++;
+                }
+                while (dest[1] < j && isValid(i, j - 1, board)){
+                    out.append("L");
+                    j--;
+                }
+            }
+            if(i == dest[0] && j == dest[1]){
+                out.append("!");
+            }
+        }
+        return out.toString();
+    }
+
+    public boolean isValid(int i, int j, char[][] board){
+        if(board[i][j] >= 'a' && board[i][j] <= 'z') return true;
+        return false;
+    }
+
+    /* 791. Custom Sort String
+     * https://leetcode.com/problems/custom-sort-string/
+     * */
+    public String customSortString(String s, String t) {
+        HashMap<Character, Integer> map = new HashMap<>();
+        StringBuilder fromT = new StringBuilder();
+        for (int i = 0; i < t.length(); i++) {
+            map.put(t.charAt(i), map.getOrDefault(t.charAt(i), 0) + 1);
+            if(s.indexOf(t.charAt(i)) < 0){
+                fromT.append(t.charAt(i));
+            }
+        }
+        StringBuilder out = new StringBuilder();
+        for (int i = 0; i < s.length(); i++) {
+            if(map.containsKey(s.charAt(i))){
+                int freq = map.get(s.charAt(i));
+                while (freq-- > 0){
+                    out.append(s.charAt(i));
+                }
+            }
+        }
+        out.append(fromT);
+        return out.toString();
+    }
+
+
     /*
     * 933. Number of Recent Calls
     * https://leetcode.com/problems/number-of-recent-calls/

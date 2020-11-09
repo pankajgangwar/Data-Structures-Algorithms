@@ -15,6 +15,8 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.TreeMap;
 
+import sun.reflect.generics.tree.Tree;
+
 public class JanuaryW4 extends BaseHelper {
 
     /* https://leetcode.com/problems/kth-largest-element-in-an-array/discuss/60294/Solution-explained */
@@ -164,28 +166,12 @@ public class JanuaryW4 extends BaseHelper {
 
     /* https://leetcode.com/problems/rank-transform-of-an-array/ */
     public int[] arrayRankTransform(int[] arr) {
-        int[] copy = Arrays.copyOf(arr, arr.length);
         int[] result = new int[arr.length];
-        Set<Integer> sets = new HashSet<Integer>();
-        int dup = 0;
-        for (int i = 0; i < copy.length; i++) {
-            if(!sets.add(copy[i])){
-                dup++;
-            }
-        }
-
-        int[] res = new int[arr.length - dup];
-        Iterator<Integer> it = sets.iterator();
-        int idx = 0;
-        while (it.hasNext()){
-            res[idx] = it.next();
-            idx++;
-        }
-        Arrays.sort(res);
-        for (int i = 0; i < arr.length; i++) {
-            int found = Arrays.binarySearch(res, arr[i]);
-            result[i] = found + 1;
-        }
+        HashMap<Integer, Integer> hashMap = new HashMap<>();
+        int[] sortedArr = Arrays.copyOf(arr, arr.length);
+        Arrays.sort(sortedArr);
+        for(int i = 0; i < arr.length; i++)  hashMap.putIfAbsent(sortedArr[i], hashMap.size() + 1);
+        for(int i = 0; i < arr.length; i++)  result[i] = hashMap.get(arr[i]);
         return result;
     }
 

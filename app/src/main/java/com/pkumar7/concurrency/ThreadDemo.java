@@ -30,8 +30,8 @@ public class ThreadDemo {
             }
         });
 
-        //producer.start();
-       // consumer.start();
+        producer.start();
+        consumer.start();
         try {
             producer.join();
             consumer.join();
@@ -39,23 +39,24 @@ public class ThreadDemo {
             e.printStackTrace();
         }
 
-        /*Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+        /*Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
         YieldSample yieldDemo = new YieldSample();
-        yieldDemo.setPriority(Thread.MIN_PRIORITY);
+        yieldDemo.setPriority(Thread.MAX_PRIORITY);
         yieldDemo.start();
 
         for (int i = 0; i < 5; i++) {
+            Thread.yield();
             System.out.println(Thread.currentThread().getName() + " in control");
         }*/
 
-        ResourceLock lock = new ResourceLock();
+        /*ResourceLock lock = new ResourceLock();
         ThreadA threadA = new ThreadA(lock); // Prints 0
         ThreadB threadB = new ThreadB(lock); // Prints even
         ThreadC threadC = new ThreadC(lock); // Prints odd
 
         threadA.start();
         threadB.start();
-        threadC.start();
+        threadC.start();*/
     }
 
     /*
@@ -207,8 +208,8 @@ public class ThreadDemo {
         @Override
         public void run() {
             for (int i = 1; i < 6; i++) {
-                Thread.yield();
-                System.out.println(" YieldSample in control");
+                //Thread.yield();
+                System.out.println(" Child thread in control");
             }
         }
     }

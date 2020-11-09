@@ -15,6 +15,58 @@ class B {
         System.out.println("status = " + status);
     }
 
+    /*
+     *1573. Number of Ways to Split a String
+     *https://leetcode.com/problems/number-of-ways-to-split-a-string/
+     */
+    public int numWays(String s) {
+        int count1 = 0;
+        int n = s.length();
+        int mod = (int)1e9 + 7;
+        for(int i = 0; i < n; i++){
+            count1 += (int)(s.charAt(i) - '0');
+        }
+        if(count1 == 0) return (int)(((n - 1L) * (n - 2L)) / 2) % mod;
+        if(count1 % 3 != 0) return 0;
+        int need = count1 / 3;
+        long x = 0, y = 0;
+        for(int i = 0, count = 0; i < n; i++){
+            count += s.charAt(i) - '0';
+            if(count == need){
+                ++x;
+            }else if(count == 2 * need){
+                ++y;
+            }
+        }
+        return (int)(x * y % mod);
+    }
+
+    public int numWays1(String s) {
+        int ones = 0, n = s.length();
+        int m = 1_000_000_007;
+        for (int i = 0; i < n; ++i) {
+            ones += s.charAt(i) - '0';
+        }
+        if (ones == 0) {
+            return (int)((n - 2L) * (n - 1L) / 2 % m);
+        }
+        if (ones % 3 != 0) {
+            return 0;
+        }
+        int onesInEachSplitedBlock = ones / 3;
+        long waysOfFirstCut = 0, waysOfSecondCut = 0;
+        for (int i = 0, count = 0; i < n; ++i) {
+            count += s.charAt(i) - '0';
+            if (count == onesInEachSplitedBlock) {
+                ++waysOfFirstCut;
+            }else if (count == 2 * onesInEachSplitedBlock) {
+                ++waysOfSecondCut;
+            }
+        }
+        return (int)(waysOfFirstCut * waysOfSecondCut % m);
+    }
+
+
     /* 1616. Split Two Strings to Make Palindrome
      * https://leetcode.com/problems/split-two-strings-to-make-palindrome/
      * */

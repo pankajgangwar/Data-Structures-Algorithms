@@ -1,9 +1,14 @@
 package com.pkumar7.greedy;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+import java.util.TreeMap;
 
 /**
  * Created by Pankaj Kumar on 13/August/2020
@@ -13,6 +18,94 @@ class A {
         A curr = new A();
         boolean status = curr.isTransformable("4941","1494");
         System.out.println("status = " + status);
+    }
+
+    /* 1632. Rank Transform of a Matrix
+     * https://leetcode.com/problems/rank-transform-of-a-matrix/
+     * */
+    public int[][] matrixRankTransform(int[][] matrix) {
+        int m = matrix.length;
+        int n = matrix[0].length;
+        HashMap<Integer, HashMap<Integer, ArrayList<Integer>>> graphs = new HashMap<>();
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                int val = matrix[i][j];
+                graphs.putIfAbsent(val, new HashMap<Integer, ArrayList<Integer>>());
+                HashMap<Integer, ArrayList<Integer>> graph = graphs.get(val);
+                graph.putIfAbsent(i, new ArrayList<>());
+                graph.putIfAbsent(~j, new ArrayList<>());
+                graph.get(i).add(~j);
+                graph.get(~j).add(i);
+            }
+        }
+        int[][] seen = new int[m][n];
+        TreeMap<Integer, List<List<int[]>>> value2Index = new TreeMap<>();
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if(seen[i][j] == 1)continue;
+                seen[i][j] = 1;
+                int val = matrix[i][j];
+                HashMap<Integer, ArrayList<Integer>> g = graphs.get(val);
+                List<int[]> points = new ArrayList<>();
+                points.add(new int[]{i, j});
+                Queue<int[]> q = new LinkedList<>();
+                q.offer(new int[]{i, j});
+                while (!q.isEmpty()){
+                    int[] curr = q.poll();
+                    int row = curr[0];
+                    for(int col : g.get(row)){
+                        if(seen[row][~col] == 0){
+                            seen[row][~col] = 1;
+                            points.add(new int[]{row, ~col});
+                            q.offer(new int[]{row, ~col});
+                        }
+                    }
+                    int currCol = curr[1];
+                    for(int r : g.get(~curr[1])){
+                        if(seen[r][currCol] == 0){
+                            seen[r][currCol] = 1;
+                            points.add(new int[]{r, currCol});
+                            q.offer(new int[]{r, currCol});
+                        }
+                    }
+                }
+                value2Index.putIfAbsent(val, new ArrayList<>());
+                value2Index.get(val).add(points);
+            }
+        }
+        int[][] answer = new int[m][n];
+        int[] rowMax = new int[m];
+        int[] colMax = new int[n];
+        for(int v : value2Index.keySet()){
+            for(List<int[]> point : value2Index.get(v)){
+                int rank = 1;
+                for(int[] p : point){
+                    rank = Math.max(rank, Math.max(rowMax[p[0]], colMax[p[1]]) + 1);
+                }
+                for(int[] p : point){
+                    answer[p[0]][p[1]] = rank;
+                    rowMax[p[0]] = Math.max(rowMax[p[0]], rank);
+                    colMax[p[1]] = Math.max(colMax[p[1]], rank);
+                }
+            }
+        }
+        return answer;
+    }
+
+    /* 455. Assign Cookies
+     * https://leetcode.com/problems/assign-cookies/
+     * */
+    public int findContentChildren(int[] g, int[] s) {
+        Arrays.sort(g);
+        Arrays.sort(s);
+        int pointerG = 0, pointerS = 0;
+        while (pointerG < g.length && pointerS < s.length){
+            if(g[pointerG] <= s[pointerS]){
+                pointerG++;
+            }
+            pointerS++;
+        }
+        return pointerG;
     }
 
     /* 1599. Maximum Profit of Operating a Centennial Wheel

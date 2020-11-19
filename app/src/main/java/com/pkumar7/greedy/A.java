@@ -20,6 +20,27 @@ class A {
         System.out.println("status = " + status);
     }
 
+    /*
+     * 1648. Sell Diminishing-Valued Colored Balls
+     * https://leetcode.com/problems/sell-diminishing-valued-colored-balls/
+     * */
+    public int maxProfit(int[] inventory, int orders) {
+        long colors = 1, res = 0;
+        int mod = (int)1e9 + 7;
+        Arrays.sort(inventory);
+        for (int i = inventory.length - 1; i >= 0 && orders > 0; --i, ++colors) {
+            long cur = inventory[i], prev = (i > 0) ? inventory[i - 1] : 0;
+            long rounds = Math.min(orders / colors, cur - prev);
+            orders -= rounds * colors;
+            res = (res + (cur * (cur + 1 ) - (cur - rounds) * (cur - rounds + 1)) / 2 * colors) % mod;
+            if(cur - prev > rounds){
+                res = (res + orders * (cur - rounds)) % mod;
+                break;
+            }
+        }
+        return (int)res;
+    }
+
     /* 1632. Rank Transform of a Matrix
      * https://leetcode.com/problems/rank-transform-of-a-matrix/
      * */

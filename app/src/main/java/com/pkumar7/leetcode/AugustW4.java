@@ -806,46 +806,7 @@ public class AugustW4 {
         return result;
     }
 
-    /** 66. Plus One
-     * https://leetcode.com/problems/plus-one/
-     * Input: [1,2,3]
-     * Output: [1,2,4]
-     * Explanation: The array represents the integer 123.
-     *
-     * [0,0,7,9]
-     * [0,0,8,0]
-     *
-     * [9,9,9,9,9]
-     * [1,0,0,0,0,0]
-     *
-     *
-     * */
-    public int[] plusOne(int[] digits) {
-        int n = digits.length;
-        int []result_arr = new int[digits.length + 1];
 
-        int carry = 0;
-        for (int i = n - 1; i >= 0; i--) {
-            int sum = 0;
-            if(i == n -1){
-                sum = digits[i] + 1;
-            }else{
-                sum = digits[i] + carry;
-            }
-            if(sum > 9){
-                carry = sum / 9;
-                result_arr[i] = 0;
-            }else{
-                result_arr[i] = sum;
-                carry = 0;
-            }
-        }
-        if(carry > 0){
-            result_arr[0] = carry;
-            return result_arr;
-        }
-        return Arrays.copyOfRange(result_arr,0,result_arr.length -1);
-    }
 
     /**
      * Important

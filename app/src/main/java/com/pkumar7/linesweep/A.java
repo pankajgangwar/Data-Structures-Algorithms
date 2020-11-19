@@ -7,6 +7,33 @@ import java.util.Arrays;
  */
 class A {
 
+    /*1589. Maximum Sum Obtained of Any Permutation
+     * https://leetcode.com/problems/maximum-sum-obtained-of-any-permutation/
+     * */
+    public int maxSumRangeQuery(int[] nums, int[][] requests) {
+        int n = nums.length;
+        int[] freq = new int[n];
+        for (int i = 0; i < requests.length; i++) {
+            int from = requests[i][0];
+            int to = requests[i][1];
+            freq[from] += 1;
+            if(to + 1 < n){
+                freq[to + 1] -= 1;
+            }
+        }
+        for (int i = 1; i < n; i++) {
+            freq[i] += freq[i - 1];
+        }
+        Arrays.sort(freq);
+        Arrays.sort(nums);
+        long mod = (long)1e9+7;
+        long res = 0;
+        for (int i = 0; i < n; i++) {
+            res += ((long)nums[i] * freq[i]) % mod;
+        }
+        return (int)(res % mod);
+    }
+
     /* 1288. Remove Covered Intervals
         https://leetcode.com/problems/remove-covered-intervals/
     */

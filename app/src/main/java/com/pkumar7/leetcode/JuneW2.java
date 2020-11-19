@@ -473,26 +473,17 @@ class JuneW2 {
     }
     public int lengthOfLisDP(int[] nums) {
         int LIS[] = new int[nums.length];
-
         for(int i = 0; i < nums.length; i++){
             LIS[i] = 1;
         }
-
         for(int i = 1; i < nums.length; i++){
             for(int j = 0; j < i; j++){
-                if(nums[i] > nums[j]){
+                if(nums[j] < nums[i]){
                     LIS[i] = Math.max(LIS[i], LIS[j]+1);
                 }
             }
         }
-
-        int max = 0;
-        for(int i = 0; i < LIS.length; i++){
-            if(max < LIS[i]){
-                max = LIS[i];
-            }
-        }
-        return max;
+        return Arrays.stream(LIS).max().getAsInt();
     }
 
     public int lengthOfLISPatienceSort(int[] nums) {

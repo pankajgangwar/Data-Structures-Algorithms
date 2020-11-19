@@ -2,18 +2,144 @@ package com.pkumar7.bfs;
 
 import com.pkumar7.TreeNode;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Queue;
 
 /**
  * Created by Pankaj Kumar on 16/August/2020
  */
 class A {
+
+    /* 711. Number of Distinct Islands II
+    * https://leetcode.com/problems/number-of-distinct-islands-ii/
+    * https://en.wikipedia.org/wiki/Dihedral_group
+    * */
+    public int numDistinctIslands2(int[][] grid) {
+        if(grid == null || grid.length == 0 || grid[0].length == 0 ) return 0;
+        int m = grid.length;
+        int n = grid[0].length;
+        HashSet<String> islands = new HashSet<>();
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if(grid[i][j] == 1){
+                    List<int[]> cells = new ArrayList<>();
+                    dfs(grid, i, j, cells);
+                    String key = findDihedral(cells);
+                    islands.add(key);
+                }
+            }
+        }
+        return islands.size();
+    }
+    int[][] trans = new int[][]{{1,1},{1,-1},{-1,1},{-1,-1}};
+    private String findDihedral(List<int[]> cells) {
+        List<String> forms = new ArrayList<>();
+        for(int[] ts : trans){
+            List<int[]> list1 = new ArrayList<>();
+            List<int[]> list2 = new ArrayList<>();
+            for(int[] c : cells){
+                list1.add(new int[]{c[0]*ts[0], c[1]*ts[1]});
+                list2.add(new int[]{c[1]*ts[1], c[0]*ts[0]});
+            }
+            forms.add(getKey(list1));
+            forms.add(getKey(list2));
+        }
+        Collections.sort(forms);
+        return forms.get(0);
+    }
+
+    private String getKey(List<int[]> cells) {
+        Collections.sort(cells, (a,b) -> a[0] == b[0] ? a[1] - b[1] : a[0] - b[0]);
+        StringBuilder out = new StringBuilder();
+        int x = cells.get(0)[0], y = cells.get(0)[1];
+        for(int[] c : cells){
+            out.append((c[0]-x) + ":" + (c[1]-y) + ":");
+        }
+        return out.toString();
+    }
+
+    private void dfs(int[][] grid, int curr_x, int curr_y, List<int[]> cells) {
+        int m = grid.length;
+        int n = grid[0].length;
+        cells.add(new int[]{curr_x, curr_y});
+        int[][] dirs = new int[][]{{1,0},{-1,0},{0,1},{0,-1}};
+        grid[curr_x][curr_y] = 0;
+        for (int i = 0; i < dirs.length; i++) {
+             int next_x = dirs[i][0] + curr_x;
+             int next_y = dirs[i][1] + curr_y;
+             if(next_x >= 0 && next_x < m && next_y >= 0 && next_y < n &&
+                                grid[next_x][next_y] == 1){
+                 dfs(grid, next_x, next_y, cells);
+             }
+        }
+    }
+
+    /*
+     * 675. Cut Off Trees for Golf Event
+     * https://leetcode.com/problems/cut-off-trees-for-golf-event/
+     * */
+    public int cutOffTree(List<List<Integer>> forest) {
+        PriorityQueue<int[]> queue = new PriorityQueue<>( (a, b) -> a[0] - b[0]); // [height, x, y]
+        int[][] matrix = new int[forest.size()][forest.get(0).size()];
+        for(int i = 0; i < forest.size(); i++){
+            for (int j = 0; j < forest.get(i).size(); j++) {
+                int h = forest.get(i).get(j);
+                if(h == 0)continue;
+                queue.offer(new int[]{h, i, j});
+                matrix[i][j] = h;
+            }
+        }
+        int res = 0;
+        int[] src = new int[2];
+        while (!queue.isEmpty()){
+            int[] next = queue.poll();
+            int[] dest = new int[]{next[1], next[2]};
+            int steps = minSteps(matrix, src, dest);
+            if(steps == -1){
+                return -1;
+            }
+            res += steps;
+            src = dest;
+        }
+        return res;
+    }
+
+    public int minSteps(int[][] matrix, int[] src, int[] dest){
+        int m = matrix.length;
+        int n = matrix[0].length;
+        boolean[][] visited = new boolean[m][n];
+        visited[src[0]][src[1]] = true;
+        Queue<int[]> q = new LinkedList<>();
+        q.offer(src);
+        int steps = 0;
+        int[][] dirs = new int[][]{{1,0},{-1,0},{0,1},{0,-1}};
+        while (!q.isEmpty()){
+            int size = q.size();
+            while (size-- > 0){
+                int[]curr = q.poll();
+                if(Arrays.equals(curr, dest)) return steps;
+                for (int i = 0; i < dirs.length; i++) {
+                    int next_x = curr[0] + dirs[i][0];
+                    int next_y = curr[1] + dirs[i][1];
+                    if(next_x >=0 && next_x < m && next_y >= 0 && next_y < n
+                            && matrix[next_x][next_y] != 0 && !visited[next_x][next_y]){
+                        q.offer(new int[]{next_x, next_y});
+                        visited[next_x][next_y] = true;
+                    }
+                }
+            }
+            steps++;
+        }
+        return -1;
+    }
 
     /*
      * 1609. Even Odd Tree

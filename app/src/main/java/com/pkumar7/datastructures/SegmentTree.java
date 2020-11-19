@@ -1,4 +1,6 @@
-package com.pkumar7.algorithms;
+package com.pkumar7.datastructures;
+
+import java.util.Arrays;
 
 public class SegmentTree {
 
@@ -54,7 +56,6 @@ public class SegmentTree {
     }
 
     public int getSum(int[] segTree, int n, int qs, int qe) {
-        // Check for erroneous input values
         if (qs < 0 || qe > n - 1 || qs > qe) {
             System.out.println("Invalid Input");
             return -1;
@@ -97,7 +98,6 @@ public class SegmentTree {
     void updateValueUtil(int[] segTree, int ss, int se, int i, int diff, int pos) {
         if (i < ss || i > se)
             return;
-
         segTree[pos] = segTree[pos] + diff;
         if (se != ss) {
             int mid = getMid(ss, se);
@@ -112,11 +112,8 @@ public class SegmentTree {
             System.out.println("Invalid Input");
             return;
         }
-
         int diff = new_val - arr[i];
-
         arr[i] = new_val;
-
         updateValueUtil(segTree, 0, n - 1, i, diff, 0);
     }
 
@@ -136,18 +133,82 @@ public class SegmentTree {
      * https://leetcode.com/problems/range-sum-query-immutable/
      * 303. Range Sum Query - Immutable
      * */
-    static int []arr = new int[]{-2, 0, 3, -5, 2, -1};
-    public static int sumRange(int i, int j) {
-        int sum = 0;
-        if(i < 0 || j > arr.length){
-            return sum;
+    class NumArray {
+        int []arr;
+        int[] segTree;
+        int n;
+        public NumArray(int[] nums) {
+            n = nums.length;
+            arr = nums;
+            if(n <= 0){
+                return ;
+            }
+            segTree = createSegmentTree(nums);
+        }
+        public int nextPowerOf2(int num){
+            if(num ==0){
+                return 1;
+            }
+            if(num > 0 && (num & (num-1)) == 0){
+                return num;
+            }
+            while((num & (num-1)) > 0){
+                num = num & (num-1);
+            }
+            return num<<1;
         }
 
-        for (; i <= j ; i++) {
-            sum += arr[i];
+        public int[] createSegmentTree(int[] input){
+            int nextPowerOfTwo = nextPowerOf2(input.length);
+            int[] seg_tree = new int[nextPowerOfTwo * 2 - 1];
+            for (int i = 0; i < seg_tree.length; i++) {
+                seg_tree[i] = Integer.MAX_VALUE;
+            }
+            constructSumTree(input, seg_tree,0, input.length -1,0);
+            return seg_tree;
         }
-        System.out.print("Sum: --> " + sum);
-        return sum;
+
+        public void constructSumTree(int[] input, int[] segTree, int low, int high, int pos){
+            if(low == high){
+                segTree[pos] = input[low];
+                return;
+            }
+            int mid = (low + high)/2;
+            constructSumTree(input, segTree, low, mid, 2*pos + 1);
+            constructSumTree(input, segTree, mid + 1, high, 2*pos + 2);
+            segTree[pos] = segTree[2*pos + 1] + segTree[2*pos + 2];
+        }
+
+        int getMid(int s, int e) {
+            return s + (e - s) / 2;
+        }
+
+        public int getSum(int[] segTree, int n, int qs, int qe) {
+            if (qs < 0 || qe > n - 1 || qs > qe) {
+                System.out.println("Invalid Input");
+                return -1;
+            }
+            return getSumUtil(segTree,0, n - 1, qs, qe, 0);
+        }
+
+        int getSumUtil(int[] segTree, int ss, int se, int qs, int qe, int si) {
+            if (qs <= ss && qe >= se)
+                return segTree[si];
+
+            if (se < qs || ss > qe)
+                return 0;
+            int mid = getMid(ss, se);
+            return getSumUtil(segTree, ss, mid, qs, qe, 2 * si + 1) +
+                    getSumUtil(segTree, mid + 1, se, qs, qe, 2 * si + 2);
+        }
+
+        public int sumRange(int i, int j) {
+            if(n <= 0){
+                return 0;
+            }
+            int sum = getSum(segTree, n, i, j);
+            return sum;
+        }
     }
 
 

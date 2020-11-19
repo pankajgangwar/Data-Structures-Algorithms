@@ -19,6 +19,46 @@ class B {
         ArrayChallenge(arr);
     }
 
+    /* 1656. Design an Ordered Stream
+     * https://leetcode.com/problems/design-an-ordered-stream/
+     * */
+    class OrderedStream {
+        String[] arr;
+        int ptr;
+        public OrderedStream(int n) {
+            ptr = 1;
+            arr = new String[n + 1];
+        }
+        public List<String> insert(int id, String value) {
+            arr[id] = value;
+            List<String> res = new ArrayList<>();
+            while (ptr < arr.length && arr[ptr] != null) {
+                res.add(arr[ptr++]);
+            }
+            return res;
+        }
+    }
+
+    /* 66. Plus One
+    * https://leetcode.com/problems/plus-one/
+    * */
+    public int[] plusOne(int[] digits) {
+        int carry = 0;
+        for (int i = digits.length -1; i >= 0 ; i--) {
+            if(i == digits.length - 1 || carry == 1){
+                digits[i] += 1;
+                carry = digits[i] / 10;
+                digits[i] %= 10;
+            }
+        }
+        if(carry == 1){
+            int[] res = new int[digits.length + 1];
+            res[0] = 1;
+            return res;
+        }
+        return digits;
+    }
+
     /* 1018. Binary Prefix Divisible By 5
      * https://leetcode.com/problems/binary-prefix-divisible-by-5/
      * */

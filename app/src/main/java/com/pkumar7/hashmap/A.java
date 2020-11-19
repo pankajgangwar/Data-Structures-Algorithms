@@ -1,6 +1,7 @@
 package com.pkumar7.hashmap;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,6 +15,52 @@ class A {
 
     public static void main(String[] args) {
 
+    }
+
+    /* 1658. Minimum Operations to Reduce X to Zero
+     * https://leetcode.com/problems/minimum-operations-to-reduce-x-to-zero/
+     * */
+    public int minOperations(int[] nums, int x) {
+        int target = -x;
+        target += Arrays.stream(nums).sum();
+        if(target == 0) return nums.length;
+        HashMap<Integer, Integer> map = new HashMap<>();
+        int sum = 0, res = Integer.MIN_VALUE;
+        map.put(0, -1);
+        for (int i = 0; i < nums.length; i++) {
+            sum += nums[i];
+            if(map.containsKey(sum - target)){
+                res = Math.max(res, i - map.get(sum - target));
+            }
+            map.put(sum, i);
+        }
+        return res == Integer.MIN_VALUE ? -1 : nums.length - res;
+    }
+
+    /* 1166. Design File System
+     * https://leetcode.com/problems/design-file-system/
+     * */
+    class FileSystem {
+        HashMap<String, Integer> map;
+        public FileSystem() {
+            map = new HashMap<>();
+        }
+
+        public boolean createPath(String path, int value) {
+            if(map.containsKey(path)){
+                return false;
+            }
+            String parent = path.substring(0, path.lastIndexOf("/"));
+            if(parent.length() > 0 && !map.containsKey(parent)){
+                return false;
+            }
+            map.put(path, value);
+            return true;
+        }
+
+        public int get(String path) {
+            return map.getOrDefault(path, -1);
+        }
     }
 
     /* 954. Array of Doubled Pairs

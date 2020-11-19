@@ -1,4 +1,4 @@
-package com.pkumar7.datastructures;
+package com.pkumar7.algorithms.graph;
 import java.util.ArrayList;
 import java.util.HashMap;
 

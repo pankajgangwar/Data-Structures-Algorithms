@@ -5,17 +5,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
-import java.util.Set;
 import java.util.TreeMap;
-
-import sun.reflect.generics.tree.Tree;
 
 public class JanuaryW4 extends BaseHelper {
 
@@ -731,12 +726,10 @@ public class JanuaryW4 extends BaseHelper {
         return builder.toString().equals(num);
     }
 
-    /* https://leetcode.com/problems/minimum-distance-to-type-a-word-using-two-fingers/ */
-    public int minimumDistance(String word) {
-        return 0;
-    }
-
-    /* https://leetcode.com/problems/tree-diameter/ */
+    /*
+    1245. Tree Diameter
+    https://leetcode.com/problems/tree-diameter
+    */
     public int treeDiameter(int[][] edges) {
         int n = edges.length;
         List<Integer>[] graph = new ArrayList[n+1];
@@ -751,12 +744,12 @@ public class JanuaryW4 extends BaseHelper {
             graph[src].add(dst);
             graph[dst].add(src);
         }
-        diameterOfBinaryTree(graph, 0, -1);
+        diameterOfTree(graph, 0, -1);
         return diameter;
     }
 
     int diameter = 0;
-    public int diameterOfBinaryTree(List<Integer>[] graph, int root, int parent) {
+    public int diameterOfTree(List<Integer>[] graph, int root, int parent) {
         maxDepth(graph, root, parent);
         return diameter;
     }

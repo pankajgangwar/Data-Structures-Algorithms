@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Stack;
 
 /**
  * Created by Pankaj Kumar on 19/August/2020
@@ -17,6 +18,37 @@ class A {
         //cur.fractionAddition("1/3-1/2");
         long num = Long.parseLong("53.5e93", 16);
         System.out.println("num = " + num);
+    }
+
+    /* 640. Solve the Equation
+    * https://leetcode.com/problems/solve-the-equation/
+    * */
+    public String solveEquation(String equation) {
+        String no_sol = "No solution";
+        String infinite_sol = "Infinite solutions";
+        if(!equation.contains("=")){
+            return no_sol;
+        }
+        String[] arr = equation.split("=");
+        int[] lhs = evaluateExpression(arr[0]);
+        int[] rhs = evaluateExpression(arr[1]);
+        lhs[0] -= rhs[0];
+        lhs[1] = rhs[1] - lhs[1];
+        if(lhs[0] == 0 && lhs[1] == 0) return infinite_sol;
+        if(lhs[0] == 0) return no_sol;
+        return "x=" + lhs[1] / lhs[0];
+    }
+
+    public int[] evaluateExpression(String exp){
+        String[] tokens = exp.split("(?=[-+])");
+        int[] res = new int[2];
+        for (String token : tokens){
+            if(token.equals("+x") || token.equals("x")) res[0] += 1;
+            else if(token.equals("-x")) res[0] -= 1;
+            else if(token.contains("x")) res[0] += Integer.parseInt(token.substring(0, token.indexOf("x")));
+            else res[1] += Integer.parseInt(token);
+        }
+        return res;
     }
 
     /* 1180. Count Substrings with Only One Distinct Letter

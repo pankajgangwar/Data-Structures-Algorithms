@@ -17,6 +17,96 @@ class A {
         curr.stoneGameV(new int[]{6,2,3,4,5,5});
     }
 
+    /* 873. Length of Longest Fibonacci Subsequence
+     * https://leetcode.com/problems/length-of-longest-fibonacci-subsequence/
+     * */
+    public int lenLongestFibSubseq(int[] arr) {
+        //return lenLongestFibSubseqSets(arr);
+        return lenLongestFibSubseqDP(arr);
+    }
+
+    public int lenLongestFibSubseqDP(int[] arr) {
+        // dp[a,b] = dp[b - a, a] + 1
+        HashMap<Integer, Integer> index = new HashMap<>();
+        int n = arr.length;
+        int[][] dp = new int[n][n];
+        int res = 0;
+        for (int j = 0; j < n; j++) {
+            index.put(arr[j], j);
+            for (int i = 0; i < j; i++) {
+                int k = index.getOrDefault(arr[j] - arr[i], -1);
+                dp[i][j] = (arr[j] - arr[i] < arr[i] && k >= 0) ? dp[k][i] + 1 : 2;
+                res = Math.max(res, dp[i][j]);
+            }
+        }
+        return res > 2 ? res : 0;
+    }
+
+    public int lenLongestFibSubseqSets(int[] arr) {
+        HashSet<Integer> set = new HashSet<>();
+        for(int x : arr) set.add(x);
+        int res = 2;
+        for (int i = 0; i < arr.length; i++) {
+            for (int j = i + 1; j < arr.length; j++) {
+                int a = arr[i], b = arr[j];
+                int len = 2;
+                while (set.contains(a+b)){
+                    b = b + a;
+                    a = b - a;
+                    len += 1;
+                }
+                res = Math.max(res, len);
+            }
+        }
+        return res < 3 ? 0 : res;
+    }
+
+    /*
+    1320. Minimum Distance to Type a Word Using Two Fingers
+    https://leetcode.com/problems/minimum-distance-to-type-a-word-using-two-fingers/
+    */
+    public int minimumDistance(String word) {
+        location = new HashMap<>();
+        int i = 0; int j = 0;
+        for(char ch = 'A'; ch <= 'Z'; ch++){
+            if(j>0 && j%6==0){
+                j = 0;
+                i++;
+            }
+            location.put(ch, new int[]{i, j});
+            j++;
+        }
+        dpfingers = new int[27][27][301];
+        for (int k = 0; k < 27; k++) {
+            for (int l = 0; l < 27; l++) {
+                Arrays.fill(dpfingers[k][l], -1);
+            }
+        }
+        return dfs(word, 0, null, null);
+    }
+
+    int[][][] dpfingers;
+    HashMap<Character, int[]> location;
+    public int dfs(String word, int pos, Character left, Character right){
+        if(pos >= word.length()) return 0;
+        int leftIdx = left == null ? 0 : left - 'A' + 1;
+        int rightIdx = right == null ? 0 : right - 'A' + 1;
+        if(dpfingers[leftIdx][rightIdx][pos] != -1) {
+            return dpfingers[leftIdx][rightIdx][pos];
+        }
+        char to = word.charAt(pos);
+        dpfingers[leftIdx][rightIdx][pos] = Math.min(cost(left, to) + dfs(word, pos + 1, to, right),
+                cost(right, to) + dfs(word, pos + 1, left, to));
+        return dpfingers[leftIdx][rightIdx][pos];
+    }
+    public int cost(Character from, Character to){
+        if(from == null || to == null) return 0;
+        if(from == to) return 0;
+        int[] loc1 = location.get(from);
+        int[] loc2 = location.get(to);
+        return Math.abs(loc1[0] - loc2[0]) + Math.abs(loc1[1] - loc2[1]);
+    }
+
     /* 1531. String Compression II
      * https://leetcode.com/problems/string-compression-ii/
      * */
@@ -105,7 +195,6 @@ class A {
         for(int i = 0; i < n; i++){
             LIS[i] = nums[i][1];
         }
-        int max_scores = 0;
         for(int i = 1; i < n; i++){
             for(int j = 0; j < i; j++){
                 if(nums[j][1] <= nums[i][1]){
@@ -113,10 +202,7 @@ class A {
                 }
             }
         }
-        for(int score : LIS){
-            max_scores = Math.max(max_scores, score);
-        }
-        return max_scores;
+        return Arrays.stream(LIS).max().getAsInt();
     }
 
     /* 871. Minimum Number of Refueling Stops

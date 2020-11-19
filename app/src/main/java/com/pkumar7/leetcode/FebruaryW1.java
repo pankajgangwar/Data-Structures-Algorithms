@@ -111,58 +111,6 @@ public class FebruaryW1 {
         return memo[pos];
     }
 
-    /* https://leetcode.com/problems/basic-calculator/
-    *  Input: "(1+(4+5+2)-3)+(6+8)"
-       Output: 23
-    *  */
-    public int calculate(String s) {
-        s = s.replaceAll("\\s+", "");
-        StringBuilder builder = new StringBuilder(s);
-        Stack<Integer> stack = new Stack<Integer>();
-        for(int i = 0 ; i < builder.length(); i++){
-
-        }
-        return 0;
-    }
-
-    /* Input: "(1+(4+5+2)-3)+(6+8)" */
-    public int evaluate(StringBuilder builder, int start){
-
-        int num = 0;
-        int eval = 0;
-        char sign = '+';
-        int n = builder.length();
-        for (int i = start; i <  builder.length(); i++) {
-            if(builder.charAt(i) == '('){
-                num = evaluate(builder, i+1);
-            }
-            if(builder.charAt(i) == ')'){
-                return eval;
-            }
-            while(i < n &&
-                    Character.isDigit(builder.charAt(i))){
-                num = num*10 + builder.charAt(i) - '0';
-                i++;
-            }
-            if (sign == '+') {
-                eval = eval + num;
-                num = 0;
-            } else if (sign == '-') {
-                eval = eval - num;
-                num = 0;
-            }
-
-            if(i < n && builder.charAt(i) == '+'){
-                sign = '+';
-            }
-
-            if(i < n && builder.charAt(i) == '-'){
-                sign = '-';
-            }
-        }
-        return eval;
-    }
-
     /* https://leetcode.com/problems/search-in-rotated-sorted-array/ */
     public int search(int[] nums, int target) {
         if(nums.length == 0) return -1;

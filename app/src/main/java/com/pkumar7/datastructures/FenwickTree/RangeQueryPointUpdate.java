@@ -49,7 +49,7 @@ public class RangeQueryPointUpdate {
         }
     }
 
-    public void set(int i, long v){
+    public void update(int i, long v){
         long val = sum(i, i);
         add(i, v - val);
     }

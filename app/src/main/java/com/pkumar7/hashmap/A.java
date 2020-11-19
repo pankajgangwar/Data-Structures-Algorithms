@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * Created by Pankaj Kumar on 06/September/2020
@@ -15,6 +16,24 @@ class A {
 
     public static void main(String[] args) {
 
+    }
+
+    /*
+     * https://leetcode.com/problems/k-empty-slots/
+     * 683. K Empty Slots
+     * */
+    public int kEmptySlots(int[] bulbs, int k) {
+        TreeSet<Integer> sets = new TreeSet<>();
+        for (int i = 0; i < bulbs.length; i++) {
+            Integer low = sets.lower(bulbs[i]);
+            Integer high = sets.higher(bulbs[i]);
+            if((low != null && bulbs[i] - low - 1 == k) ||
+                    (high != null && high - bulbs[i] - 1 == k )){
+                return i + 1;
+            }
+            sets.add(bulbs[i]);
+        }
+        return -1;
     }
 
     /* 1658. Minimum Operations to Reduce X to Zero

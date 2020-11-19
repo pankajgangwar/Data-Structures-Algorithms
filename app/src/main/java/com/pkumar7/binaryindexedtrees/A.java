@@ -23,6 +23,13 @@ class A {
         System.out.println("res = " + numArray.sumRange(0, 2));*/
     }
 
+    /* 327. Count of Range Sum
+    * https://leetcode.com/problems/count-of-range-sum/
+    * */
+    public int countRangeSum(int[] nums, int lower, int upper) {
+        return 0;
+    }
+
     /* 308. Range Sum Query 2D - Mutable
     * https://leetcode.com/problems/range-sum-query-2d-mutable/
     * */

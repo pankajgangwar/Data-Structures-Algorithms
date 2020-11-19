@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.TreeMap;
 
@@ -18,6 +19,31 @@ class A {
         A curr = new A();
         boolean status = curr.isTransformable("4941","1494");
         System.out.println("status = " + status);
+    }
+
+    /* 1353. Maximum Number of Events That Can Be Attended
+     * https://leetcode.com/problems/maximum-number-of-events-that-can-be-attended/
+     * */
+    public int maxEvents(int[][] events) {
+        Arrays.sort(events, (a,b) -> a[0] == b[0] ? a[1] - b[1] : a[0] - b[0]);
+        PriorityQueue<Integer> minHeap = new PriorityQueue<>();
+        int i = 0;
+        int n = events.length;
+        int res = 0;
+        for (int d = 1; d <= 100000; d++) {
+            while (!minHeap.isEmpty() && minHeap.peek() < d){
+                minHeap.poll();
+            }
+            while (i < n && events[i][0] == d){
+                minHeap.offer(events[i][1]);
+                i++;
+            }
+            if(!minHeap.isEmpty()){
+                minHeap.poll();
+                ++res;
+            }
+        }
+        return res;
     }
 
     /*

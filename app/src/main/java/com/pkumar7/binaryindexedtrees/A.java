@@ -1,6 +1,8 @@
 package com.pkumar7.binaryindexedtrees;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -13,21 +15,71 @@ class A {
         int[] arr1 = new int[]{1,2,3,6,5,4};
         int[] arr2 = new int[]{1,3,3,3,2,4,2,1,2};
         //int res = current.createSortedArray(new int[]{1,3,3,3,2,4,2,1,2});
-        String[][] matrix = new String[][]{{"a","b"},{"c","d"}};
-        String[] mat = Stream.of(matrix).flatMap(Stream::of).toArray(String[]::new);
-        System.out.println("Arrays.toString(mat) = " + Arrays.toString(mat));
-
         /*NumArray numArray = new NumArray(arr);
         System.out.println("res = " + numArray.sumRange(0, 2));
         numArray.update(1, 2);
         System.out.println("res = " + numArray.sumRange(0, 2));*/
+        int[] nums = new int[]{-2, 5, -1};
+        int res = current.countRangeSum(nums, -2, 2);
+        System.out.println("res = " + res);
     }
 
     /* 327. Count of Range Sum
     * https://leetcode.com/problems/count-of-range-sum/
     * */
     public int countRangeSum(int[] nums, int lower, int upper) {
-        return 0;
+        Set<Long> sets = new HashSet<>();
+        int n = nums.length;
+        long sum = 0;
+        for (int i = 0; i < n; i++) {
+            sum += (long)nums[i];
+            sets.add(sum);
+        }
+        Long[] arr = sets.toArray(new Long[0]);
+        Arrays.sort(arr);
+        SegTreeNode root = buildSegmentTree(arr, 0, arr.length - 1);
+        int count = 0;
+        for (int i = n - 1; i >= 0 ; --i) {
+            updateSegmentTree(root, sum);
+            sum -= (long)nums[i];
+            count += getCount(root, (long)(lower + sum), (long)(upper + sum));
+        }
+        return count;
+    }
+
+    private int getCount(SegTreeNode root, long min, long max) {
+        if(root == null) return 0;
+        if(min > root.max || max < root.min) return 0;
+        if(min <= root.min && max >= root.max) return root.count;
+        return getCount(root.left, min, max) + getCount(root.right, min, max);
+    }
+
+    public void updateSegmentTree(SegTreeNode root, long value){
+        if(root == null) return;
+        if(value >= root.min && value <= root.max) {
+            root.count++;
+            updateSegmentTree(root.left, value);
+            updateSegmentTree(root.right, value);
+        }
+    }
+    private SegTreeNode buildSegmentTree(Long[] arr, int low, int high) {
+        if(low > high) return null;
+        SegTreeNode root = new SegTreeNode(arr[low], arr[high]);
+        if(low == high) return root;
+        int mid = (low + high) / 2;
+        root.left = buildSegmentTree(arr, low, mid);
+        root.right = buildSegmentTree(arr, mid + 1, high);
+        return root;
+    }
+
+    class SegTreeNode {
+        SegTreeNode left, right;
+        long min, max;
+        int count;
+        public SegTreeNode(long min, long max){
+            this.min = min;
+            this.max = max;
+        }
     }
 
     /* 308. Range Sum Query 2D - Mutable

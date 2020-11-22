@@ -12,7 +12,11 @@ import java.util.PriorityQueue;
 import java.util.TreeMap;
 
 public class FebruaryW3 {
-    /* https://leetcode.com/problems/count-of-smaller-numbers-after-self/ */
+    /*
+    315. Count of Smaller Numbers After Self
+    https://leetcode.com/problems/count-of-smaller-numbers-after-self/
+    Balanced BST based solution
+    */
     class TreeNode {
         TreeNode left = null;
         TreeNode right = null;
@@ -29,7 +33,6 @@ public class FebruaryW3 {
         for(int i = n -1; i >= 0; --i){
             root = insert(nums[i], root, res, i, 0);
         }
-
         return Arrays.asList(res);
     }
 
@@ -57,24 +60,23 @@ public class FebruaryW3 {
         }
     }
 
+    public static void main(String[] args) {
+        FebruaryW3 w3 = new FebruaryW3();
+        w3.countSmallerMergeSort(new int[]{1,5,3,2,4,6});
+    }
+
     public List<Integer> countSmallerMergeSort(int[] nums) {
         int n = nums.length;
         Pair[] arr = new Pair[n];
-
         for(int i = 0; i < n; i++){
             Pair p = new Pair(nums[i], i);
             arr[i] = p;
         }
-
         Integer[] res = new Integer[n];
         Arrays.fill(res, 0);
-
         mergeSort(arr, res);
-
-        for(Pair p : arr){
-            //System.out.print(p.val + "\t");
-        }
-
+        for(Pair p : arr)System.out.print(p.val + "\t");
+        for(int x : res) System.out.print("x = " + x + "\t");
         return Arrays.asList(res);
     }
 
@@ -232,11 +234,6 @@ public class FebruaryW3 {
             }
         }
         return res;
-    }
-
-    public static void main(String[] args) {
-        FebruaryW3 w3 = new FebruaryW3();
-        //w3.largestMultipleOfThree(new int[]{8,6,7,1,0});
     }
 
     /* https://leetcode.com/problems/number-of-substrings-containing-all-three-characters/ */

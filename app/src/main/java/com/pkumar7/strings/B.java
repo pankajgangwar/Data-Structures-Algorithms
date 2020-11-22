@@ -18,6 +18,44 @@ class B {
         System.out.println("status = " + status);
     }
 
+    /*1662. Check If Two String Arrays are Equivalent
+     * https://leetcode.com/problems/check-if-two-string-arrays-are-equivalent
+     * */
+    public boolean arrayStringsAreEqual(String[] word1, String[] word2) {
+        StringBuilder out = new StringBuilder();
+        for(String x : word1){
+            out.append(x);
+        }
+
+        StringBuilder out1 = new StringBuilder();
+        for(String x : word2){
+            out1.append(x);
+        }
+        return out.toString().equals(out1.toString());
+    }
+
+    /* 1663. Smallest String With A Given Numeric Value
+     * https://leetcode.com/problems/smallest-string-with-a-given-numeric-value/
+     * */
+    public String getSmallestString(int n, int k) {
+        char[] s = new char[n];
+        Arrays.fill(s, 'a');
+        k -= n;
+        char[] arr = new char[26];
+        char start = 'a';
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = start;
+            start++;
+        }
+        while (k > 0){
+            int min = (Math.min(26, k + 1));
+            char ch = arr[min-1];
+            s[--n] = ch;
+            k = k - min + 1;
+        }
+        return new String(s);
+    }
+
     /* 681. Next Closest Time
      * https://leetcode.com/problems/next-closest-time/
      * */

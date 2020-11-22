@@ -39,6 +39,11 @@ class A {
         Arrays.sort(arr);
         SegTreeNode root = buildSegmentTree(arr, 0, arr.length - 1);
         int count = 0;
+        /*
+        * Let sum[i] be the prefix sum of nums[..i]. Then the range-sum of [i, j] is equal to sum[j] - sum[i - 1].
+        * We enumerate all i's. For any fixed i, we need to count the number of j's satisfying lower ≤ sum[j] - sum[i - 1] ≤ upper
+        * i.e., lower + sum[i - 1] ≤ sum[j] ≤ upper + sum[i - 1], for all i ≤ j ≤ n.
+        * */
         for (int i = n - 1; i >= 0 ; --i) {
             updateSegmentTree(root, sum);
             sum -= (long)nums[i];

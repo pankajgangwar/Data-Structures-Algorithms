@@ -17,6 +17,58 @@ class A {
         curr.stoneGameV(new int[]{6,2,3,4,5,5});
     }
 
+    /* 1664. Ways to Make a Fair Array
+     * https://leetcode.com/problems/ways-to-make-a-fair-array/
+     * */
+    public int waysToMakeFair(int[] nums) {
+        int res = 0;
+        int totaleven = 0, totalodd = 0;
+        for (int i = 0; i < nums.length; i++) {
+            if(i % 2 == 0) totaleven += nums[i];
+            else totalodd += nums[i];
+        }
+        int lefteven = 0, leftodd = 0;
+        boolean iseven = false;
+        for (int i = 0; i < nums.length; i++) {
+            if(i % 2 == 0){
+                iseven = true;
+                lefteven += nums[i];
+            }else {
+                iseven = false;
+                leftodd += nums[i];
+            }
+            int rightOdd = 0, rightEven = 0;
+            rightOdd = totaleven - lefteven;
+            rightEven = totalodd - leftodd;
+
+            /*Delete current element
+            from curr running odd even sum*/
+            if(iseven){
+                lefteven -= nums[i];
+            }else{
+                leftodd -= nums[i];
+            }
+            if((rightOdd + leftodd) == (rightEven + lefteven)){
+                res++;
+            }
+            /*Restore current element
+            from curr running odd even sum*/
+            if(iseven){
+                lefteven += nums[i];
+            }else{
+                leftodd += nums[i];
+            }
+        }
+        return res;
+    }
+
+    /* 343. Integer Break
+    * https://leetcode.com/problems/integer-break/
+    * */
+    public int integerBreak(int n) {
+        return 0;
+    }
+
     /* 873. Length of Longest Fibonacci Subsequence
      * https://leetcode.com/problems/length-of-longest-fibonacci-subsequence/
      * */

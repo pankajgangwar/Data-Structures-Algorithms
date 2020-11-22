@@ -15,6 +15,37 @@ class A {
         w2.kthSmallestPrimeFraction(new int[]{1, 2, 3, 5}, 3);
     }
 
+    /* 1665. Minimum Initial Energy to Finish Tasks
+     * https://leetcode.com/problems/minimum-initial-energy-to-finish-tasks/
+     * */
+    public int minimumEffort(int[][] tasks) {
+        PriorityQueue<int[]> maxHeap = new PriorityQueue<>((a,b) -> -(a[1] - a[0]) + (b[1] - b[0]));
+        int low = 1, high = 1000_000_00_7;
+        for (int[] t : tasks) {
+            maxHeap.offer(t);
+        }
+        while (low < high){
+            int mid = (low + high) / 2;
+            PriorityQueue<int[]> tempHeap = new PriorityQueue<>(maxHeap);
+            if(isValid(mid, tempHeap)){
+                high = mid;
+            }else{
+                low = mid + 1;
+            }
+        }
+        return low;
+    }
+    private boolean isValid(int minReqEnergy, PriorityQueue<int[]> maxHeap) {
+        while (!maxHeap.isEmpty()){
+            int[] t = maxHeap.poll();
+            if(minReqEnergy < t[1]){
+                return false;
+            }
+            minReqEnergy -= (t[0]);
+        }
+        return true;
+    }
+
     /* 1631. Path With Minimum Effort
     * https://leetcode.com/problems/path-with-minimum-effort/
     * */

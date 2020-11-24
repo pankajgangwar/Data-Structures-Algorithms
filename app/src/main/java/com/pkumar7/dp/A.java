@@ -1,11 +1,14 @@
 package com.pkumar7.dp;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * Created by Pankaj Kumar on 16/August/2020
@@ -14,8 +17,42 @@ class A {
 
     public static void main(String[] args) {
         A curr = new A();
-        curr.stoneGameV(new int[]{6,2,3,4,5,5});
+        int res = curr.integerBreak(8);
+        System.out.println("res = " + res);
     }
+
+    /* 343. Integer Break
+     * https://leetcode.com/problems/integer-break/
+     * */
+    public int integerBreak(int n) {
+        return integerBreakDP(n);
+    }
+
+    public int integerBreakDP(int n) {
+        List<Integer> dp = new ArrayList<>();
+        dp.add(0);
+        dp.add(0);
+        dp.add(1);
+        dp.add(2);
+        dp.add(4);
+        dp.add(6);
+        dp.add(9);
+        for (int i = 7; i <= n ; i++) {
+            dp.add( 3 * dp.get(i - 3));
+        }
+        return dp.get(n);
+    }
+
+    public int integerBreakIterative(int n) {
+        if(n <= 3) return n-1;
+        int res = 1;
+        while (n > 4){
+            res = res * 3;
+            n = n - 3;
+        }
+        return n * res;
+    }
+
 
     /* 1664. Ways to Make a Fair Array
      * https://leetcode.com/problems/ways-to-make-a-fair-array/
@@ -60,13 +97,6 @@ class A {
             }
         }
         return res;
-    }
-
-    /* 343. Integer Break
-    * https://leetcode.com/problems/integer-break/
-    * */
-    public int integerBreak(int n) {
-        return 0;
     }
 
     /* 873. Length of Longest Fibonacci Subsequence

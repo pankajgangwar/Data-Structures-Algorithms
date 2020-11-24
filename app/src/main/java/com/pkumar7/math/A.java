@@ -9,15 +9,57 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Stack;
 
+import javax.sound.sampled.Line;
+
 /**
  * Created by Pankaj Kumar on 19/August/2020
  */
 class A {
     public static void main(String[] args) {
         A cur = new A();
-        //cur.fractionAddition("1/3-1/2");
-        long num = Long.parseLong("53.5e93", 16);
-        System.out.println("num = " + num);
+        String res = cur.convertToTitle(52);
+        System.out.println("num = " + res);
+    }
+
+    /* 168. Excel Sheet Column Title
+    * https://leetcode.com/problems/excel-sheet-column-title/
+    * Revisit
+    * */
+    public String convertToTitle(int n) {
+        //return iterative(n);
+        return dfs(n);
+    }
+    public String dfs(int n){
+        return n == 0 ? "" : dfs(--n / 26) + (char)('A' + (n % 26));
+    }
+    public String iterativeI(int n) {
+        char[] arr = new char[26];
+        char ch = 'A';
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = ch++;
+        }
+        StringBuilder out = new StringBuilder();
+        while (n > 0){
+            n = n - 1;
+            out.append(arr[n % 26]);
+            n = n >> 1;
+        }
+        return out.toString();
+    }
+
+    public String iterative(int n) {
+        HashMap<Integer, Character> map = new HashMap<>();
+        char ch = 'A';
+        for (int i = 1; i <= 26 ; i++) {
+            map.put(i, ch++);
+        }
+        StringBuilder builder = new StringBuilder();
+        while (n > 0){
+            n--;
+            builder.insert(0, map.get(n % 26 + 1));
+            n = n / 26;
+        }
+        return builder.toString();
     }
 
     /* 640. Solve the Equation

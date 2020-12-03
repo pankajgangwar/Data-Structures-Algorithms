@@ -21,6 +21,58 @@ class A {
         System.out.println("res = " + res);
     }
 
+    /* 464. Can I Win
+     * https://leetcode.com/problems/can-i-win/
+     * */
+    public boolean canIWin(int maxChoosableInteger, int desiredTotal) {
+        HashMap<Integer, Boolean> map = new HashMap<>();
+        int sum = maxChoosableInteger * (maxChoosableInteger + 1) / 2;
+        if(sum < desiredTotal) return false;
+        if(desiredTotal <= 0) return true;
+        used = new boolean[maxChoosableInteger + 1];
+        return helper(desiredTotal, map);
+    }
+    public boolean[] used;
+    public boolean helper(int desiredTotal, HashMap<Integer, Boolean> map){
+        if(desiredTotal <= 0){
+            return false;
+        }
+        int key = format(used);
+        if(map.containsKey(key)){
+            return map.get(key);
+        }
+        for (int i = 1; i < used.length; i++) {
+            if(!used[i]){
+                used[i] = true;
+                if(!helper(desiredTotal - i, map)){// If A chooses i and B loses with rem = desiredTotal -i, A wins
+                    map.put(key, true);
+                    used[i] = false; // A decided to let B choose this number if A wins (Doubt !! )
+                    return true;
+                }
+                used[i] = false;
+            }
+        }
+        map.put(key, false);
+        return false;
+    }
+
+    private int format(boolean[] used) {
+        int num = 0;
+        for (int i = 1; i < used.length; i++) {
+            num <<= 1;
+            if(used[i]) num |= 1;
+        }
+        return num;
+    }
+
+    private StringBuilder getKey(boolean[] used) {
+        StringBuilder out = new StringBuilder();
+        for (int i = 1; i < used.length; i++) {
+            out.append(used[i] ? 1 : 0);
+        }
+        return out;
+    }
+
     /* 343. Integer Break
      * https://leetcode.com/problems/integer-break/
      * */

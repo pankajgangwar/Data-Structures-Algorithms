@@ -14,23 +14,32 @@ import java.util.TreeSet;
 class A {
     public static void main(String[] args) {
         A d = new A();
-        DinnerPlates D = new DinnerPlates(2);  // Initialize with capacity = 2
-        D.push(1);
-        D.push(2);
-        D.push(3);
-        //D.push(4);
-        //D.push(5);
-        D.popAtStack(1);
-        /*D.push(20);
-        D.push(21);
-        D.popAtStack(0);
-        D.popAtStack(2);*/
-        D.pop();
-        D.pop();
-        /*D.pop();
-        D.pop();
-        D.pop();*/
     }
+
+    /*
+     * 1673. Find the Most Competitive Subsequence
+     * https://leetcode.com/problems/find-the-most-competitive-subsequence/
+     */
+    public int[] mostCompetitive(int[] nums, int k) {
+        int len = nums.length;
+        Stack<Integer> stack = new Stack<>();
+        for (int i=0; i<len; i++) {
+            int num = nums[i];
+            int rest = len-i-1;
+            while ((rest + stack.size()) >= k && !stack.isEmpty() && stack.peek() > num) {
+                stack.pop();
+            }
+            if(stack.size() < k){
+                stack.push(num);
+            }
+        }
+        int[] res = new int[k];
+        for (int i = 0; i < k; i++) {
+            res[k - i - 1] = stack.pop();
+        }
+        return res;
+    }
+
     /* 1172. Dinner Plate Stacks
     * https://leetcode.com/problems/dinner-plate-stacks/
     * */

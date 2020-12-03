@@ -21,6 +21,33 @@ class A {
         System.out.println("status = " + status);
     }
 
+    /* 1674. Minimum Moves to Make Array Complementary
+     * https://leetcode.com/problems/minimum-moves-to-make-array-complementary/
+     * */
+    public int minMoves(int[] nums, int limit) {
+        int maxlen = (int) 1e5;
+        int[] delta = new int[maxlen * 2];
+        int n = nums.length;
+        for (int i = 0; i < n / 2; i++) {
+            int A = nums[i], B = nums[n - i - 1];
+            delta[2] += 2;
+            int min = Math.min(A, B) + 1;
+            int max = Math.max(A, B) + limit;
+            delta[A + B]--;
+            delta[A + B + 1]++;
+            delta[min]--;
+            delta[max + 1]++;
+        }
+        for (int i = 0; i < delta.length - 1 ; i++) {
+            delta[i + 1] += delta[i];
+        }
+        int min_op = Integer.MAX_VALUE;
+        for (int i = 2; i < delta.length ; i++) {
+            min_op = Math.min(delta[i], min_op);
+        }
+        return min_op;
+    }
+
     /* 1353. Maximum Number of Events That Can Be Attended
      * https://leetcode.com/problems/maximum-number-of-events-that-can-be-attended/
      * */

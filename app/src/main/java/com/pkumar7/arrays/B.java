@@ -19,6 +19,17 @@ class B {
         ArrayChallenge(arr);
     }
 
+    /* 1672. Richest Customer Wealth
+    * https://leetcode.com/problems/richest-customer-wealth/
+    * */
+    public int maximumWealth(int[][] accounts) {
+        int wealth = 0;
+        for(int[] bank : accounts){
+            wealth = Math.max(Arrays.stream(bank).sum(), wealth);
+        }
+        return wealth;
+    }
+
     /* 1656. Design an Ordered Stream
      * https://leetcode.com/problems/design-an-ordered-stream/
      * */

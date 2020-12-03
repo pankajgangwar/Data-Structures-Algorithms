@@ -18,6 +18,59 @@ class A {
 
     }
 
+    /* 825. Friends Of Appropriate Ages
+     * https://leetcode.com/problems/friends-of-appropriate-ages/
+     */
+    public int numFriendRequests(int[] ages) {
+        return numFriendRequestsMap(ages);
+    }
+
+    public int numFriendRequestsMap(int[] ages){
+        HashMap<Integer, Integer> map = new HashMap<>();
+        for(int a : ages){
+            map.put(a, map.getOrDefault(a, 0) + 1);
+        }
+        int res =0;
+        for(Map.Entry<Integer, Integer> entrya : map.entrySet()){
+            for(Map.Entry<Integer, Integer> entryb : map.entrySet()){
+                int a = entrya.getKey();
+                int b = entryb.getKey();
+                int countA = entrya.getValue();
+                int countB = entryb.getValue();
+                if(canMakeRequest(a, b)){
+                    res += countA * countA - (countA == countB ? 1 : 0);
+                }
+            }
+        }
+        return res;
+    }
+
+    public boolean canMakeRequest(int a, int b){
+        if(b <= 0.5 * a + 7) return false;
+        if(b > a) return false;
+        if(b > 100 && a < 100) return false;
+        return true;
+    }
+
+    public int numFriendRequestsRollingSum(int[] ages) {
+        int[] sumInAges = new int[121];
+        int[] numInAges = new int[121];
+        for (int i = 0; i < ages.length; i++) {
+            int age = ages[i];
+            numInAges[age]++;
+        }
+        for (int i = 1; i <= 120; i++) {
+            sumInAges[i] = sumInAges[i - 1] + numInAges[i];
+        }
+
+        int res = 0;
+        for (int i = 16; i < 121; i++) {
+            int count = sumInAges[i] - sumInAges[i / 2 + 7];
+            res += (count * numInAges[i]) - numInAges[i];
+        }
+        return res;
+    }
+
     /*
      * https://leetcode.com/problems/k-empty-slots/
      * 683. K Empty Slots

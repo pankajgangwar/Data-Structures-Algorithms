@@ -3,6 +3,7 @@ package com.pkumar7.heap;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
@@ -13,6 +14,67 @@ import java.util.TreeSet;
  * Created by Pankaj Kumar on 29/August/2020
  */
 class A {
+
+    /* https://leetcode.com/problems/minimize-deviation-in-array/
+     * 1675. Minimize Deviation in Array
+     * */
+    public int minimumDeviation(int[] nums) {
+        PriorityQueue<Integer> maxHeap = new PriorityQueue<>(Collections.reverseOrder());
+        int res = Integer.MAX_VALUE;
+        int min = Integer.MAX_VALUE;
+        for (int i = 0; i < nums.length; i++) {
+            if(nums[i] % 2 != 0){
+                maxHeap.offer(nums[i] * 2);
+                min = Math.min(min, nums[i] * 2);
+            }else{
+                min = Math.min(min, nums[i]);
+                maxHeap.offer(nums[i]);
+            }
+        }
+        while (!maxHeap.isEmpty()){
+            int currMax = maxHeap.poll();
+            res = Math.min(res, currMax - min);
+            if(currMax % 2 == 0){
+                min = Math.min(min, currMax / 2);
+                maxHeap.offer(currMax / 2);
+            }else{
+                break;
+            }
+        }
+        return res;
+    }
+
+    /* 632. Smallest Range Covering Elements from K Lists
+     * https://leetcode.com/problems/smallest-range-covering-elements-from-k-lists/
+     * */
+    public int[] smallestRange(List<List<Integer>> nums) {
+        int[] res = new int[2];
+        int max = Integer.MIN_VALUE;
+        PriorityQueue<int[]> pq = new PriorityQueue<>((a,b) -> a[0] - b[0]);//[value, idx, row]
+        for (int row = 0; row < nums.size(); row++) {
+            pq.offer(new int[]{nums.get(row).get(0), 0, row});
+            max = Math.max(nums.get(row).get(0), max);
+        }
+        int start = 0, end = Integer.MAX_VALUE;
+        while (pq.size() == nums.size()){
+            int[] curr = pq.poll();
+            int val = curr[0];
+            int idx = curr[1];
+            int row = curr[2];
+            if(end - start > max - val){
+                start = val;
+                end = max;
+            }
+            if(idx + 1 < nums.get(row).size()){
+                int next_val = nums.get(row).get(idx + 1);
+                pq.offer(new int[]{next_val, idx + 1, row});
+                max = Math.max(max, next_val);
+            }
+        }
+        res[0] = start;
+        res[1] = end;
+        return res;
+    }
 
     /* 1629. Slowest Key
      * https://leetcode.com/problems/slowest-key/

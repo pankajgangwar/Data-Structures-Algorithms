@@ -1,11 +1,96 @@
 package com.pkumar7.dfs;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * Created by Pankaj Kumar on 08/October/2020
  */
 class B {
+
+    public static void main(String[] args) {
+        B b = new B();
+        b.distributeCandies(7, 4);
+    }
+
+    /* 293. Flip Game
+     * https://leetcode.com/problems/flip-game/
+     * */
+    public List<String> generatePossibleNextMoves(String s) {
+        List<String> res = new ArrayList<>();
+        StringBuilder out = new StringBuilder(s);
+        for (int i = 0; i < s.length(); i++) {
+            if(i + 1 < s.length() && s.charAt(i) == '+' && s.charAt(i + 1) == '+'){
+                out.setCharAt(i, '-');
+                out.setCharAt(i + 1, '-');
+                res.add(out.toString());
+                out.setCharAt(i, '+');
+                out.setCharAt(i + 1, '+');
+            }
+        }
+        return res;
+    }
+
+
+    /* 294. Flip Game II
+     * https://leetcode.com/problems/flip-game-ii/
+     * */
+    public boolean canWin(String s) {
+        boolean status = false;
+        StringBuilder out = new StringBuilder(s);
+        for (int i = 0; i < s.length(); i++) {
+            if(i + 1 < s.length() && s.charAt(i) == '+' && s.charAt(i + 1) == '+'){
+                out.setCharAt(i, '-');
+                out.setCharAt(i + 1, '-');
+                if(!canWin(out.toString())){
+                    return true;
+                }
+                out.setCharAt(i, '+');
+                out.setCharAt(i + 1, '+');
+            }
+        }
+        return status;
+    }
+
+    /* 1103. Distribute Candies to People
+    * https://leetcode.com/problems/distribute-candies-to-people/
+    * */
+    public int[] distributeCandies(int candies, int num_people) {
+        int[] res = new int[num_people];
+        int count = 1;
+        for (int i = 0; candies > 0; i++) {
+            if(count >= candies){
+                count = candies;
+            }
+            res[i % num_people] += count;
+            candies -= count;
+            count++;
+        }
+        return res;
+    }
+
+    /* 690. Employee Importance
+    * https://leetcode.com/problems/employee-importance/
+    * */
+    class Employee {
+        public int id;
+        public int importance;
+        public List<Integer> subordinates;
+    };
+    public int getImportance(List<Employee> employees, int id) {
+        int res = 0;
+        for (int i = 0; i < employees.size(); i++) {
+            if(employees.get(i).id == id){
+                res += employees.get(i).importance;
+                List<Integer> children = employees.get(i).subordinates;
+                for (int j = 0; j < children.size(); j++) {
+                    res += getImportance(employees, children.get(j));
+                }
+            }
+        }
+        return res;
+    }
 
     /*
      *   1625. Lexicographically Smallest String After Applying Operations

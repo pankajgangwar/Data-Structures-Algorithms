@@ -52,12 +52,9 @@ public class MayW2 {
         w2.accountsMerge(accounts);
     }
 
-    /* https://leetcode.com/problems/brick-wall/ */
-    public int leastBricks(List<List<Integer>> wall) {
-        return 0;
-    }
-
-    /* https://leetcode.com/problems/couples-holding-hands/ */
+    /*
+    https://leetcode.com/problems/couples-holding-hands/
+    */
     public int minSwapsCouples(int[] row) {
         int n = row.length / 2;
         UnionFind unionfind = new UnionFind(n);
@@ -66,7 +63,6 @@ public class MayW2 {
             int b = row[2 * i  +1];
             unionfind.union(a / 2, b / 2);
         }
-
         return unionfind.count() - n;
     }
 
@@ -76,9 +72,7 @@ public class MayW2 {
         Kruskals Algorithm
     */
     public int minimumCost(int n, int[][] connections) {
-        
         Arrays.sort(connections, (a,b) -> a[2] - b[2]);
-            
         UnionFind unionfind = new UnionFind(n);
         int cost = 0;
         for(int i = 0; i < connections.length; i++) {

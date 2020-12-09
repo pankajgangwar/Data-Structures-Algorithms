@@ -18,6 +18,60 @@ class A {
 
     }
 
+    /* 1679. Max Number of K-Sum Pairs
+     * https://leetcode.com/problems/max-number-of-k-sum-pairs/
+     * */
+    public int maxOperations(int[] nums, int k) {
+        return solution1(nums, k);
+    }
+
+    public int solution1(int[] nums, int k) {
+        Arrays.sort(nums);
+        int res = 0;
+        int p = nums.length - 1;
+        for (int i = 0; i < nums.length; i++) {
+            while (i < p && nums[i] + nums[p] > k){
+                p--;
+            }
+            if(i < p && nums[i] + nums[p] == k){
+                p--;
+                res++;
+            }
+        }
+        return res;
+    }
+
+
+    public int solution2(int[] nums, int k) {
+        HashMap<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < nums.length; i++) {
+            map.put(nums[i], map.getOrDefault(nums[i], 0) + 1);
+        }
+        int res = 0;
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            int ele = entry.getKey();
+            int freq = entry.getValue();
+            int other = k - ele;
+            if (other == ele) {
+                res += freq / 2;
+                int rem = freq % 2;
+                map.put(ele, rem);
+            } else if (map.containsKey(k - ele)) {
+                int other_freq = map.get(k - ele);
+                if (other_freq > freq) {
+                    map.put(k - ele, other_freq - freq);
+                    map.put(ele, 0);
+                    res += freq;
+                } else {
+                    map.put(ele, freq - other_freq);
+                    map.put(k - ele, 0);
+                    res += other_freq;
+                }
+            }
+        }
+        return res;
+    }
+
     /* 825. Friends Of Appropriate Ages
      * https://leetcode.com/problems/friends-of-appropriate-ages/
      */

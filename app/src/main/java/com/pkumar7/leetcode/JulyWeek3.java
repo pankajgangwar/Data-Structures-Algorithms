@@ -1,6 +1,8 @@
 package com.pkumar7.leetcode;
 
 
+import com.pkumar7.TreeNode;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -66,58 +68,6 @@ public class JulyWeek3 {
             }
         }
         return -1;
-    }
-
-    /**
-     * 897. Increasing Order Search Tree
-     *
-     * https://leetcode.com/problems/increasing-order-search-tree/
-     * **/
-    List<Integer> mList = new ArrayList<>();
-
-    public static class TreeNode {
-        int val;
-        TreeNode left, right;
-
-        public TreeNode(int data) {
-            val = data;
-            left = null;
-            right = null;
-        }
-    }
-
-    public TreeNode increasingBST(TreeNode root) {
-        increasingBSTRec(root);
-        return constructFromInorder();
-    }
-
-    public void increasingBSTRec(TreeNode root) {
-        if(root == null){
-            return;
-        }
-        increasingBSTRec(root.left);
-        mList.add(root.val);
-        increasingBSTRec(root.right);
-    }
-
-    public TreeNode constructFromInorder(){
-        TreeNode root = null;
-        TreeNode child = null;
-        for (int i = 0; i < mList.size(); i++) {
-            if(root == null){
-                root = new TreeNode(mList.get(i));
-            }else{
-                if(child == null){
-                    child = new TreeNode(mList.get(i));
-                    root.right = child;
-                }else{
-                    TreeNode temp = new TreeNode(mList.get(i));
-                    child.right = temp;
-                    child = temp;
-                }
-            }
-        }
-        return root;
     }
 
     /**
@@ -231,41 +181,11 @@ public class JulyWeek3 {
     }
 
 
-    /**
-    *  i/p:
-     *
-     {8, 6}, {2, 5}, {3, 5}, {4, 6}, {6, 7}, {2, 5}, {5, 9}, {7, 3}, {8, 9}, {3, 3},
-     {6, 5}, {7, 6}, {9, 6}, {5, 3}, {3, 9}, {2, 1}, {7, 3}, {8, 2}, {6, 5}, {1, 4},
-     {9, 8}, {7, 3}, {3, 9}, {2, 8}, {2, 3}, {7, 3}, {6, 3}, {6, 7}, {2, 3}, {7, 4},
-     {3, 7}, {4, 7}, {9, 2}, {2, 1}, {3, 6}, {5, 3}, {6, 8}, {6, 7}, {3, 2}, {9, 5}
-
-      {9,6},{4,4},{7,9},{3,2},{4,3},{8,1},{8,8},{6,4},{5,6},{2,3},
-      {4,8},{2,9},{9,1},{1,5},{6,1},{8,9},{4,1},{4,8},{6,9},{1,8},
-      {1,5},{7,3},{4,2},{6,7},{5,8},{2,5},{6,1},{6,5},{3,3},{9,7},
-      {8,9},{6,5},{5,7},{5,8},{8,3},{6,8},{3,8},{6,6},{8,9},{7,2},
-      {6,1},{7,3},{1,1},{8,5},{5,8},{8,8},{7,5},{8,7},{8,7},{7,1},
-      {7,9},{5,5},{8,9},{2,3},{7,1},{5,8},{5,6},{4,9},{3,8},{3,2},
-      {2,7},{8,5},{5,5},{2,2},{2,6},{7,8},{1,3},{1,3},{2,3},{8,8},
-      {6,7},{3,2},{7,6},{3,9},{5,5},{7,8},{8,3},{9,4},{5,1},{5,8},
-      {2,3},{9,4},{1,4},{2,9},{4,4},{3,5},{4,9},{4,3},{2,1},{9,3},
-      {4,1},{5,9},{9,9},{4,7},{5,4},{2,4},{3,3},{2,2},{3,4},{7,6}
-
-     *
-    * **/
-    public static int[][] dominoes = new int[][]{
-            {8, 6}, {2, 5}, {3, 5}, {4, 6}, {6, 7}, {2, 5}, {5, 9}, {7, 3}, {8, 9}, {3, 3},
-            {6, 5}, {7, 6}, {9, 6}, {5, 3}, {3, 9}, {2, 1}, {7, 3}, {8, 2}, {6, 5}, {1, 4},
-            {9, 8}, {7, 3}, {3, 9}, {2, 8}, {2, 3}, {7, 3}, {6, 3}, {6, 7}, {2, 3}, {7, 4},
-            {3, 7}, {4, 7}, {9, 2}, {2, 1}, {3, 6}, {5, 3}, {6, 8}, {6, 7}, {3, 2}, {9, 5}
-    };
-
     /****
      * https://leetcode.com/problems/number-of-equivalent-domino-pairs/
      */
     public int numEquivDominoPairs(int[][] dominoes) {
         List<Pair> mPairs = new ArrayList<Pair>();
-
-
         for (int i = 0; i < dominoes.length; i++) {
             int first = dominoes[i][0];
             int second = dominoes[i][1];

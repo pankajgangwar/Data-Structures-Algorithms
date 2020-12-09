@@ -21,6 +21,53 @@ class A {
         System.out.println("status = " + status);
     }
 
+    /* 1536. Minimum Swaps to Arrange a Binary Grid
+     * https://leetcode.com/problems/minimum-swaps-to-arrange-a-binary-grid/
+     * */
+    public int minSwaps(int[][] grid) {
+        int[] arr = gridToArray(grid);
+        return minSwaps(arr);
+    }
+
+    public int minSwaps(int[] arr){
+        int res = 0;
+        int n = arr.length;
+        for (int i = 0; i < n; i++) {
+            if(arr[i] < (n - i -1)){
+                int j = i;
+                while (j < n && arr[j] < n - i -1){
+                    j++;
+                }
+                if(j == n) return -1;
+                while (j > i){
+                    int temp = arr[j];
+                    arr[j] = arr[j - 1];
+                    arr[j - 1] = temp;
+                    j--;
+                    res++;
+                }
+            }
+        }
+        return res;
+    }
+
+    public int[] gridToArray(int[][] grid) {
+        int[] arr = new int[grid.length];
+        int i = 0;
+        for(int[] a : grid){
+            arr[i++] = trailingZero(a);
+        }
+        return arr;
+    }
+
+    private int trailingZero(int[] arr) {
+        int count = 0;
+        for (int i = arr.length - 1; i >= 0 && arr[i] == 0 ; --i) {
+            count++;
+        }
+        return count;
+    }
+
     /* 1674. Minimum Moves to Make Array Complementary
      * https://leetcode.com/problems/minimum-moves-to-make-array-complementary/
      * */

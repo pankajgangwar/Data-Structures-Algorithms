@@ -21,6 +21,65 @@ class A {
         System.out.println("num = " + res);
     }
 
+    /* 910. Smallest Range II
+     * https://leetcode.com/problems/smallest-range-ii/
+     * */
+    public int smallestRangeII(int[] arr, int k) {
+        int n = arr.length;
+        if(n == 1 ) return 0;
+        Arrays.sort(arr);
+        int res = arr[n - 1] - arr[0];
+        int min = arr[0] + k, max = arr[n - 1] - k;
+        for (int i = 0; i < n - 1; i++) {
+            int curr_min = Math.min(min, arr[i + 1] - k);
+            int curr_max = Math.max(max, arr[i] + k);
+            res = Math.min(res, curr_max - curr_min);
+        }
+        return res;
+    }
+
+    /*
+     * 1680. Concatenation of Consecutive Binary Numbers
+     * https://leetcode.com/problems/concatenation-of-consecutive-binary-numbers/
+     */
+    public int concatenatedBinary(int n) {
+        return solution3(n);
+    }
+
+    public int solution3(int n) {
+        long res = 0;
+        int mod = (int)1e9+7;
+        for (int i = 1; i <= n; i++) {
+            String binary = Integer.toBinaryString(i);
+            res = res * (int)Math.pow(2, binary.length()) + i;
+            res = res % mod;
+        }
+        return (int)res;
+    }
+
+    public int solution2(int n){
+        int res = 0;
+        int mod = (int)1e9+7;
+        StringBuilder out = new StringBuilder();
+        for (int i = 1; i <= n; i++) {
+            String binary  = Integer.toBinaryString(i);
+            for (int j = 0; j < binary.length(); j++) {
+                res = res * 2 + binary.charAt(j) - '0';
+                res = res % mod;
+            }
+        }
+        return res;
+    }
+
+    public int solution1(int n){
+        int mod = (int)1e9+7;
+        long sum = 0;
+        for (int i = 1; i <= n; i++) {
+            sum = (sum * (int)Math.pow(2, Integer.toBinaryString(i).length()) + i) % mod;
+        }
+        return (int)sum;
+    }
+
     /* 168. Excel Sheet Column Title
     * https://leetcode.com/problems/excel-sheet-column-title/
     * Revisit

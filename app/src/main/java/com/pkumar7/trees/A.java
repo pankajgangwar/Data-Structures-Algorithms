@@ -15,6 +15,43 @@ import java.util.Queue;
  * Created by Pankaj Kumar on 12/August/2020
  */
 class A {
+    public static void main(String[] args) {
+        A current = new A();
+        current.increasingBST(null);
+    }
+
+    /**
+     * 897. Increasing Order Search Tree
+     * https://leetcode.com/problems/increasing-order-search-tree/
+     * **/
+    TreeNode result, pre;
+    public TreeNode increasingBST(TreeNode root) {
+        //inOrder(root);
+        //return result;
+        return increasingBSTRec(root, null);
+    }
+
+    public TreeNode increasingBSTRec(TreeNode root, TreeNode tail){
+        if(root == null) return tail;
+        TreeNode r_left = increasingBSTRec(root.left, root);
+        root.left = null;
+        TreeNode r_right = increasingBSTRec(root.right, tail);
+        root.right = r_right;
+        return r_left;
+    }
+
+    public void inOrder(TreeNode root){
+        if(root == null) return ;
+        inOrder(root.left);
+        if(result == null){
+            result = root;
+        }else{
+            pre.right = root;
+        }
+        root.left = null;
+        pre = root;
+        inOrder(root.right);
+    }
 
     /*
      * 440. K-th Smallest in Lexicographical Order

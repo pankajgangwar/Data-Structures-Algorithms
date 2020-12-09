@@ -15,6 +15,36 @@ import java.util.TreeSet;
  */
 class A {
 
+    /*
+    554. Brick Wall
+    https://leetcode.com/problems/brick-wall/
+    */
+    public int leastBricks(List<List<Integer>> wall) {
+        int res = Integer.MAX_VALUE;
+        int size = wall.size();
+        if(size == 0) return 0;
+        PriorityQueue<int[]> minPq = new PriorityQueue<>((a,b) -> a[0] - b[0]); // [brick length, rowIdx, colIdx]
+        for (int i = 0; i < wall.size(); i++) {
+            List<Integer> w = wall.get(i);
+            minPq.offer(new int[]{w.get(0), i, 0});
+        }
+        while (!minPq.isEmpty()){
+            int count = 0;
+            int currlen = minPq.peek()[0];
+            while (!minPq.isEmpty() && minPq.peek()[0] == currlen){
+                count++;
+                int[] curr = minPq.poll();
+                if((curr[2] + 1) < wall.get(curr[1]).size()){
+                    minPq.offer(new int[]{currlen + wall.get(curr[1]).get(curr[2] + 1), curr[1], curr[2] + 1});
+                }
+            }
+            if(!minPq.isEmpty()){
+                res = Math.min(res, size - count);
+            }
+        }
+        return res;
+    }
+
     /* https://leetcode.com/problems/minimize-deviation-in-array/
      * 1675. Minimize Deviation in Array
      * */

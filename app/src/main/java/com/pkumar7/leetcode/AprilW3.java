@@ -124,7 +124,6 @@ public class AprilW3 {
         return s;
     }
 
-
     public int minSwap(){
         int[] nums = new int[]{4,5,1,2,3};
         int swaps = 0;
@@ -155,14 +154,39 @@ public class AprilW3 {
         return m & n;
     }
 
-
-    /* https://leetcode.com/problems/predict-the-winner/ */
+    /*
+    486. Predict the Winner
+    https://leetcode.com/problems/predict-the-winner/
+    */
     public boolean PredictTheWinner(int[] nums) {
+        //return helper(nums, 0 , nums.length -1) >= 0;
+        int n = nums.length;
+        if(n <= 1) return true;
+        int s = 0, e = n - 1;
+        return helper(nums, s, e, 0, 0);
+    }
+    public boolean helper(int[] nums,int start, int end, int a_score, int b_score){
+        if(start > end) return a_score >= b_score;
+
+        a_score += nums[start];
+        if(!helper(nums, start + 1, end, b_score, a_score)){
+            return true;
+        }
+        a_score -= nums[start];
+
+        a_score += nums[end];
+        if(!helper(nums, start, end - 1, b_score, a_score)){
+            return true;
+        }
+        a_score -= nums[end];
         return false;
     }
 
-    public boolean helper(int[] nums, int s, int e){
-        return false;
+    public int helper(int[] nums, int s, int e){
+        if(s == e){
+            return nums[e];
+        }
+        return Math.max((nums[s] + helper(nums, s + 1, e)), nums[e] + helper(nums, s, e - 1) );
     }
 
 
@@ -191,7 +215,9 @@ public class AprilW3 {
         return false;
     }
 
-    /* https://leetcode.com/problems/subarray-sums-divisible-by-k/ */
+    /*
+    https://leetcode.com/problems/subarray-sums-divisible-by-k/
+    */
     public int subarraysDivByK(int[] arr, int k) {
         HashMap<Integer, Integer> map = new HashMap<>();
         int count = 0;

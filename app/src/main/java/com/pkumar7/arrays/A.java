@@ -14,6 +14,29 @@ class A {
         A a = new A();
         a.countBalancingElements(Arrays.asList(5, 5, 2, 5, 8));
     }
+
+    /* 1572. Matrix Diagonal Sum
+     * https://leetcode.com/problems/matrix-diagonal-sum/
+     * */
+    public int diagonalSum(int[][] mat) {
+        int n = mat.length, m = mat[0].length;
+        int sum = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if(i == j){
+                    sum += mat[i][j];
+                }
+                if(m - 1 - i == j){
+                    sum += mat[i][j];
+                }
+            }
+        }
+        if(n % 2 != 0){
+            sum -= mat[n / 2][n / 2];
+        }
+        return sum;
+    }
+
     /*
     * https://www.interviewbit.com/problems/balance-array/
     */

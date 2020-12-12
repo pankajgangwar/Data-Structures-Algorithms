@@ -7,6 +7,7 @@
 /.idea/workspace.xml
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
+app/.idea/.*
 app/.idea/*
 app/out/
 .DS_Store

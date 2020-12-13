@@ -21,6 +21,63 @@ class A {
         System.out.println("res = " + res);
     }
 
+    /* 1690. Stone Game VII
+     * https://leetcode.com/problems/stone-game-vii/
+     * */
+    public int stoneGameVII(int[] stones) {
+        int n = stones.length;
+        int sum = Arrays.stream(stones).sum();
+        int i = 0, j = n - 1;
+        stonesdp = new int[n][n];
+        for (int k = 0; k < n; k++) {
+            Arrays.fill(dp[k], 0);
+        }
+        return dfs(stones, i, j, sum);
+    }
+
+    int[][] stonesdp;
+    public int dfs(int[] stones, int i, int j, int sum){
+        if(i == j){
+            return 0;
+        }
+        if(stonesdp[i][j] != 0){
+            return stonesdp[i][j];
+        }
+        int diffstart = (sum - stones[i]) - dfs(stones, i + 1, j, sum - stones[i]);// difference if i is chosen
+        int diffend = (sum - stones[j]) - dfs(stones, i, j - 1, sum - stones[j]);// difference if j is chosen
+        int maxDiff = Math.max(diffstart, diffend);
+        stonesdp[i][j] = maxDiff;
+        return stonesdp[i][j];
+    }
+
+    /* 1691. Maximum Height by Stacking Cuboids
+     * https://leetcode.com/problems/maximum-height-by-stacking-cuboids/
+     * */
+    public int maxHeight(int[][] cuboids) {
+        int n = cuboids.length;
+        for(int[] cube: cuboids){
+            Arrays.sort(cube);
+        }
+        Arrays.sort(cuboids, (a,b) -> (a[0] + a[1] + a[2]) - (b[0] + b[1] + b[2]));
+        int max = 0;
+        int[] lis = new int[n];
+        for (int i = 0; i < n; i++) {
+            lis[i] = cuboids[i][2];
+            max = Math.max(lis[i], max);
+        }
+        for (int i = 1; i < n; i++) {
+            for (int j = 0; j < i; j++) {
+                if(cuboids[j][0] <= cuboids[i][0] &&
+                        cuboids[j][1] <= cuboids[i][1] &&
+                        cuboids[j][2] <= cuboids[i][2]) {
+                    lis[i] = Math.max(lis[i], lis[j] + cuboids[i][2]);
+                    max = Math.max(max, lis[i]);
+                }
+            }
+        }
+        return max;
+    }
+
     /*
      * 801. Minimum Swaps To Make Sequences Increasing
      * https://leetcode.com/problems/minimum-swaps-to-make-sequences-increasing/

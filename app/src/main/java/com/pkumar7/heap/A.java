@@ -15,6 +15,36 @@ import java.util.TreeSet;
  */
 class A {
 
+    /* Amazon
+     * https://leetcode.com/discuss/interview-question/933383/
+     * */
+    public int fiveStar(List<List<Integer>> productRatings, int ratingThreshold){
+        PriorityQueue<int[]> pq = new PriorityQueue<>((r1, r2) -> {
+            int c1 = (r1[0] + 1 / r1[1] + 1) - (r1[0] / r1[1]);
+            int c2 = (r2[0] + 1 / r2[1] + 1) - (r2[0] / r2[1]);
+            return c1 - c2;
+        });
+        int res = 0;
+        double current = 0.00;
+        int n = productRatings.size();
+        double threshold = (double)(ratingThreshold * n) / (double)100.0;
+        for(List<Integer> list : productRatings){
+            current += (double)list.get(0) / list.get(1) ;
+            pq.offer(new int[]{list.get(0), list.get(1)});
+        }
+        while (current < threshold){
+            int[] maxRating = pq.poll();
+            double change = (double) maxRating[0] / maxRating[1];
+            maxRating[0]++;
+            maxRating[1]++;
+            double newchange = (double)maxRating[0] / maxRating[1];
+            current += newchange - change;
+            pq.offer(maxRating);
+            res++;
+        }
+        return res;
+    };
+
     /*
     554. Brick Wall
     https://leetcode.com/problems/brick-wall/

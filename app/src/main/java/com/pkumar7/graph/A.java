@@ -1,6 +1,7 @@
 package com.pkumar7.graph;
 
 import com.pkumar7.TreeNode;
+import com.pkumar7.unionfind.UnionFind;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -128,49 +129,16 @@ class A {
      * */
     public int minimumCost(int n, int[][] connections) {
         Arrays.sort(connections, (a, b) -> a[2] - b[2]);
-        int[] parent = new int[n];
-        int[] rank = new int[n];
-        for (int i = 0; i < n; i++) {
-            parent[i] = i;
-        }
-        Arrays.fill(rank, -1);
+        UnionFind unionfind = new UnionFind(n);
         int cost = 0;
         for(int i = 0; i < connections.length; i++) {
             int x = connections[i][0] - 1;
             int y = connections[i][1] - 1;
-            int xroot = find(parent, x);
-            int yroot = find(parent, y);
-            if(xroot == yroot){
-                continue;
-            }
-            union(xroot, yroot, parent, rank);
+            if(unionfind.find(x) == unionfind.find(y)) continue;
+            unionfind.union(x, y);
             cost += connections[i][2];
         }
         return cost;
-    }
-
-
-
-    public void union(int x, int y, int[] parent, int[] rank){
-        int xroot = find(parent, x);
-        int yroot = find(parent, y);
-        if(xroot == yroot) return;
-        if(rank[yroot] > rank[xroot]){
-            parent[xroot] = yroot;
-        }else{
-            parent[yroot] = xroot;
-            if(rank[xroot] == rank[yroot]){
-                rank[xroot]++;
-            }
-        }
-    }
-
-    public int find(int[] parent, int p) {
-        while(p != parent[p]) {
-            parent[p] = parent[parent[p]];
-            p = parent[p];
-        }
-        return p;
     }
 
     /*

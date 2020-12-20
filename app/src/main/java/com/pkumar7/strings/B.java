@@ -18,6 +18,41 @@ class B {
         System.out.println("status = " + status);
     }
 
+    /* 1694. Reformat Phone Number
+     * https://leetcode.com/problems/reformat-phone-number/
+     * */
+    public String reformatNumber(String number) {
+        StringBuilder out = new StringBuilder();
+        for (int i = 0; i < number.length(); i++) {
+            if(number.charAt(i) == '-' || number.charAt(i) == ' ') continue;
+            out.append(number.charAt(i));
+        }
+        StringBuilder sb = new StringBuilder();
+        while (out.length() > 4){
+            int n = 3;
+            while(n-- > 0) {
+                sb.append(out.charAt(0));
+                out.deleteCharAt(0);
+            }
+            sb.append("-");
+        }
+        if(out.length() == 4){
+            while(out.length() > 0) {
+                sb.append(out.charAt(0));
+                out.deleteCharAt(0);
+                if(out.length() == 2){
+                    sb.append("-");
+                }
+            }
+        }else {
+            while(out.length() > 0) {
+                sb.append(out.charAt(0));
+                out.deleteCharAt(0);
+            }
+        }
+        return sb.toString();
+    }
+
     /* 1684. Count the Number of Consistent Strings
      * https://leetcode.com/problems/count-the-number-of-consistent-strings/
      * */

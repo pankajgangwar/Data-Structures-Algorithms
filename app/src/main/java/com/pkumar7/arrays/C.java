@@ -2,6 +2,7 @@ package com.pkumar7.arrays;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -10,6 +11,28 @@ import java.util.List;
 class C {
     public static void main(String[] args) {
 
+    }
+
+    /* 1695. Maximum Erasure Value
+     * https://leetcode.com/problems/maximum-erasure-value/
+     * */
+    public int maximumUniqueSubarray(int[] arr) {
+        int i = 0, j = 1;
+        HashSet<Integer> set = new HashSet<Integer>();
+        set.add(arr[0]);
+        int sum = arr[0];
+        int maxsum = sum;
+        while (i < arr.length - 1 && j < arr.length) {
+            if (!set.contains(arr[j])) {
+                sum = sum + arr[j];
+                maxsum = Math.max(sum,maxsum);
+                set.add(arr[j++]);
+            } else {
+                sum -= arr[i];
+                set.remove(arr[i++]);
+            }
+        }
+        return maxsum;
     }
 
     /* https://leetcode.com/problems/find-pivot-index/

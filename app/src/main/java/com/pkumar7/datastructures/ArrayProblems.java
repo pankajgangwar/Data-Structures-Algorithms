@@ -803,11 +803,9 @@ public class ArrayProblems {
     		System.out.println("Adding: " + ele.val + " freq: " + ele.frequency);
     		mMaxHeap.offer(ele);
     	}
-    	
     	int result[] = new int[barcodes.length];
     	int i = 0;
     	Element prev = new Element(-1);
-    	
     	while(!mMaxHeap.isEmpty()) {
     		Element element = mMaxHeap.peek();
     		mMaxHeap.poll();
@@ -818,57 +816,17 @@ public class ArrayProblems {
     		if(prev.frequency > 0) {
     			mMaxHeap.offer(prev);
     		}
-    		
     		element.frequency--;
     		prev = element;
     		
     		i++;
     	}
-    	
     	for(int ele : result) {
     		System.out.println(ele);
     	}
-    	
     	return result;
-    	
 	}
-	
-	//https://www.geeksforgeeks.org/find-next-greater-number-set-digits/
-	
-	//https://leetcode.com/problems/find-pivot-index/
-	//[1, 7, 3, 6, 5, 6] 
-	public int pivotIndex(int[] nums) {
-		nums = new int[] {-1,-1,0,1,1,0};
-        if(nums.length < 3) {
-        	return -1;
-        }
-        int i = 0;
-        int j = nums.length -1;
-        int sumFromEnd = 0;
-        int sumFromStart = 0;
-        while(j >= 1) {
-        	sumFromEnd+= nums[j];
-        	j--;
-        }
-        if(sumFromStart == sumFromEnd) {
-        	return i;
-        }
-       
-        System.out.println(sumFromStart + " initial <----> " + sumFromEnd);
-        for(i = 0; i < nums.length - 1; i++) {
-        	
-        	sumFromStart+= nums[i];
-        	sumFromEnd-= nums[i+1];
-        	//j++;
-        	System.out.println(sumFromStart + " <----> " + sumFromEnd);
-        	if(sumFromStart == sumFromEnd) {
-        		return i+1;
-        	}
-        }
-        
-        return -1;
-	}
-	
+
 	public static void main(String[] args) {
 		int[] arr = new int[]{1,0};
 		duplicateZeros(arr);
@@ -888,7 +846,6 @@ public class ArrayProblems {
 					arr[j++] = 0;
 			}
 	   }
-	   
     }
 
 }

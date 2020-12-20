@@ -18,6 +18,28 @@ class B {
         System.out.println("status = " + status);
     }
 
+    /* 1684. Count the Number of Consistent Strings
+     * https://leetcode.com/problems/count-the-number-of-consistent-strings/
+     * */
+    public int countConsistentStrings(String allowed, String[] words) {
+        HashSet<Character> sets = new HashSet<Character>();
+        for(char ch : allowed.toCharArray()){
+            sets.add(ch);
+        }
+        int res = 0;
+        outer: for (int i = 0; i < words.length; i++) {
+            String w = words[i];
+            for(char ch : w.toCharArray()){
+                if(!sets.contains(ch)){
+                    continue outer;
+                }
+            }
+            res++;
+        }
+        return res;
+    }
+
+
     /*1662. Check If Two String Arrays are Equivalent
      * https://leetcode.com/problems/check-if-two-string-arrays-are-equivalent
      * */

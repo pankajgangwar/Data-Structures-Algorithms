@@ -14,6 +14,39 @@ import java.util.PriorityQueue;
  */
 class A {
 
+    /* 1697. Checking Existence of Edge Length Limited Paths
+    * https://leetcode.com/problems/checking-existence-of-edge-length-limited-paths/
+    * */
+
+    public boolean[] distanceLimitedPathsExist(int n, int[][] edgeList, int[][] queries) {
+        Arrays.sort(edgeList, (a,b) -> a[2] - b[2]);
+        for (int i = 0; i < queries.length; i++) {
+            int[] q = queries[i];
+            int[] resized = new int[q.length + 1];
+            resized[0] = q[0];
+            resized[1] = q[1];
+            resized[2] = q[2];
+            resized[3] = i;
+            queries[i] = resized;
+        }
+        Arrays.sort(queries, (a,b) -> a[2] - b[2]);
+        int i = 0;
+        UnionFind unionfind = new UnionFind(n);
+        boolean[] result = new boolean[queries.length];
+        for(int[] q : queries){
+            while(i < edgeList.length && edgeList[i][2] < q[2]){
+                int[] e1 = edgeList[i];
+                int a = e1[0];
+                int b = e1[1];
+                unionfind.union(a, b);
+                i++;
+            }
+            result[q[3]] = unionfind.find(q[0]) == unionfind.find(q[1]);
+        }
+        return result;
+    }
+
+
     /* 1627. Graph Connectivity With Threshold
     * https://leetcode.com/problems/graph-connectivity-with-threshold/
     * */
@@ -299,7 +332,7 @@ class A {
         int[][] dirs = new int[][]{{-1,0},{1,0},{0,1},{0,-1}};
         boolean[][] visited = new boolean[rows][cols];
 
-        UnionFind unionFind = new UnionFind(rows, cols);
+        UnionFindMatrix UnionFindMatrix = new UnionFindMatrix(rows, cols);
         for (int[] curr : coord){
             visited[curr[0]][curr[1]] = true;
 
@@ -310,19 +343,19 @@ class A {
                 if(next_x < 0 || next_x >= rows || next_y < 0 || next_y >= cols || !visited[next_x][next_y])
                     continue;
 
-                unionFind.union(curr[0], curr[1], next_x, next_y);
+                UnionFindMatrix.union(curr[0], curr[1], next_x, next_y);
             }
 
-            if(unionFind.find(0,0) == unionFind.find(rows -1, cols -1)) return matrix[curr[0]][curr[1]];
+            if(UnionFindMatrix.find(0,0) == UnionFindMatrix.find(rows -1, cols -1)) return matrix[curr[0]][curr[1]];
         }
         return -1;
     }
 
-    class UnionFind {
+    class UnionFindMatrix {
         private int[] parent, rank;
         int row, col;
 
-        public UnionFind(int rows, int cols) {
+        public UnionFindMatrix(int rows, int cols) {
             parent = new int[rows * cols];
             rank = new int[rows * cols];
             this.row = rows;

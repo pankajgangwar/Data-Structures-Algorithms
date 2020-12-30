@@ -18,6 +18,34 @@ class B {
         System.out.println("status = " + status);
     }
 
+    /* 1704. Determine if String Halves Are Alike
+     * https://leetcode.com/problems/determine-if-string-halves-are-alike/
+     * */
+    public boolean halvesAreAlike(String s) {
+        s = s.toLowerCase();
+        int n = s.length();
+        String a = s.substring(0, n / 2);
+        String b = s.substring(n / 2);
+
+        int count = 0;
+        for (int i = 0; i < a.length(); i++) {
+            char ch = a.charAt(i);
+            if(a.charAt(i) == 'a' || a.charAt(i) == 'e' || a.charAt(i) == 'i'
+                    || a.charAt(i) == 'o' || a.charAt(i) == 'u'){
+                count++;
+            }
+        }
+
+        for (int i = 0; i < b.length(); i++) {
+            char ch = b.charAt(i);
+            if (b.charAt(i) == 'a' || b.charAt(i) == 'e' || b.charAt(i) == 'i'
+                    || b.charAt(i) == 'o' || b.charAt(i) == 'u') {
+                if(--count < 0) return false;
+            }
+        }
+        return count == 0;
+    }
+
     /* 1694. Reformat Phone Number
      * https://leetcode.com/problems/reformat-phone-number/
      * */

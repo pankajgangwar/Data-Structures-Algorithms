@@ -14,6 +14,54 @@ class B {
         b.distributeCandies(7, 4);
     }
 
+    /* 1706. Where Will the Ball Fall
+     * https://leetcode.com/problems/where-will-the-ball-fall/
+     * https://leetcode.com/problems/regions-cut-by-slashes/
+     * Upscaling the grid
+     * */
+    public int[] findBall(int[][] grid) {
+        int rows = grid.length;
+        int cols = grid[0].length;
+        int[][] upscaled = new int[rows*3][cols*3];
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[i].length; j++) {
+                if(grid[i][j] == 1){
+                    upscaled[i*3][j*3] = upscaled[i*3 + 1][j*3 + 1] = upscaled[i*3 + 2][j*3 + 2] = 1;
+                }else{
+                    upscaled[i*3][j*3 + 2] = upscaled[i*3 + 1][j*3 + 1] = upscaled[i*3 + 2][j*3] = 1;
+                }
+            }
+        }
+
+        int[] res = new int[cols];
+        for (int i = 0; i < cols; i++) {
+            boolean[][] visited = new boolean[rows*3][cols*3];
+            int status = dfs(upscaled, 0, i*3 + 1, visited);
+            res[i] = status;
+        }
+        return res;
+    }
+
+    public int dfs(int[][] grid, int row, int col, boolean[][] visited){
+        int[][] dirs = new int[][]{{1,0},{0,1},{0,-1}};
+        if(visited[row][col]) return -1;
+        visited[row][col] = true;
+        int m = grid.length;
+        int n = grid[0].length;
+        if(row == m - 1) return col / 3;
+        for (int i = 0; i < dirs.length; i++) {
+            int next_x = dirs[i][0] + row;
+            int next_y = dirs[i][1] + col;
+            if(next_x >= 0 && next_x < m && next_y >= 0 && next_y < n && grid[next_x][next_y] == 0){
+                int res = dfs(grid, next_x, next_y, visited);
+                if(res != -1){
+                    return res;
+                }
+            }
+        }
+        return -1;
+    }
+
     /* 293. Flip Game
      * https://leetcode.com/problems/flip-game/
      * */

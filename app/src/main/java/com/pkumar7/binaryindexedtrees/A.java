@@ -2,6 +2,7 @@ package com.pkumar7.binaryindexedtrees;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -22,6 +23,58 @@ class A {
         int[] nums = new int[]{-2, 5, -1};
         int res = current.countRangeSum(nums, -2, 2);
         System.out.println("res = " + res);
+    }
+
+    /* HackerRank problems
+     * https://leetcode.com/discuss/interview-question/820003/Sorted-Sums/677325
+     * */
+    static class BIT {
+        int size = 0;
+        long[] tree;
+        public BIT(int n){
+            size = n;
+            tree = new long[n];
+        }
+        private void update(int i, int delta) {
+            while(i < size){
+                tree[i] += delta;
+                i += i & (-i);
+            }
+        }
+
+        public long add(int i){
+            long s = 0;
+            while(i > 0){
+                s += tree[i];
+                i -= lsb(i);
+            }
+            return s;
+        }
+
+        public int lsb(int i){
+            return i & -i;
+        }
+
+    }
+    public static int sortedSum(List<Integer> a) {
+        int n = (int)1e6 + 1, m = (int)1e9 + 7;
+        int len = a.size();
+        BIT prefix = new BIT(n);
+        BIT postFix = new BIT(n);
+        long fn = a.get(0);
+        long ans = fn, totalSum = fn;
+        prefix.update(a.get(0), 1);
+        prefix.update(a.get(0), a.get(0));
+        for (int i = 1; i < len; i++) {
+            int rank = (int)prefix.add(a.get(i)) + 1;
+            long sumGreaterThanI = totalSum - postFix.add(a.get(i));
+            fn = (fn + rank * 1l * a.get(i) + sumGreaterThanI) % m;
+            ans = (ans + fn) % m;
+            prefix.update(a.get(i), 1);
+            prefix.update(a.get(i), a.get(i));
+            totalSum += a.get(i);
+        }
+        return (int)ans;
     }
 
     /* 327. Count of Range Sum

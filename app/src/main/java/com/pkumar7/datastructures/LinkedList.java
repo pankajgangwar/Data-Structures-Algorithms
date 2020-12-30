@@ -565,48 +565,6 @@ public class LinkedList {
 		}
 	}
 
-	private void checkPalindrome() {
-		// TODO Auto-generated method stub
-		System.out.println("************ PALINDROME CHECK *************");
-		boolean isPalindrome = checkPalindrome(head);
-		System.out.println("If Palindrome : " + isPalindrome);
-		// System.out.println("isPalindrom: " + checkPalindrome(head));
-	}
-
-	private boolean checkPalindrome(Node head) {
-		if (head == null) {
-			return false;
-		}
-		Node fastPtr = head.next;
-		Node slowPtr = head;
-		Stack<Integer> mStack = new Stack<>();
-
-		while (fastPtr != null && fastPtr.next != null) {
-			mStack.push(slowPtr.data);
-			slowPtr = slowPtr.next;
-			fastPtr = fastPtr.next.next;
-		}
-		if (fastPtr != null) {
-			mStack.push(slowPtr.data);
-		}
-
-		slowPtr = slowPtr.next;
-
-		while (slowPtr != null) {
-			if (!mStack.isEmpty()) {
-				if (mStack.peek() == slowPtr.data) {
-					mStack.pop();
-				}
-			}
-			slowPtr = slowPtr.next;
-		}
-		if (mStack.isEmpty() && slowPtr == null) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
 	public void testMergeList() {
 		int k = 3; // Number of linked lists  
         int n = 4; // Number of elements in each list  

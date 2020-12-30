@@ -28,7 +28,8 @@ class JuneW2 {
         //obj.printLIS(new int[]{10,9,2,5,3,7,101,18});
         //obj.largestDivisibleSubset(new int[]{2,8,18,19,20,4,16});
         int[][] times = new int[][]{{1,2,1},{2,3,2},{1,3,2}};
-        obj.networkDelayTime(times, 3, 1);
+        int[] arr = new int[]{10,9,2,5,3,7,101,18};
+        obj.lengthOfLIS(arr);
         //System.out.println("res = " + res);
         //obj.findLeastNumOfUniqueInts(new int[]{4,3,1,1,3,3,2}, 3);
         /*TreeAncestor treeAncestor = new TreeAncestor(7, new int[]{-1,0,0,1,1,2,2});
@@ -77,47 +78,7 @@ class JuneW2 {
         return root;
     }
 
-    /* https://cp-algorithms.com/graph/lca_binary_lifting.html
-    *  https://leetcode.com/problems/kth-ancestor-of-a-tree-node/
-    *  Binary lifting
-    */
-    static class TreeAncestor {
-        Map<Integer, List<Integer>> children = new HashMap<>();
-        Integer[][] memo;
-        public TreeAncestor(int n, int[] parents) {
-            memo = new Integer[n][30];//30 is max depth
-            for (int i = 0; i < n; i++) {
-                int currNode = i;
-                int parent = parents[i];
-                children.computeIfAbsent(parent, value ->  new ArrayList<Integer>()).add(currNode);
-                if(i > 0)memo[currNode][0] = parent;
-            }
-            dfs(0);
-        }
 
-        private void dfs(int currNode) {
-            for (int i = 1; memo[currNode][i-1] != null ; i++) {
-                int parent = memo[currNode][i-1];
-                memo[currNode][i] = memo[parent][i-1];
-            }
-            for(int child : children.getOrDefault(currNode, new ArrayList<>())){
-                dfs(child);
-            }
-        }
-
-        public int getKthAncestor(int node, int k) {
-            int currPow = 0;
-            while (k > 0 ){
-                if(k % 2 == 1){
-                    if(memo[node][currPow] == null) return -1;
-                    node = memo[node][currPow];
-                }
-                currPow++;
-                k = k / 2;
-            }
-            return node;
-        }
-    }
 
     /*
     LC : 5454
@@ -487,6 +448,7 @@ class JuneW2 {
     }
 
     public int lengthOfLISPatienceSort(int[] nums) {
+        //https://www.cs.princeton.edu/courses/archive/spring13/cos423/lectures/LongestIncreasingSubsequence.pdf
         List<Integer> piles = new ArrayList<>(nums.length);
         for (int num : nums) {
             int pile = Collections.binarySearch(piles, num);

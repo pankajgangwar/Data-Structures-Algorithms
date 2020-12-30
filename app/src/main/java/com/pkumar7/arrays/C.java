@@ -2,6 +2,7 @@ package com.pkumar7.arrays;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -13,10 +14,49 @@ class C {
 
     }
 
+    /* Minimum Number of Platforms Required for a Railway/Bus Station
+     * https://www.geeksforgeeks.org/minimum-number-platforms-required-railwaybus-station/
+     * */
+    public int findPlatform(int arr[], int dep[], int n) {
+        Arrays.sort(arr);
+        Arrays.sort(dep);
+        int i = 0, j = 0;
+        int stations_needed = 0;
+        int max_station = 0;
+        while(i < n && j < n){
+            if(arr[i] <= dep[j]){
+                i++;
+                max_station += 1;
+                stations_needed = Math.max(stations_needed, max_station);
+            }else if(arr[i] >= dep[j]){
+                j++;
+                max_station -= 1;
+            }
+        }
+        return stations_needed;
+    }
+
+
     /* 1695. Maximum Erasure Value
      * https://leetcode.com/problems/maximum-erasure-value/
      * */
-    public int maximumUniqueSubarray(int[] arr) {
+    public int maximumUniqueSubarray(int[] nums) {
+        HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+        int maxScore = 0;
+        int n = nums.length;
+        int[] prefix = new int[n + 1];
+        for (int i = 0; i < nums.length; i++) {
+            prefix[i + 1] = prefix[i] + nums[i];
+        }
+        for (int i = 0, j = 0; i < nums.length; i++) {
+            j = Math.max(j, map.getOrDefault(nums[i], -1) + 1);
+            maxScore = Math.max(maxScore, prefix[i + 1] - prefix[j]);
+            map.put(nums[i], i);
+        }
+        return maxScore;
+    }
+
+    public int maximumUniqueSubarrayI(int[] arr) {
         int i = 0, j = 1;
         HashSet<Integer> set = new HashSet<Integer>();
         set.add(arr[0]);

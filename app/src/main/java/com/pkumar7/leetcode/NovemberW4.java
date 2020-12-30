@@ -25,12 +25,10 @@ public class NovemberW4 {
         //w4.knightDialer(1);
         w4.maxSlidingWindow(new int[]{1,3,-1,-3,5,3,6,7},3);
     }
-
     /*
         https://leetcode.com/problems/sliding-window-maximum/
         239. Sliding Window Maximum
     */
-    
     public int[] maxSlidingWindow(int[] nums, int k) {
         return maxSlidingWindowUsingDeque(nums, k);
     }

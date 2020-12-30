@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.TreeMap;
 
 /**
  * Created by Pankaj Kumar on 12/August/2020
@@ -18,6 +19,49 @@ class A {
     public static void main(String[] args) {
         A current = new A();
         current.increasingBST(null);
+    }
+
+    /*
+     * https://www.geeksforgeeks.org/print-nodes-top-view-binary-tree/
+     * https://www.hackerrank.com/challenges/tree-top-view/problem
+     * Print top view of of Binary tree
+     * */
+    void topView(TreeNode root) {
+        bfs(root);
+    }
+    class QueueNode {
+        TreeNode treeNode;
+        int hd;
+        public QueueNode(TreeNode treeNode, int hd) {
+            this.treeNode = treeNode;
+            this.hd = hd;
+        }
+    }
+    void bfs(TreeNode root){
+        if(root == null) return;
+        Queue<QueueNode> q = new LinkedList<>();
+        q.offer(new QueueNode(root, 0));
+        TreeMap<Integer, TreeNode> map = new TreeMap<>();
+        map.put(0, root);
+        while(!q.isEmpty()){
+            int size = q.size();
+            for(int i = 0; i < size; i++){
+                QueueNode curr = q.poll();
+                if(!map.containsKey(curr.hd)){
+                    map.put(curr.hd, curr.treeNode);
+                }
+                if(curr.treeNode.left != null){
+                    q.offer(new QueueNode(curr.treeNode.left, curr.hd - 1));
+                }
+                if(curr.treeNode.right != null) {
+                    q.offer(new QueueNode(curr.treeNode.right, curr.hd + 1));
+                }
+            }
+        }
+        for(Map.Entry<Integer, TreeNode> entry : map.entrySet()) {
+            System.out.print(entry.getValue().val);
+            System.out.print(" ");
+        }
     }
 
     /**

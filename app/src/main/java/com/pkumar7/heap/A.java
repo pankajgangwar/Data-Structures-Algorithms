@@ -15,6 +15,39 @@ import java.util.TreeSet;
  */
 class A {
 
+    /* 1705. Maximum Number of Eaten Apples
+     * https://leetcode.com/problems/maximum-number-of-eaten-apples/
+     * */
+    public int eatenApples(int[] apples, int[] days) {
+        int res = 0;
+        //Entries with minimum expiry days should come first
+        PriorityQueue<int[]> pq = new PriorityQueue<int[]>((a,b) -> a[0] - b[0]);
+        for (int d = 0; d <= 20000; d++) {
+            if(d < days.length) {
+                // Add days after which apples will rot and no. of apples
+                pq.offer(new int[]{d + days[d] - 1, apples[d]});
+
+            }
+            while(!pq.isEmpty()){
+                int[] curr = pq.peek();//check apples which are expiring soon
+                if(curr[0] < d){
+                    pq.poll(); // Remove the apples which are rotten till this day
+                }else{
+                    break;
+                }
+            }
+            if(!pq.isEmpty()){
+                int[] curr = pq.poll();
+                curr[1]--;
+                res++;
+                if(curr[1] > 0){
+                    pq.offer(curr);
+                }
+            }
+        }
+        return res;
+    }
+
     /* Amazon
      * https://leetcode.com/discuss/interview-question/933383/
      * */

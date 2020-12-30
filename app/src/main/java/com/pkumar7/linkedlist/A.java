@@ -10,6 +10,33 @@ import java.util.HashSet;
  */
 class A {
 
+    /* 234. Palindrome Linked List
+    * https://leetcode.com/problems/palindrome-linked-list/
+    * */
+    public boolean isPalindrome(ListNode head) {
+        ListNode fastPtr = head;
+        ListNode slowPtr = head;
+        while (fastPtr != null && fastPtr.next != null) {
+            fastPtr = fastPtr.next.next;
+            slowPtr = slowPtr.next;
+        }
+        ListNode newHead = null;
+        while(slowPtr != null){
+            ListNode next = slowPtr.next;
+            slowPtr.next = newHead;
+            newHead = slowPtr;
+            slowPtr = next;
+        }
+        while (head != null && newHead != null){
+            if(head.val != newHead.val){
+                return false;
+            }
+            head = head.next;
+            newHead = newHead.next;
+        }
+        return true;
+    }
+
     /* 1669. Merge In Between Linked Lists
      * https://leetcode.com/problems/merge-in-between-linked-lists/
      * */

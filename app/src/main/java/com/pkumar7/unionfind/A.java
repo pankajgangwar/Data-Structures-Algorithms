@@ -17,7 +17,6 @@ class A {
     /* 1697. Checking Existence of Edge Length Limited Paths
     * https://leetcode.com/problems/checking-existence-of-edge-length-limited-paths/
     * */
-
     public boolean[] distanceLimitedPathsExist(int n, int[][] edgeList, int[][] queries) {
         Arrays.sort(edgeList, (a,b) -> a[2] - b[2]);
         for (int i = 0; i < queries.length; i++) {

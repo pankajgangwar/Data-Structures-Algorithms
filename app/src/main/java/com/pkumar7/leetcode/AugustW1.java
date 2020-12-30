@@ -36,7 +36,7 @@ class AugustW1 {
     public static void main(String[] args) {
         AugustW1 w1 = new AugustW1();
         //boolean status = w1.canConvertString("atmtxzjkz","tvbtjhvjd", 35);
-        int status = w1.maxNonOverlapping(new int[]{1,1,1,1,1}, 2);
+        int status = w1.findMaximumXOR(new int[]{3,10,5,25,2,8});
         System.out.println(status);
     }
 

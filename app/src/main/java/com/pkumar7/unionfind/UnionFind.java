@@ -3,7 +3,7 @@ package com.pkumar7.unionfind;
 /**
  * Created by Pankaj Kumar on 20/December/2020
  */
-class UnionFind {
+public class UnionFind {
     private int count = 0;
     private int[] parent, rank;
     public UnionFind(int n) {
@@ -26,9 +26,9 @@ class UnionFind {
         int rootQ = find(q);
         if (rootP == rootQ) return;
         if (rank[rootQ] > rank[rootP]) {
-            parent[rootP] = rootQ;
+            parent[rootP] = rootQ; // p points to q
         } else {
-            parent[rootQ] = rootP;
+            parent[rootQ] = rootP; // q points to p
             if (rank[rootP] == rank[rootQ]) {
                 rank[rootP]++;
             }

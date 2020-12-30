@@ -10,50 +10,6 @@ import java.util.Map;
 
 public class MayW3 {
 
-
-
-    /* HackerRank problems*/
-    public static int sortedSum(List<Integer> a) {
-        int mod = (int)1e9+7;
-        int sum = 0;
-        ArrayList<Integer> list = new ArrayList<>();
-        for (int i = 0; i < a.size(); i++) {
-            int ele = a.get(i);
-            int loc = Collections.binarySearch(list, ele);
-            list.add( Math.abs(loc) - 1, ele);
-            int currSum = 0;
-            for (int j = 0; j < list.size(); j++) {
-                currSum += (j + 1) * list.get(j);
-                currSum = ((currSum % mod ) + mod ) % mod;
-            }
-            sum += currSum;
-            sum =( (sum % mod) + mod ) % mod;
-        }
-        return sum;
-    }
-
-    /* HackerRank problems*/
-    public static long taskOfPairing(List<Long> freq) {
-        long pairs = 0L;
-        LinkedList<Long> freqs = new LinkedList<>(freq);
-
-        Long prevWeight = 0L;
-        while(!freqs.isEmpty()){
-            Long dumbbells = freqs.pollFirst() + prevWeight;
-            if(dumbbells % 2 == 0){
-                pairs += dumbbells / 2;
-                prevWeight = 0L;
-            }else if(dumbbells > 2){
-                prevWeight = 1L;
-                pairs += dumbbells / 2;
-            }else{
-                prevWeight = dumbbells;
-            }
-        }
-        BigInteger big = BigInteger.valueOf(pairs);
-        return big.longValue();
-    }
-
     /* HackerRank
      *  Customers activity more than 5%
      * */

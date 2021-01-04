@@ -15,6 +15,87 @@ class A {
         w2.kthSmallestPrimeFraction(new int[]{1, 2, 3, 5}, 3);
     }
 
+    /* 1712. Ways to Split Array Into Three Subarrays
+     * https://leetcode.com/problems/ways-to-split-array-into-three-subarrays/
+     * */
+    public int waysToSplit(int[] nums) {
+        int ans = 0;
+        int mod = (int)1e9 + 7;
+        int n = nums.length;
+        int[] prefix = new int[n];
+        prefix[0] = nums[0];
+        for(int i = 1; i < n; i++) {
+            prefix[i] = prefix[i - 1] + nums[i];
+        }
+        for (int i = 1; i < n; i++) {
+            int left = search(prefix, prefix[i - 1], i , true);
+            int right = search(prefix, prefix[i - 1], i , false);
+            if(left == -1 || right == -1) continue;
+            ans = (ans + (right - left + 1) % mod) % mod;
+        }
+        return ans;
+    }
+
+    public int search(int[] prefix, int leftSum, int index, boolean searchLeft){
+        int N = prefix.length;
+        int l = index, r = N - 2;
+        int res = -1;
+        while(l <= r){
+            int mid = l + (r - l) / 2;
+            int midSum = prefix[mid] - prefix[index - 1];
+            int rightSum = prefix[N - 1] - prefix[mid];
+            if(leftSum <= midSum && midSum <= rightSum){
+                res = mid;
+                if(searchLeft) r = mid - 1;
+                else l = mid + 1;
+            }else if(midSum < leftSum){
+                l = mid + 1;
+            }else{
+                r = mid - 1;
+            }
+        }
+        return res;
+    }
+
+    /* 34. Find First and Last Position of Element in Sorted Array
+    * https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/
+    * */
+    public int[] searchRange(int[] nums, int target) {
+        int n = nums.length;
+        int l = 0, r = n - 1;
+        int left = first(nums, l, r, target);
+        int right = last(nums, l, r, target);
+        return new int[]{left, right};
+    }
+
+    public int last(int[] nums, int l, int r, int target){
+        int n = nums.length;
+        if(l > r) return -1;
+        int mid = l + (r - l) / 2;
+        if((mid + 1 < n && (nums[mid + 1] > target && nums[mid] == target))
+                || (mid == n - 1 && nums[mid] == target)) {
+            return mid;
+        }else if(nums[mid] == target || nums[mid] < target){
+            return last(nums, mid + 1, r, target);
+        }else{
+            return last(nums, l, mid - 1, target);
+        }
+    }
+
+    public int first(int[] nums, int l, int r, int target){
+        int n = nums.length;
+        if(l > r) return -1;
+        int mid = l + (r - l) / 2;
+        if( (mid > 0 && (nums[mid - 1] < target) && nums[mid] == target)
+                || (mid == 0 && nums[mid] == target)) {
+            return mid;
+        }else if(nums[mid] == target || nums[mid] > target){
+            return first(nums, l, mid - 1, target);
+        }else{
+            return first(nums, mid + 1, r, target);
+        }
+    }
+
     /* 1665. Minimum Initial Energy to Finish Tasks
      * https://leetcode.com/problems/minimum-initial-energy-to-finish-tasks/
      * */
@@ -35,6 +116,7 @@ class A {
         }
         return low;
     }
+
     private boolean isValid(int minReqEnergy, PriorityQueue<int[]> maxHeap) {
         while (!maxHeap.isEmpty()){
             int[] t = maxHeap.poll();

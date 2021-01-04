@@ -646,38 +646,27 @@ public class ArrayProblems {
 	//https://leetcode.com/problems/two-sum/
 	public int[] intersection(int[] nums1, int[] nums2) {
 		Set<Integer> mSet = new HashSet<>();
-
 		Set<Integer> mSet2 = new HashSet<>();
-
 		for (int i = 0; i < nums1.length; i++) {
 			mSet.add(nums1[i]);
 		}
-
 		for (int i = 0; i < nums2.length; i++) {
 			mSet2.add(nums2[i]);
 		}
-
 		ArrayList<Integer> mResult = new ArrayList<>();
-
 		Iterator<Integer> iterator = mSet.iterator();
-
 		while (iterator.hasNext()) {
 			int ele = iterator.next();
 			if (mSet2.contains(ele)) {
 				mResult.add(ele);
 			}
 		}
-
 		int[] result = new int[mResult.size()];
-
 		Object[] re = mResult.toArray();
-
 		for (int i = 0; i < re.length; i++) {
 			result[i] = (int) re[i];
 		}
-
 		return result;
-
 	}
 	
 	//https://leetcode.com/problems/search-insert-position/submissions/

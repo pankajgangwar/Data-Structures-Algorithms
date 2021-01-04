@@ -344,7 +344,6 @@ public class NovemberW4 {
         buildMap(root, null);
         
         if(!map.containsKey(target)) return res;
-
         Set<TreeNode> visited = new HashSet<>();
         visited.add(target);
 
@@ -352,19 +351,15 @@ public class NovemberW4 {
         q.offer(target);
 
         while(!q.isEmpty()){
-
             if(K == 0){
                 while(!q.isEmpty()){
                     res.add(q.poll().val);
                 }
             }
-
             int size = q.size();
-
             while(size-- > 0){
                 TreeNode curr = q.poll();
                 visited.add(curr);
-
                 List<TreeNode> neighbours = map.get(curr);
                 for(TreeNode adj : neighbours){
                     if(visited.contains(adj)) continue;
@@ -408,7 +403,6 @@ public class NovemberW4 {
     /*
     * https://leetcode.com/problems/count-servers-that-communicate/
       1267. Count Servers that Communicate
-
     * */
     public int countServers(int[][] grid) {
         int[] rows = new int[grid.length];

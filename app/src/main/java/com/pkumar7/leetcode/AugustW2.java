@@ -263,69 +263,6 @@ public class AugustW2 {
     }
 
     /**
-     * 34. Find First and Last Position of Element in Sorted Array
-     *
-     * https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/
-     *
-     * Input: nums = [5,7,7,8,8,10], target = 8
-     * Output: [3,4]
-     *
-     * Input: nums = [5,7,7,8,8,10], target = 6
-     * Output: [-1,-1]
-     * */
-    public static int[] searchRange(int[] nums, int target) {
-        int first_idx = Arrays.binarySearch(nums, target);
-        int second_idx = -1;
-        if(first_idx > 0){
-            second_idx = Arrays.binarySearch(nums, first_idx+1, nums.length-1, target);
-        }else{
-            first_idx = -1;
-        }
-        if(second_idx < 0){
-            second_idx = -1;
-        }
-        return new int[]{first_idx, second_idx};
-        /*int i = 0;
-        int j = nums.length -1;
-        if(nums.length == 1){
-            if(target == nums[0]){
-                return new int[]{0,0};
-            }
-        }
-
-        boolean firstFound = false, secondFound = false;
-        while(i <= j){
-            if(nums[i] == target){
-                firstFound = true;
-            }else{
-                i++;
-            }
-
-            if(nums[j] == target){
-                secondFound = true;
-            }else{
-                j--;
-            }
-
-            if(firstFound && secondFound){
-                break;
-            }
-        }
-
-        if(!firstFound  && !secondFound){
-            i = -1;
-            j = -1;
-        }else if(firstFound && !secondFound){
-            j = i;
-        }else if(secondFound && !firstFound){
-            i = j;
-        }
-
-        System.out.println(i + "," + j);
-        return new int[]{i, j};*/
-    }
-
-    /**
      * https://leetcode.com/problems/find-k-pairs-with-smallest-sums/
      * https://leetcode.com/problems/find-k-pairs-with-smallest-sums/discuss/84551/simple-Java-O(KlogK)-solution-with-explanation
      * 373. Find K Pairs with Smallest Sums

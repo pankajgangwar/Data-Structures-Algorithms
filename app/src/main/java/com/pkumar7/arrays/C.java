@@ -14,6 +14,28 @@ class C {
 
     }
 
+    /* 1710. Maximum Units on a Truck
+     * https://leetcode.com/problems/maximum-units-on-a-truck/
+     * */
+    public int maximumUnits(int[][] boxTypes, int truckSize) {
+        Arrays.sort(boxTypes, (a,b) -> -a[0] + b[0]);
+        int ans = 0;
+        for (int i = 0; i < boxTypes.length; i++) {
+            int boxes = boxTypes[i][0];
+            int unit = boxTypes[i][1];
+            if(truckSize == 0) break;
+            if(truckSize >= boxes){
+                ans += (unit * boxes);
+                truckSize -= boxes;
+            }else{
+                int rem = truckSize;
+                ans += (unit * rem);
+                truckSize = 0;
+            }
+        }
+        return ans;
+    }
+
     /* Minimum Number of Platforms Required for a Railway/Bus Station
      * https://www.geeksforgeeks.org/minimum-number-platforms-required-railwaybus-station/
      * */

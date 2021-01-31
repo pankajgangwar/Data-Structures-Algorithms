@@ -21,6 +21,32 @@ class A {
         System.out.println("status = " + status);
     }
 
+    /* 1744. Can You Eat Your Favorite Candy on Your Favorite Day?
+     * https://leetcode.com/problems/can-you-eat-your-favorite-candy-on-your-favorite-day/
+     * */
+    public boolean[] canEat(int[] candiesCount, int[][] queries) {
+        int n = candiesCount.length;
+        long[] prefixsum = new long[n];
+        int qlen = queries.length;
+        boolean[] ans = new boolean[qlen];
+        prefixsum[0] = candiesCount[0];
+        for (int i = 1; i < n; i++) {
+            prefixsum[i] = prefixsum[i - 1] + candiesCount[i];
+        }
+        for(int i = 0; i < qlen; i++){
+            int[] q = queries[i];
+            int type = q[0];
+            long day = (long)q[1] + 1;
+            long atmost = (long)q[2];
+            if((day) * atmost > (type == 0? 0:prefixsum[type-1]) &&  prefixsum[type] >= (day)){
+                ans[i] = true;
+            }else{
+                ans[i] = false;
+            }
+        }
+        return ans;
+    }
+
     /* 1536. Minimum Swaps to Arrange a Binary Grid
      * https://leetcode.com/problems/minimum-swaps-to-arrange-a-binary-grid/
      * */

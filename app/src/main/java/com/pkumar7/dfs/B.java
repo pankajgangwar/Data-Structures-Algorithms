@@ -1,8 +1,10 @@
 package com.pkumar7.dfs;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Pankaj Kumar on 08/October/2020
@@ -12,6 +14,46 @@ class B {
     public static void main(String[] args) {
         B b = new B();
         b.distributeCandies(7, 4);
+    }
+
+    /* 1743. Restore the Array From Adjacent Pairs
+     * https://leetcode.com/problems/restore-the-array-from-adjacent-pairs/
+     * */
+    public int[] restoreArray(int[][] adjacentPairs) {
+        int n = adjacentPairs.length + 1;
+        int[] res = new int[n];
+        HashMap<Integer,List<Integer>> graph = new HashMap<>();
+        for (int[] adj : adjacentPairs) {
+            int a = adj[0];
+            int b = adj[1];
+            graph.putIfAbsent(a, new ArrayList<>());
+            graph.putIfAbsent(b, new ArrayList<>());
+            graph.get(a).add(b);
+            graph.get(b).add(a);
+        }
+        int root = 0;
+        for(Map.Entry<Integer, List<Integer>> e : graph.entrySet()){
+            if(e.getValue().size() == 1){
+                root = e.getKey();
+                break;
+            }
+        }
+        HashSet<Integer> visited = new HashSet<>();
+        List<Integer> ans = new ArrayList<>();
+        dfs(root, visited,ans, graph);
+        for (int i = 0; i < ans.size(); i++) {
+            res[i] = ans.get(i);
+        }
+        return res;
+    }
+
+    public void dfs(int src, HashSet<Integer> visited, List<Integer> ans, HashMap<Integer, List<Integer>> graph){
+        if(visited.contains(src)) return;
+        ans.add(src);
+        visited.add(src);
+        for(int child : graph.get(src)){
+            dfs(child, visited, ans, graph);
+        }
     }
 
     /* 1706. Where Will the Ball Fall

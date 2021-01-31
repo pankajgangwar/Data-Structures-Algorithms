@@ -10,6 +10,35 @@ import java.util.HashSet;
  */
 class A {
 
+    /*
+    * 83. Remove Duplicates from Sorted List
+    * https://leetcode.com/problems/remove-duplicates-from-sorted-list/
+    * */
+    public ListNode deleteDuplicatesI(ListNode head) {
+        if(head == null) return head;
+        while(head.next != null && head.val == head.next.val){
+            head = head.next;
+        }
+        head.next = deleteDuplicatesI(head.next);
+        return head;
+    }
+
+    /* 82. Remove Duplicates from Sorted List II
+    https://leetcode.com/problems/remove-duplicates-from-sorted-list-ii/
+    */
+    public ListNode deleteDuplicates(ListNode head) {
+        if(head == null) return null;
+        if(head.next != null && head.val == head.next.val){
+            while(head.next != null && head.val == head.next.val){
+                head = head.next;
+            }
+            return deleteDuplicates(head.next);
+        }else{
+            head.next = deleteDuplicates(head.next);
+        }
+        return head;
+    }
+
     /* 234. Palindrome Linked List
     * https://leetcode.com/problems/palindrome-linked-list/
     * */

@@ -9,7 +9,61 @@ import java.util.Deque;
 class B {
     public static void main(String[] args) {
         B current = new B();
-        current.constrainedSubsetSum(new int[] {10,-2,-10,-5,20}, 2);
+        current.findNumberOfLIS(new int[]{1,3,5,4,7});
+    }
+
+    /* 1745. Palindrome Partitioning IV
+     * https://leetcode.com/problems/palindrome-partitioning-iv/
+     * */
+    public boolean checkPartitioning(String s) {
+        boolean [][]isPal = new boolean[2001][2001];
+        for (int i = s.length() - 1 ; i >= 0; i--) {
+            for (int j = i; j < s.length() ; j++) {
+                isPal[i][j] = s.charAt(i) == s.charAt(j) && (i + 1 >= j || isPal[i + 1][j - 1]);
+            }
+        }
+        for (int i = 2; i < s.length(); i++) {
+            if(isPal[i][s.length() -1]){
+                for (int j = 1; j < i; j++) {
+                    if(isPal[j][i-1] && isPal[0][j-1]){
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /* 673. Number of Longest Increasing Subsequence
+    * https://leetcode.com/problems/number-of-longest-increasing-subsequence/
+    * */
+    public int findNumberOfLIS(int[] nums) {
+        int len[] = new int[nums.length];
+        int cnt[] = new int[nums.length];
+
+        int max_len = 0, res=  0;
+        for(int i = 0; i < nums.length; i++){
+            len[i] = 1;
+            cnt[i] = 1;
+            for(int j = 0; j < i; j++){
+                if(nums[j] < nums[i]){
+                    if(len[i] == len[j] + 1) {
+                        cnt[i] += cnt[j];
+                    }else if(len[i] < len[j] + 1){
+                        len[i] = len[j] + 1;
+                        cnt[i] = cnt[j];
+                    }
+                }
+            }
+
+            if(max_len == len[i]) {
+                res += cnt[i];
+            }else if(max_len < len[i]){
+                max_len = len[i];
+                res = cnt[i];
+            }
+        }
+        return res;
     }
 
     /* https://leetcode.com/problems/constrained-subsequence-sum/

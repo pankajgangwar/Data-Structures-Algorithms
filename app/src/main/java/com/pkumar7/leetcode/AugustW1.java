@@ -279,21 +279,17 @@ class AugustW1 {
     1539. Kth Missing Positive Number
     https://leetcode.com/problems/kth-missing-positive-number/ */
     public int findKthPositive(int[] arr, int k) {
-        List<Integer> list = new ArrayList<>();
-        for (int i = 1, start = 0; i < 1000 && start < arr.length; i++) {
-            if(arr[start] == i){
-                start++;
+        int l = 0, r = arr.length;
+        while(l < r){
+            int mid = l + (r - l) / 2;
+            if(arr[mid] - 1 - mid < k){
+                l = mid + 1;
             }else{
-                list.add(i);
+                r = mid;
             }
         }
-        if(k > list.size()){
-            k = k - list.size();
-            int last = list.get(list.size() - 1);
-            return last + k;
-        }else{
-            return list.get(k + 1);
-        }
+        //return r + k;
+        return l + k;
     }
 
     /*

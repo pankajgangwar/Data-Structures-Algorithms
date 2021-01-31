@@ -166,9 +166,7 @@ public class MarchW4 {
             WorkerRatio workerRatio = new WorkerRatio((double)wage[i]/quality[i], (double)quality[i]);
             list.add(workerRatio);
         }
-
         Collections.sort(list, (w1, w2) -> Double.compare(w1.ratio, w2.ratio));
-
         double sum = 0, ans = Double.MAX_VALUE;
         PriorityQueue<Double> pq = new PriorityQueue<>();
         for (WorkerRatio worker: list) {
@@ -864,21 +862,7 @@ public class MarchW4 {
         return stack.pop();
     }
 
-    /* https://leetcode.com/problems/remove-duplicates-from-sorted-list-ii/ */
-    public ListNode deleteDuplicates(ListNode head) {
-        if(head == null) return null;
-        
-        if(head.next != null && head.val == head.next.val){
-            
-            while(head.next != null && head.val == head.next.val){
-                head = head.next;               
-            }
-            return deleteDuplicates(head.next);
-        }else{
-            head.next = deleteDuplicates(head.next);
-        }
-        return head;
-    }
+
 
     /* https://leetcode.com/problems/add-two-numbers-ii/ */
     public ListNode addTwoNumbers(ListNode l1, ListNode l2) {

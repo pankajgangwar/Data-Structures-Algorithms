@@ -23,14 +23,17 @@ public class SegmentTree {
     }
 
     public int[] createSegmentTree(int[] input){
+        /*int n = input.length;
+        int x = (int)Math.ceil(Math.log(n)/ Math.log(2)); // Height of tree
+        int max_size = 2 *(int)Math.pow(2, x) -1;
+        int[] tree = new int[max_size];*/
         int nextPowerOfTwo = nextPowerOf2(input.length);
-        int[] seg_tree = new int[nextPowerOfTwo * 2 - 1];
-        for (int i = 0; i < seg_tree.length; i++) {
-            seg_tree[i] = Integer.MAX_VALUE;
-        }
-        constructSumTree(input, seg_tree,0, input.length -1,0);
-        //constructTree(input, seg_tree,0, input.length -1,0);
-        return seg_tree;
+        int[] tree = new int[nextPowerOfTwo * 2 - 1];
+        Arrays.fill(tree, Integer.MIN_VALUE);
+        //constructSumTree(input, seg_tree,0, input.length -1,0);
+        //constructMinTree(input, seg_tree,0, input.length -1,0);
+        constructMaxTree(input,tree,0, input.length -1,0);
+        return tree;
     }
 
     public void constructSumTree(int[] input, int[] segTree, int low, int high, int pos){
@@ -44,14 +47,25 @@ public class SegmentTree {
         segTree[pos] = segTree[2*pos + 1] + segTree[2*pos + 2];
     }
 
-    public void constructTree(int[] input, int[] segTree, int low, int high, int pos){
+    public int constructMaxTree(int[] input,int[] tree, int low, int high, int pos){
+        if(low == high){
+            tree[pos] = input[low];
+            return tree[pos];
+        }
+        int mid = low + (high - low)/2;
+        tree[pos] = Math.max(constructMaxTree(input, tree, low, mid, pos*2 + 1),
+                constructMaxTree(input, tree, mid + 1, high, pos*2 + 2));
+        return tree[pos];
+    }
+
+    public void constructMinTree(int[] input, int[] segTree, int low, int high, int pos){
         if(low == high){
             segTree[pos] = input[low];
             return;
         }
         int mid = (low + high)/2;
-        constructTree(input, segTree, low, mid, 2*pos + 1);
-        constructTree(input, segTree, mid + 1, high, 2*pos + 2);
+        constructMinTree(input, segTree, low, mid, 2*pos + 1);
+        constructMinTree(input, segTree, mid + 1, high, 2*pos + 2);
         segTree[pos] = Math.min(segTree[2*pos + 1], segTree[2*pos + 2]);
     }
 
@@ -81,6 +95,26 @@ public class SegmentTree {
         int mid = getMid(ss, se);
         return getSumUtil(segTree, ss, mid, qs, qe, 2 * si + 1) +
                 getSumUtil(segTree, mid + 1, se, qs, qe, 2 * si + 2);
+    }
+
+    public int getMax(int[] segTree, int n, int qs, int qe) {
+        if (qs < 0 || qe > n - 1 || qs > qe) {
+            System.out.println("Invalid Input");
+            return -1;
+        }
+        return rangeMaxQuery(segTree,0, n - 1, qs, qe, 0);
+    }
+
+    public int rangeMaxQuery(int[] tree, int low, int high, int qLow, int qHigh, int pos){
+        if(qLow <= low  && qHigh >= high){//total overlap
+            return tree[pos];
+        }
+        if(qLow > high || qHigh < low) { //No overlap
+            return -1;
+        }
+        int mid = (low + high) / 2;
+        return Math.max(rangeMaxQuery(tree, low, mid, qLow, qHigh, 2*pos + 1),
+                rangeMaxQuery(tree, mid+1 , high, qLow, qHigh, 2*pos + 2));
     }
 
     public int rangeMinQuery(int[] segTree, int qLow, int qHigh, int low, int high, int pos){
@@ -122,11 +156,11 @@ public class SegmentTree {
         int []input = {0, 3, 4, 2, 1, 6, -1};
         int n = input.length;
         int[] segTree = tree.createSegmentTree(input);
-        int output = tree.getSum(segTree, n, 1, 3);
+        int output = tree.getMax(segTree, n, 1, 3);
         tree.updateValue(segTree, input, n, 1, 10);
         //int output = tree.rangeMinQuery(segTree,0,7, 0, input.length-1, 0);
-        int output_new = tree.getSum(segTree, n, 1, 3);
-        System.out.println("Old sum " + output + " New sum:" + output_new);
+        int output_new = tree.getMax(segTree, n, 1, 3);
+        System.out.println("Old max " + output + " New max:" + output_new);
     }
 
     /**

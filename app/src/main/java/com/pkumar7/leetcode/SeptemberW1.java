@@ -407,22 +407,9 @@ public class SeptemberW1 {
                 isSubSetRec(nums, n -1, sum);
     }
 
-
-
     /**
      * https://leetcode.com/problems/convert-bst-to-greater-tree/
-     *
-     * Input: The root of a Binary Search Tree like this:
-     *               5
-     *             /   \
-     *            2     13
-     *
-     * Output: The root of a Greater Tree like this:
-     *              18
-     *             /   \
-     *           20     13
-     *
-     * **/
+     **/
     int sum = 0;
     public TreeNode convertBST(TreeNode root) {
         if(root != null){
@@ -516,15 +503,6 @@ public class SeptemberW1 {
     /**
      * https://leetcode.com/problems/coin-change-2/
      * https://www.geeksforgeeks.org/understanding-the-coin-change-problem-with-dynamic-programming/
-     *
-     * Input: amount = 5, coins = [1, 2, 5]
-     * Output: 4
-     * Explanation: there are four ways to make up the amount:
-     * 5=5
-     * 5=2+2+1
-     * 5=2+1+1+1
-     * 5=1+1+1+1+1
-     *
      * */
     public int change(int amount, int[] coins) {
         //return coinChangeIIRec(amount, coins, coins.length);
@@ -533,23 +511,33 @@ public class SeptemberW1 {
         memo[0] = 1;
         int res = coinChangeIIMemo(amount, coins, coins.length, memo);
         return res;*/
-
-        return coinChangeIIDP(amount, coins, coins.length);
+        return coinChangeIIDP(amount, coins);
     }
 
-    public int coinChangeIIDP(int amount, int[] coins, int n) {
-        int[] dp = new int[amount + 1];
-        Arrays.fill(dp, 0);
-        dp[0] = 1;
+    public int coinChangeIIDP(int amount, int[] coins){
+        int n = coins.length;
+        if(amount == 0) return 1;
+        if(n == 0) return 0;
+        int[][] dp = new int[coins.length +1][amount +1];
+        for(int i = 0; i <= coins.length; i++){
+            dp[i][0] = 1;
+        }
+        for(int j = 0; j <= amount; j++){
+            dp[0][j] = 0;
+        }
 
-        for (int i = 0; i < n; i++) {
-            for (int j = coins[i]; j <= amount; j++) {
-                if(coins[i] <= j) {
-                    dp[j] = dp[j] + dp[j - coins[i]];
+        // dp[i-1][j] : If I don't use this coin
+        // dp[i][j - coins[i - 1]] : If ith coin is used, ways for amount j - coins[i - 1]
+        for(int i = 1; i <= n; i++){
+            for(int j = 1; j <= amount; j++){
+                if(coins[i-1] > j){
+                    dp[i][j] = dp[i-1][j];
+                }else{
+                    dp[i][j] = dp[i-1][j] + dp[i][j - coins[i-1]];
                 }
             }
         }
-        return dp[n];
+        return dp[n][amount];
     }
 
     public int coinChangeIIMemo(int amount, int[] coins, int n, int[] memo) {

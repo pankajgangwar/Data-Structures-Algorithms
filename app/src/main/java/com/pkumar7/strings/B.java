@@ -18,6 +18,53 @@ class B {
         System.out.println("status = " + status);
     }
 
+    /*
+     * https://leetcode.com/problems/minimum-changes-to-make-alternating-binary-string/
+     * */
+    public int minOperations(String s) {
+        int res = 0;
+        StringBuilder out = new StringBuilder(s);
+        char curr = '0';
+        for (int i = 0; i < out.length(); i+= 1) {
+            if(out.charAt(i) != curr){
+                res++;
+                out.setCharAt(i, curr);
+            }
+            curr = curr == '0' ? '1' : '0';
+        }
+        curr = '1';
+        out = new StringBuilder(s);
+        int res1 = 0;
+        for (int i = 0; i < out.length(); i+= 1) {
+            if(out.charAt(i) != curr){
+                res1++;
+                out.setCharAt(i, curr);
+            }
+            curr = curr == '0' ? '1' : '0';
+        }
+        return Math.min(res, res1);
+    }
+
+    /* https://leetcode.com/problems/count-number-of-homogenous-substrings/
+     * https://leetcode.com/problems/count-number-of-homogenous-substrings/discuss/1064589/JAVA-HashMap
+     * */
+    public int countHomogenous(String s) {
+        int len = s.length();
+        long res = 0;
+        int mod = (int)1e9 + 7;
+        for (int i = 0; i < s.length();) {
+            int j = i + 1;
+            while (j < len && s.charAt(i) == s.charAt(j)){
+                j++;
+            }
+            long n = j - i;
+            long ans = (((n % mod) * ((n + 1) % mod) / 2)) % mod;
+            res = (res + ans) % mod;
+            i = j;
+        }
+        return (int)res % mod;
+    }
+
     /* 1704. Determine if String Halves Are Alike
      * https://leetcode.com/problems/determine-if-string-halves-are-alike/
      * */

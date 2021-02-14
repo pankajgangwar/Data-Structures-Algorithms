@@ -15,6 +15,33 @@ class A {
         w2.kthSmallestPrimeFraction(new int[]{1, 2, 3, 5}, 3);
     }
 
+    /*
+     * https://leetcode.com/problems/minimum-limit-of-balls-in-a-bag/
+     * */
+    public int minimumSize(int[] nums, int maxOperations) {
+        int max = Arrays.stream(nums).max().getAsInt();
+        int low = 1, high = max;
+        while (low <= high){
+            int mid = (high + low) / 2;
+            if(isPossible(mid, nums, maxOperations)){
+                high = mid;
+            }else{
+                low = mid + 1;
+            }
+        }
+        return low;
+    }
+
+    private boolean isPossible(int bagSize, int[] nums, int operations) {
+        for (int i = 0; i < nums.length; i++) {
+            if(operations < 0) return false;
+            if(nums[i] > bagSize ){
+                operations -= ((nums[i] - 1) / bagSize);
+            }
+        }
+        return operations >= 0;
+    }
+
     /* 1712. Ways to Split Array Into Three Subarrays
      * https://leetcode.com/problems/ways-to-split-array-into-three-subarrays/
      * */

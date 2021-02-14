@@ -11,11 +11,44 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.Set;
 
 /**
  * Created by Pankaj Kumar on 14/August/2020
  */
 class A {
+
+    /*
+     * https://leetcode.com/problems/minimum-degree-of-a-connected-trio-in-a-graph/
+     * */
+    public int minTrioDegree(int n, int[][] edges) {
+        for(int[] edge : edges){
+            int min = Math.min(edge[0], edge[1]);
+            int max = Math.max(edge[0], edge[1]);
+            edge[0] = min;
+            edge[1] = max;
+        }
+        Arrays.sort(edges, (a,b) -> a[0] == b[0] ? a[1] - b[1] : a[0] - b[0]);
+        HashMap<Integer, Set<Integer>> map = new HashMap<>();
+        for(int[] edge : edges){
+            map.putIfAbsent(edge[0], new HashSet<>());
+            map.putIfAbsent(edge[1], new HashSet<>());
+            map.get(edge[0]).add(edge[1]);
+            map.get(edge[1]).add(edge[0]);
+        }
+        int res = Integer.MAX_VALUE;
+        for (int[] edge : edges) {
+            int first = edge[0];
+            int second = edge[1];
+            for (int third = second + 1; third <= n ; third++) {
+                if(map.containsKey(third) && map.get(third).contains(first) && map.get(third).contains(second)){
+                    int curr = map.get(third).size() + map.get(first).size() + map.get(second).size() - 6;
+                    res = Math.min(res, curr);
+                }
+            }
+        }
+        return res == Integer.MAX_VALUE ? -1 : res;
+    }
 
     /*
      * 1631. Path With Minimum Effort

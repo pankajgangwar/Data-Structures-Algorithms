@@ -1,16 +1,27 @@
 package com.pkumar7;
 
+import com.pkumar7.datastructures.ListNode;
+import com.pkumar7.unionfind.UnionFind;
+
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.Vector;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * Created by Pankaj Kumar on 14/August/2020
@@ -30,28 +41,104 @@ class Current {
     */
 
     //https://leetcode.com/problems/odd-even-jump/
+    // https://leetcode.com/problems/remove-boxes/
 
     public static void main(String[] args) {
         Current current = new Current();
         int c_k = 3;
         //int[] res = current.mostCompetitive(c, c_k);
         //System.out.println("res = " + Arrays.toString(res));
-        int[] arr = {1,-1,-2,4,-7,3};
-        //int res = current.maxResult(arr, 2);
-        //System.out.println(res);
-        //int res = current.sortedSum(Arrays.asList(4,3,2,1));
-        int[][] grid = new int[][]{
-                {1,1,1,-1,-1},
-                {1,1,1,-1,-1},
-                {-1,-1,-1,1,1},
-                {1,1,1,1,-1},
-                {-1,-1,-1,-1,-1}
-        };
+        int[] arr = {1, -1, -2, 4, -7, 3};
+        int[] nums = new int[]{6, 10, 6};
+        //int res = current.longestPalindrome("cacb", "cbba");
+    }
+
+    public boolean check(int[] nums) {
+        int n = nums.length;
+        int k = 0;
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] > nums[(i + 1) % n]) {
+                k++;
+            }
+            if (k > 1) return false;
+        }
+        return true;
+    }
+
+    /* 1726. Tuple with Same Product
+     * https://leetcode.com/problems/tuple-with-same-product/
+     * */
+    public int tupleSameProduct(int[] nums) {
+        HashMap<Integer, Integer> map = new HashMap<>();
+        int res = 0;
+        for (int i = 0; i < nums.length; i++) {
+            for (int j = 0; j < i; j++) {
+                int prod = nums[i] * nums[j];
+                res += 8 * map.getOrDefault(prod, 0);
+                map.put(prod, map.getOrDefault(prod, 0) + 1);
+            }
+        }
+        return res;
+    }
+
+    /* 881. Boats to Save People
+     * https://leetcode.com/problems/boats-to-save-people/
+     * */
+    public int numRescueBoats(int[] arr, int limit) {
+        int n = arr.length;
+        Integer[] people = new Integer[n];
+        for (int i = 0; i < n; i++) {
+            people[i] = arr[i];
+        }
+        Arrays.sort(people, (a, b) -> b - a);
+        int boats = 0;
+        for (int i = 0, j = n - 1; i <= j; ) {
+            if (people[i] + people[j] <= limit) {
+                i += 1;
+                j -= 1;
+            } else if (people[i] + people[j] > limit) {
+                i += 1;
+            }
+            boats += 1;
+        }
+        return boats;
+    }
+
+    /* 1722. Minimize Hamming Distance After Swap Operations
+     * https://leetcode.com/problems/minimize-hamming-distance-after-swap-operations/
+     * */
+    public int minimumHammingDistance(int[] source, int[] target, int[][] allowedSwaps) {
+        int n = source.length;
+        List<Integer> t = new ArrayList<>();
+        for (int i = 0; i < target.length; i++) {
+            t.add(target[i]);
+        }
+        UnionFind unionfind = new UnionFind(n);
+        for (int[] s : allowedSwaps) {
+            unionfind.union(s[0], s[1]);
+        }
+        HashMap<Integer, HashMap<Integer, Integer>> map = new HashMap<Integer, HashMap<Integer, Integer>>();
+        for (int i = 0; i < source.length; i++) {
+            int a = source[i];
+            int root = unionfind.find(i);
+            map.putIfAbsent(root, new HashMap<Integer, Integer>());
+            HashMap<Integer, Integer> store = map.get(root);
+            store.put(a, store.getOrDefault(a, 0) + 1);
+        }
+        int res = 0;
+        for (int i = 0; i < target.length; i++) {
+            int a = target[i];
+            int root = unionfind.find(i);
+            HashMap<Integer, Integer> store = map.getOrDefault(root, new HashMap<Integer, Integer>());
+            if (store.getOrDefault(a, 0) == 0) res++;
+            else store.put(a, store.get(a) - 1);
+        }
+        return res;
     }
 
     /*
-    * https://leetcode.com/problems/maximum-xor-with-an-element-from-array/
-    * */
+     * https://cses.fi/problemset/task/1687/
+     * */
     public static List<Long> getMaxArea(int w, int h, List<Boolean> isVertical, List<Integer> distance) {
         List<Long> res = new ArrayList<Long>();
         List<Integer> hList = new ArrayList<>();
@@ -131,7 +218,6 @@ class Current {
         if(n == 1) return 0;
         return n;
     }
-
 
     /*
      * https://leetcode.com/problems/count-subtrees-with-max-distance-between-cities/

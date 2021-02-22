@@ -5,7 +5,6 @@ import com.pkumar7.TreeNode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -223,13 +222,22 @@ class A {
     * https://leetcode.com/problems/detect-cycles-in-2d-grid/
     */
     public boolean containsCycle(char[][] grid) {
-        int[][] dirs = new int[][]{{1,0},{0,1},{-1,0},{0,-1}};
+        int[][] dirs = new int[][]{{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+        int m = grid.length;
+        int n = grid[0].length;
+        boolean[][] visited = new boolean[m][n];
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[i].length; j++) {
-                if(grid[i][j] < 'a') continue;
+                if (grid[i][j] < 'a') continue;
                 int[] start = new int[]{i, j};
                 //if(sets.contains(i+""+j)) continue;
-                if(bfs(grid, dirs, start , grid[i][j])){
+                /*
+                if(visited[i][j]) continue;
+                if(helper(grid, dirs, i, j,-1, -1, grid[i][j], visited)){
+                    return true;
+                }
+                * */
+                if (bfs(grid, dirs, start, grid[i][j])) {
                     return true;
                 }
             }
@@ -237,15 +245,37 @@ class A {
         return false;
     }
 
-    public boolean bfs(char[][] grid, int[][] dirs, int[] start, char color){
+    public boolean dfs(char[][] grid, int[][] dirs, int curr_x, int curr_y,
+                       int prev_x, int prev_y, char color, boolean[][] visited) {
+
+        visited[curr_x][curr_y] = true;
+        for (int[] dir : dirs) {
+            int next_x = dir[0] + curr_x;
+            int next_y = dir[1] + curr_y;
+            if (isValid(next_x, next_y, grid, color)) {
+                if (!(prev_x == next_x && prev_y == next_y)) {
+                    if (visited[next_x][next_y]) {
+                        return true;
+                    } else {
+                        if (dfs(grid, dirs, next_x, next_y, curr_x, curr_y, color, visited)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean bfs(char[][] grid, int[][] dirs, int[] start, char color) {
         Queue<int[]> q = new LinkedList<>();
         q.offer(start);
-        while (!q.isEmpty()){
+        while (!q.isEmpty()) {
             int size = q.size();
             Queue<int[]> tempQ = new LinkedList<>();
-            while (size-- > 0){
+            while (size-- > 0) {
                 int[] curr = q.poll();
-                if(grid[curr[0]][curr[1]] < 'a') return true;
+                if (grid[curr[0]][curr[1]] < 'a') return true;
                 //if(sets.contains(curr[0]+""+curr[1])) return true;
                 // sets.add(curr[0]+""+curr[1]);
                 grid[curr[0]][curr[1]] -= 26;

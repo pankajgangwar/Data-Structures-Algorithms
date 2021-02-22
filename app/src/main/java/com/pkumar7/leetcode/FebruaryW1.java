@@ -1095,7 +1095,7 @@ class FizzBuzz {
                 sets.add(curr);
                 List<Integer> list = map.get(arr[curr]);
                 for(int idx : list){
-                    if(dist[idx] < 0){
+                    if (dist[idx] < 0) {
                         dist[idx] = dist[curr] + 1;
                         q.offer(idx);
                     }
@@ -1105,18 +1105,17 @@ class FizzBuzz {
         return -1;
     }
 
-    /* https://leetcode.com/problems/number-of-steps-to-reduce-a-number-to-zero/ */
-    public int numberOfSteps (int num) {
-        int steps = 0;
-        while(num != 0){
-            if(num % 2 == 0){
-                num = num /2;
-            }else{
-                num = num -1;
-            }
-            steps++;
+    /*
+    https://leetcode.com/problems/number-of-steps-to-reduce-a-number-to-zero/
+    */
+    public int numberOfSteps(int num) {
+        int res = 0;
+        if (num == 0) return 0;
+        while (num != 0) {
+            res += (num & 1) == 0 ? 1 : 2;
+            num = num >> 1;
         }
-        return steps;
+        return res - 1;
     }
 
     /* https://leetcode.com/problems/number-of-sub-arrays-of-size-k-and-average-greater-than-or-equal-to-threshold/ */

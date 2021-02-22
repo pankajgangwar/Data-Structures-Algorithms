@@ -328,32 +328,37 @@ public class SeptemberW1 {
 
         if(sum % 2 == 0){
             boolean[] memo = new boolean[nums.length + 1];
-            return isSubSetMemo(nums, nums.length, sum/2, memo);
+            int n = nums.length;
+            int[] arr = new int[n + 1];
+            for (int i = 1; i <= n; i++) {
+                arr[i] = nums[i - 1];
+            }
+            return isSubSetMemo(arr, n, sum / 2, memo);
             //return isSubSetRec(nums, nums.length, sum/2);
-        }else{
+        } else {
             return false;
         }
     }
 
-    public boolean subsetDP(int [] arr, int n, int sum) {
-        boolean [][] dp = new boolean [sum+1][n+1];
-
-        for(int i = 0; i <= n; i++)
+    public boolean subsetDP(int[] arr, int n, int maxsum) {
+        boolean[][] dp = new boolean[maxsum + 1][n + 1];
+        for (int i = 0; i <= n; i++)
             dp[0][i] = true;//If Sum is zero, answer is true
 
-        for(int i = 0; i <= sum; i++)
+        for (int i = 0; i <= maxsum; i++)
             dp[i][0] = false;//If sum is not zero and set is empty then return false
 
-        for(int i = 1; i <= sum; i++) {
-            for(int j = 1; j <= n; j++) {
-                dp[i][j] = dp[i][j-1];
-                if(i >= arr[j-1]) {
-                    dp[i][j] = dp[i][j] || dp[i - arr[j-1]][j-1];
+        for (int currsum = 1; currsum <= maxsum; currsum++) {
+            for (int j = 1; j <= n; j++) {
+                boolean opt1 = dp[currsum][j - 1];
+                boolean opt2 = false;
+                if (currsum - arr[j] >= 0) {
+                    opt2 = dp[currsum - arr[j]][j - 1];
                 }
+                dp[currsum][j] = opt1 || opt2;
             }
         }
-
-        return dp[sum][n];
+        return dp[maxsum][n];
     }
 
     public boolean isSubSetMemoIterative(int[] nums, int n, int sum){

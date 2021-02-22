@@ -210,18 +210,57 @@ public class JanuaryW3 {
     public int longestPalindromeSubseq(String s) {
         //helperPalindrome(s, 0, new StringBuilder());
         //return maxLength;
-        return helperWithPointers(0, s.length(), s);
+        //return helperWithPointers(0, s.length() -1, s);
+        int n = s.length();
+        int[][] memo = new int[n][n];
+        for (int i = 0; i < n; i++) {
+            Arrays.fill(memo[i], -1);
+        }
+        //return helperWithPointersMemo(0, n - 1, s, memo);
+        return longestPalindromeSubseqDP(s);
     }
 
-    public int helperWithPointers(int l, int r, String s){
-        if(l == r) return 1;
-        if(l > r) return 0;
-        if(s.charAt(l) == s.charAt(r)){
-            return 2 + helperWithPointers(l++, r--, s);
+    public int longestPalindromeSubseqDP(String s) {
+        int n = s.length();
+        int[][] dp = new int[n][n];
+        for (int i = n - 1; i >= 0; i--) {
+            dp[i][i] = 1;
+            for (int j = i + 1; j < n; j++) {
+                if (s.charAt(i) == s.charAt(j)) {
+                    dp[i][j] = 2 + dp[i + 1][j - 1];
+                } else {
+                    dp[i][j] = Math.max(dp[i + 1][j], dp[i][j - 1]);
+                }
+            }
         }
-        return Math.max(helperWithPointers(l++, r, s), helperWithPointers(l, r--, s));
+        return dp[0][n - 1];
     }
-    
+
+    public int helperWithPointersMemo(int l, int r, String s, int[][] memo) {
+        if (l == r) return 1;
+        if (l > r) return 0;
+        if (memo[l][r] != -1) return memo[l][r];
+        if (s.charAt(l) == s.charAt(r)) {
+            int max = 2 + helperWithPointersMemo(l + 1, r - 1, s, memo);
+            memo[l][r] = max;
+            return max;
+        } else {
+            int max = Math.max(helperWithPointersMemo(l + 1, r, s, memo), helperWithPointersMemo(l, r - 1, s, memo));
+            memo[l][r] = max;
+            return max;
+        }
+    }
+
+    public int helperWithPointers(int l, int r, String s) {
+        if (l == r) return 1;
+        if (l > r) return 0;
+        if (s.charAt(l) == s.charAt(r)) {
+            return 2 + helperWithPointers(l + 1, r - 1, s);
+        } else {
+            return Math.max(helperWithPointers(l + 1, r, s), helperWithPointers(l, r - 1, s));
+        }
+    }
+
 
     int maxLength = Integer.MIN_VALUE;
     public void helperPalindrome(String s, int idx, StringBuilder helper){

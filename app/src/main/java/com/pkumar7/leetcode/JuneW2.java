@@ -204,6 +204,7 @@ class JuneW2 {
         // Runs N-1 times for relaxation
         // Single source shortest path
         // Can be used to detect negative cycles regardless of the starting node.
+        // Doesn't work for negative weight cycles
         double[] disTo = new double[N];
         Arrays.fill(disTo, Double.POSITIVE_INFINITY);
         disTo[K - 1] = 0;

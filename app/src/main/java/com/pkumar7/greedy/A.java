@@ -17,8 +17,27 @@ import java.util.TreeMap;
 class A {
     public static void main(String[] args) {
         A curr = new A();
-        boolean status = curr.isTransformable("4941","1494");
+        boolean status = curr.isTransformable("4941", "1494");
         System.out.println("status = " + status);
+    }
+
+    /*
+     * https://leetcode.com/problems/minimum-number-of-operations-to-move-all-balls-to-each-box/
+     * */
+    public int[] minOperations(String boxes) {
+        int n = boxes.length();
+        int[] answer = new int[n];
+        for (int i = 0, ops = 0, cnt = 0; i < n; i++) {
+            answer[i] += ops;
+            cnt += boxes.charAt(i) == '1' ? 1 : 0;
+            ops += cnt;
+        }
+        for (int i = n - 1, ops = 0, cnt = 0; i >= 0; i--) {
+            answer[i] += ops;
+            cnt += boxes.charAt(i) == '1' ? 1 : 0;
+            ops += cnt;
+        }
+        return answer;
     }
 
     /* 1744. Can You Eat Your Favorite Candy on Your Favorite Day?

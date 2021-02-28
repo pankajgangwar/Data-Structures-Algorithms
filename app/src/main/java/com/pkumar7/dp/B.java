@@ -10,7 +10,41 @@ import java.util.Deque;
 class B {
     public static void main(String[] args) {
         B current = new B();
-        current.findNumberOfLIS(new int[]{1, 3, 5, 4, 7});
+        current.findNumberOfLIS(new int[] {1, 3, 5, 4, 7});
+    }
+
+    /*  1774. Closest Dessert Cost
+        https://leetcode.com/problems/closest-dessert-cost/
+    */
+    public int closestCost(int[] baseCosts, int[] toppingCosts, int target) {
+        int res = 0;
+        int max = 30000;
+        boolean[] dp = new boolean[max];
+        dp[0] = true; // can have no toppings at all.
+        for (int t : toppingCosts) {
+            for (int i = max - 1; i >= 0; i--) {
+                if (dp[i]) { // If we can choose this topping
+                    if (i + t < max)dp[i + t] = true; // current topping 1 time
+                    if (i + t * 2 < max) dp[i + 2 * t] = true; // current topping at most 2 times
+                }
+            }
+        }
+        int best = 99999999;
+        for (int b : baseCosts) {
+            for (int i = 0; i < max; i++) {
+                if (dp[i]) {
+                    int v = b + i;
+                    if (
+                        (Math.abs(v - target) < Math.abs(best - target)) ||
+                        (Math.abs(v - target) == Math.abs(best - target)) &&
+                        v < best
+                    ) {
+                        best = v;
+                    }
+                }
+            }
+        }
+        return best;
     }
 
     /* 1771. Maximize Palindrome Length From Subsequences
@@ -104,9 +138,9 @@ class B {
             }
         }
         for (int i = 2; i < s.length(); i++) {
-            if(isPal[i][s.length() -1]){
+            if (isPal[i][s.length() - 1]) {
                 for (int j = 1; j < i; j++) {
-                    if(isPal[j][i-1] && isPal[0][j-1]){
+                    if (isPal[j][i - 1] && isPal[0][j - 1]) {
                         return true;
                     }
                 }
@@ -122,24 +156,24 @@ class B {
         int len[] = new int[nums.length];
         int cnt[] = new int[nums.length];
 
-        int max_len = 0, res=  0;
-        for(int i = 0; i < nums.length; i++){
+        int max_len = 0, res =  0;
+        for (int i = 0; i < nums.length; i++) {
             len[i] = 1;
             cnt[i] = 1;
-            for(int j = 0; j < i; j++){
-                if(nums[j] < nums[i]){
-                    if(len[i] == len[j] + 1) {
+            for (int j = 0; j < i; j++) {
+                if (nums[j] < nums[i]) {
+                    if (len[i] == len[j] + 1) {
                         cnt[i] += cnt[j];
-                    }else if(len[i] < len[j] + 1){
+                    } else if (len[i] < len[j] + 1) {
                         len[i] = len[j] + 1;
                         cnt[i] = cnt[j];
                     }
                 }
             }
 
-            if(max_len == len[i]) {
+            if (max_len == len[i]) {
                 res += cnt[i];
-            }else if(max_len < len[i]){
+            } else if (max_len < len[i]) {
                 max_len = len[i];
                 res = cnt[i];
             }
@@ -153,16 +187,16 @@ class B {
     public int constrainedSubsetSum(int[] nums, int k) {
         Deque<Integer> deq = new ArrayDeque<>();
         int maxSum = nums[0];
-        for(int i = 0; i < nums.length; ++i){
+        for (int i = 0; i < nums.length; ++i) {
             nums[i] += !deq.isEmpty() ? nums[deq.peekFirst()] : 0;
             maxSum = Math.max(maxSum, nums[i]);
-            while(!deq.isEmpty() && deq.peekFirst() < i - k + 1){
+            while (!deq.isEmpty() && deq.peekFirst() < i - k + 1) {
                 deq.pollFirst();
             }
-            while(!deq.isEmpty() && nums[deq.peekLast()] < nums[i]){
+            while (!deq.isEmpty() && nums[deq.peekLast()] < nums[i]) {
                 deq.pollLast();
             }
-            if(nums[i] > 0){
+            if (nums[i] > 0) {
                 deq.offer(i);
             }
         }

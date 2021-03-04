@@ -1,27 +1,14 @@
 package com.pkumar7;
 
-import com.pkumar7.datastructures.ListNode;
 import com.pkumar7.unionfind.UnionFind;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Queue;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.Vector;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 /**
  * Created by Pankaj Kumar on 14/August/2020
@@ -49,9 +36,10 @@ class Current {
         //int[] res = current.mostCompetitive(c, c_k);
         //System.out.println("res = " + Arrays.toString(res));
         int[] arr = {1, -1, -2, 4, -7, 3};
-        int[] nums = new int[]{6, 10, 6};
+        int[] nums = new int[] {6, 10, 6};
         //int res = current.longestPalindrome("cacb", "cbba");
     }
+
 
     public boolean check(int[] nums) {
         int n = nums.length;
@@ -151,10 +139,10 @@ class Current {
         vList.add(w);
         Collections.sort(vList);
         for (int i = 0; i < isVertical.size(); i++) {
-            if(isVertical.get(i)){
+            if (isVertical.get(i)) {
                 vList.add(distance.get(i));
                 Collections.sort(vList);
-            }else{
+            } else {
                 hList.add(distance.get(i));
                 Collections.sort(hList);
             }
@@ -167,13 +155,13 @@ class Current {
     public static int maxArea(List<Integer> hList, List<Integer> vList) {
         long H = 0;
         for (int i = 1; i < hList.size() ; i++) {
-            H = Math.max(H, (long)hList.get(i) - hList.get(i-1));
+            H = Math.max(H, (long)hList.get(i) - hList.get(i - 1));
         }
         long W = 0;
         for (int i = 1; i < vList.size() ; i++) {
-            W = Math.max(W, (long)vList.get(i) - vList.get(i-1));
+            W = Math.max(W, (long)vList.get(i) - vList.get(i - 1));
         }
-        return (int) (H * W % (int)(1e9+7));
+        return (int) (H * W % (int)(1e9 + 7));
     }
 
     /* HackerRank problems*/
@@ -182,15 +170,15 @@ class Current {
         LinkedList<Long> freqs = new LinkedList<>(freq);
 
         Long prevWeight = 0L;
-        while(!freqs.isEmpty()){
+        while (!freqs.isEmpty()) {
             Long dumbbells = freqs.pollFirst() + prevWeight;
-            if(dumbbells % 2 == 0){
+            if (dumbbells % 2 == 0) {
                 pairs += dumbbells / 2;
                 prevWeight = 0L;
-            }else if(dumbbells > 2){
+            } else if (dumbbells > 2) {
                 prevWeight = 1L;
                 pairs += dumbbells / 2;
-            }else{
+            } else {
                 prevWeight = dumbbells;
             }
         }
@@ -215,7 +203,7 @@ class Current {
      * */
     public int numberOfBoomerangs(int[][] points) {
         int n = points.length;
-        if(n == 1) return 0;
+        if (n == 1) return 0;
         return n;
     }
 

@@ -1,13 +1,10 @@
-package com.pkumar7.unionfind;
+package com.pkumar7.graph.unionfind;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.PriorityQueue;
 
 /**
  * Created by Pankaj Kumar on 12/August/2020

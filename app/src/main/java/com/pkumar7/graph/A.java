@@ -1,8 +1,5 @@
 package com.pkumar7.graph;
 
-import com.pkumar7.TreeNode;
-import com.pkumar7.unionfind.UnionFind;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -155,25 +152,6 @@ class A {
         }
     }
 
-    /* 1135. Connecting Cities With Minimum Cost
-     * https://leetcode.com/problems/connecting-cities-with-minimum-cost/
-     * Kruskals Algorithm
-     * Minimum Spanning tree
-     * */
-    public int minimumCost(int n, int[][] connections) {
-        Arrays.sort(connections, (a, b) -> a[2] - b[2]);
-        UnionFind unionfind = new UnionFind(n);
-        int cost = 0;
-        for(int i = 0; i < connections.length; i++) {
-            int x = connections[i][0] - 1;
-            int y = connections[i][1] - 1;
-            if(unionfind.find(x) == unionfind.find(y)) continue;
-            unionfind.union(x, y);
-            cost += connections[i][2];
-        }
-        return cost;
-    }
-
     /*
      * Prims Algorithm
      * Minimum Spanning tree
@@ -195,6 +173,7 @@ class A {
             while (!pq.isEmpty() && visited[pq.peek()[1]]){
                 pq.poll();
             }
+            if(pq.isEmpty()) return -1;
             int[] curr = pq.poll();
             res += curr[0];
             i = curr[1];

@@ -1,5 +1,7 @@
 package com.pkumar7.bitmagic;
 
+import java.util.Arrays;
+
 /**
  * Created by Pankaj Kumar on 17/August/2020
  */
@@ -235,12 +237,13 @@ class A {
      * Output: 8
      * */
     public int missingNumber(int[] nums) {
-        int i = 0,  xor = 0;
-        for(; i < nums.length; i++){
-            xor = xor ^ i ^ nums[i];
-            System.out.println(xor);
+        int n = nums.length;
+        int sum = n*(n + 1) / 2;
+        int actualSum = 0;
+        for(int a : nums){
+            actualSum += a;
         }
-        return xor ^ i;
+        return sum - actualSum;
     }
 
     /**

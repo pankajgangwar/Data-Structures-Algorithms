@@ -1,4 +1,4 @@
-package com.pkumar7.unionfind;
+package com.pkumar7.graph.unionfind;
 
 /**
  * Created by Pankaj Kumar on 20/December/2020
@@ -21,6 +21,11 @@ public class UnionFind {
         }
         return p;
     }
+
+    public boolean isConnected(int a, int b) {
+        return (find(a) == find(b));
+    }
+
     public void union(int p, int q) {
         int rootP = find(p);
         int rootQ = find(q);
@@ -35,7 +40,7 @@ public class UnionFind {
         }
         count--;
     }
-    public int count() {
+    public int getDisjointSets() {
         return count;
     }
 }

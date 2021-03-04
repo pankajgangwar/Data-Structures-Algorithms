@@ -1,4 +1,4 @@
-package com.pkumar7.topologicalsort;
+package com.pkumar7.graph.topologicalsort;
 
 import java.util.ArrayList;
 import java.util.HashMap;

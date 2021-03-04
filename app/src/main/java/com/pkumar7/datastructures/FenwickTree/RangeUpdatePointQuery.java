@@ -1,7 +1,5 @@
 package com.pkumar7.datastructures.FenwickTree;
 
-import com.sun.corba.se.spi.activation.BadServerDefinition;
-
 class RangeUpdatePointQuery {
 
     final int N;

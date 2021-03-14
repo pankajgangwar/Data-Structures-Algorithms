@@ -15,6 +15,35 @@ import java.util.TreeSet;
  */
 class A {
 
+    /*
+    * https://leetcode.com/problems/maximum-average-pass-ratio/
+    * */
+    public double maxAverageRatio(int[][] classes, int extraStudents) {
+        double totalAvg = 0;
+        int n = classes.length;
+        PriorityQueue<int[]> pq = new PriorityQueue<>((r1, r2) -> {
+            double c1 = (double)(r1[0] + 1)/(r1[1] + 1) - (double)r1[0] / r1[1];
+            double c2 = (double)(r2[0] + 1)/(r2[1] + 1) - (double)r2[0] / r2[1];
+            return -Double.compare(c1, c2); // return max diff in ratio
+        });
+        for(int[] c : classes){
+            double avg = (double) c[0] / c[1];
+            totalAvg += avg;
+            pq.offer(new int[]{c[0], c[1]});
+        }
+        while (extraStudents > 0){
+            int[] min = pq.poll();
+            double oldchange = (double)min[0] / min[1];
+            min[0]+= 1;
+            min[1]+= 1;
+            double newchange = (double)min[0] / min[1];
+            extraStudents -= 1;
+            totalAvg += (newchange - oldchange);
+            pq.offer(min);
+        }
+        return totalAvg / n;
+    }
+
     /* 1705. Maximum Number of Eaten Apples
      * https://leetcode.com/problems/maximum-number-of-eaten-apples/
      * */

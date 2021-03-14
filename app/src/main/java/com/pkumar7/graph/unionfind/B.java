@@ -13,6 +13,38 @@ public class B {
 
 	}
 
+	/* 1722. Minimize Hamming Distance After Swap Operations
+	 * https://leetcode.com/problems/minimize-hamming-distance-after-swap-operations/
+	 * */
+	public int minimumHammingDistance(int[] source, int[] target, int[][] allowedSwaps) {
+		int n = source.length;
+		List<Integer> t = new ArrayList<>();
+		for (int i = 0; i < target.length; i++) {
+			t.add(target[i]);
+		}
+		UnionFind unionfind = new UnionFind(n);
+		for (int[] s : allowedSwaps) {
+			unionfind.union(s[0], s[1]);
+		}
+		HashMap<Integer, HashMap<Integer, Integer>> map = new HashMap<Integer, HashMap<Integer, Integer>>();
+		for (int i = 0; i < source.length; i++) {
+			int a = source[i];
+			int root = unionfind.find(i);
+			map.putIfAbsent(root, new HashMap<Integer, Integer>());
+			HashMap<Integer, Integer> store = map.get(root);
+			store.put(a, store.getOrDefault(a, 0) + 1);
+		}
+		int res = 0;
+		for (int i = 0; i < target.length; i++) {
+			int a = target[i];
+			int root = unionfind.find(i);
+			HashMap<Integer, Integer> store = map.getOrDefault(root, new HashMap<Integer, Integer>());
+			if (store.getOrDefault(a, 0) == 0) res++;
+			else store.put(a, store.get(a) - 1);
+		}
+		return res;
+	}
+
 	/* 990. Satisfiability of Equality Equations
 	https://leetcode.com/problems/satisfiability-of-equality-equations/
 	*/

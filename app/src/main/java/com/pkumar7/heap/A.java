@@ -15,6 +15,58 @@ import java.util.TreeSet;
  */
 class A {
 
+    /* 1801. Number of Orders in the Backlog
+    * https://leetcode.com/problems/number-of-orders-in-the-backlog/
+    * */
+    public int getNumberOfBacklogOrders(int[][] orders) {
+        PriorityQueue<int[]> sell = new PriorityQueue<>((a,b) -> (a[0] - b[0]) );// minPq
+        PriorityQueue<int[]> buy = new PriorityQueue<>((a,b) -> (-a[0] + b[0])); // maxPq
+        // price, amount
+        int res = 0;
+        for(int[] ord : orders){
+            int price = ord[0];
+            int amount = ord[1];
+            int orderType = ord[2];
+            if(orderType == 0){ // buy
+                while (!sell.isEmpty() && sell.peek()[0] <= price && amount > 0){
+                    if(sell.peek()[1] >= amount){
+                        sell.peek()[1] -= amount;
+                        if(sell.peek()[1] == 0) sell.poll();
+                        amount = 0;
+                    }else{
+                        amount -= sell.poll()[1];
+                    }
+                }
+                if(amount > 0){
+                    buy.offer(new int[]{price, amount});
+                }
+            }else{ // sell
+                while (!buy.isEmpty() && buy.peek()[0] >= price && amount > 0){
+                    if(buy.peek()[1] >= amount){
+                        buy.peek()[1] -= amount;
+                        if(buy.peek()[1] == 0) buy.poll();
+                        amount = 0;
+                    }else{
+                        amount -= buy.poll()[1];
+                    }
+                }
+                if(amount > 0){
+                    sell.offer(new int[]{price, amount});
+                }
+            }
+        }
+        int mod = (int)1e9 + 7;
+        while (!buy.isEmpty()){
+            res = (res + (buy.peek()[1])) % mod;
+            buy.poll();
+        }
+        while (!sell.isEmpty()) {
+            res = (res + (sell.peek()[1])) % mod;
+            sell.poll();
+        }
+        return res;
+    }
+
     /*
     * https://leetcode.com/problems/maximum-average-pass-ratio/
     * */

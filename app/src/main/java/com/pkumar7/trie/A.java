@@ -9,6 +9,55 @@ import java.util.List;
  */
 class A {
 
+    /* 1803. Count Pairs With XOR in a Range
+    * https://leetcode.com/problems/count-pairs-with-xor-in-a-range/
+    * */
+    class Node {
+        Node[] children;
+        int count;
+        public Node(){
+            children = new Node[2];
+        }
+    }
+    public void insert(Node root, int N){
+        for (int i = 31; i >= 0 ; i--) {
+            int x = (N >> i) & 1;
+            if(root.children[x] == null){
+                root.children[x] = new Node();
+            }
+            root.children[x].count += 1;
+            root = root.children[x];
+        }
+    }
+
+    public int countSmaller(Node root, int N, int K){
+        int pairs = 0;
+        for (int i = 31; i >= 0 && root != null; i--) {
+            int x = (N >> i) & 1;
+            int x_flip = x == 0 ? 1: 0;
+            int y = (K >> i) & 1;
+            if(y == 1){
+                if(root.children[x] != null){
+                    pairs += root.children[x].count;
+                }
+                root = root.children[x_flip];
+            }else{
+                root = root.children[x];
+            }
+        }
+        return pairs;
+    }
+    public int countPairs(int[] nums, int low, int high) {
+        int n = nums.length;
+        Node root = new Node();
+        int countPairs = 0;
+        for (int i = 0; i < n; i++) {
+            countPairs += countSmaller(root, nums[i], high + 1) - countSmaller(root, nums[i], low);
+            insert(root, nums[i]);
+        }
+        return countPairs;
+    }
+
     /* 1707. Maximum XOR With an Element From Array
      * https://leetcode.com/problems/maximum-xor-with-an-element-from-array/
      * */

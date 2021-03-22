@@ -4,6 +4,7 @@ import com.pkumar7.TreeNode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -14,68 +15,19 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class DecemberW3 {
-    
-
 
     public static void main(String[] args) {
-
         DecemberW3 w3 = new DecemberW3();
-        /*String num = "123";
-        int val = 0;
-        for(char ch : num.toCharArray()){
-            val = val*10 + ch - '0';
-            System.out.println("ch "+ ch + " val " + val);
-        }*/
-        //String res = w3.decodeString("3[z]2[2[y]pq4[2[jk]e1[f]]]ef");
-        //String res = w3.numberToWords(1234567);
-        //String[] word = new String[]{"wr","er","rf"};
-        //w3.alienOrder(word);
-
-        //w3.maxFreq("aababcaab", 2, 3, 4);
-        //w3.isAlienSorted(new String[]{"word","world","row"}, "worldabcefghijkmnpqstuvxyz");
-
         String str = "ABC";
         int n = str.length();
-
-        //w3.getPermutationString(4, 4);
-        //w3.restoreIpAddresses("25525511135");
-        //w3.restoreIpAddressesNew("25525511135");
-
-
-        //System.out.println(ans + " ");
-
-
-        //HashSet<Character> sets = new HashSet<>();
-        //w3.getPermutationAnother(3, 3);
-        //w3.helper(n, str, new StringBuilder(), sets);
-
-        //w3.isMatch("aab","a*b");
-
-        //System.out.println(res);
-
-        //w3.grayCodeRec(3, new ArrayList<>());
-        w3.findAnagrams("cbaebabacd","abc");
-
-        String[] words = new String[]{"good","best","word"};
-
-        //w3.findSubstring("wordgoodgoodgoodbestword", words);
-        //w3.sumZero(6);
-        //int[] nums = new int[]{3,0,2,1,2};
-        //w3.canReach(nums, 2);
-        int[][] grid = new int[][]{ {1,1,1,1},
-                                    {1,1,1,1},
-                                    {1,1,1,1},
-                                    {1,1,1,1} };
-
-        //w3.colorBorder(grid, 1,1, 2);
-       // w3.asteroidCollision(new int[]{5, 10, -5});
     }
 
     /* 
         https://leetcode.com/problems/decode-string/
-
         s = "3[a]2[bc]", return "aaabcbc".
         s = "3[a2[c]]", return "accaccacc".
         s = "2[abc]3[cd]ef", return "abcabccdcdcdef".
@@ -127,13 +79,9 @@ public class DecemberW3 {
     String[] THOUSANDS = new String[]{"","Thousand","Million","Billion"};
 
     public String numberToWords(int num) {
-
         String words = "";
-
         int idx = 0;
-
         while(num > 0){
-
             if(num % 1000 != 0){
                 words = helper(num % 1000) + THOUSANDS[idx] + " " + words;
             }
@@ -757,7 +705,6 @@ public class DecemberW3 {
     }
 
     /* https://leetcode.com/problems/restore-ip-addresses/ 
-
         Permutations
         Revisit
         Input: "25525511135"
@@ -792,7 +739,6 @@ public class DecemberW3 {
                 }
             }
         }
-
         System.out.println(res);
         return res;
     }
@@ -801,22 +747,17 @@ public class DecemberW3 {
         if(s.length() > 3){
             return false;
         }
-
         //0 is valid, but 00, 01 etc not valid
         if(s.startsWith("0") && s.length() > 1){
             return false;
         }
-
         int val = Integer.parseInt(s);
-
         return val >= 0 && val <= 255;
     }
 
     public void restoreIpAddressesNew(String s){
-
         List<String> result = new ArrayList<>();
         restoreIpAddressesRec("", s, 0 , result );
-
         System.out.println(result);
     }
 
@@ -903,18 +844,14 @@ public class DecemberW3 {
         https://leetcode.com/problems/gray-code/
     */
     public List<Integer> grayCode(int n) {
-
         List<Integer> result = new ArrayList<>();
-
         result.add(0);
-
         for(int i = 0; i < n; i++){
             int inc = 1 << i;
             for(int j = result.size() -1 ; j >= 0; --j){
                 result.add(result.get(j) + inc);
             }
         }
-
         return result;
     }
 
@@ -928,15 +865,17 @@ public class DecemberW3 {
             result.add(1);
             return;
         }
-
         grayCodeRec(n -1, result);
-
+        /*
+        * Take previous code in sequence 0 and 1
+        * Add reversed code in list: 0 1 1 0
+        * Now Add prefix 0 for org previous code and prefix 1 for new generated code: 00, 01, 11, and 10
+        * */
         for(int i = result.size() -1; i >= 0; --i ){
             result.add(result.get(i));
         }
 
         int size = result.size();
-
         for(int i = size/2; i < size; i++ ){
             String binaryStr = Integer.toBinaryString(result.get(i));
             while(binaryStr.length() < n - 1){
@@ -949,36 +888,27 @@ public class DecemberW3 {
     }
 
     /* https://leetcode.com/problems/reconstruct-itinerary/ 
-
         Revisit , Important */
 
     public List<String> findItinerary(List<List<String>> tickets) {
-           
            HashMap<String, PriorityQueue<String>> map = new HashMap<String, PriorityQueue<String>>();
-
            for(List<String> list : tickets ){
                 String src = list.get(0);
                 String dst = list.get(1);
-
                 PriorityQueue<String> pq = new PriorityQueue<>();
-
                 map.putIfAbsent(src, new PriorityQueue<>());
                 map.get(src).offer(dst);
            }
-
            helperItinerary(map, "JFK");
-
            return route;
     }
 
     LinkedList<String> route = new LinkedList<>();
-
     public void helperItinerary(HashMap<String, PriorityQueue<String>> map, String src){
         while(map.containsKey(src) && !map.get(src).isEmpty()){
             String adj = map.get(src).poll();
             helperItinerary(map, adj);
         }
-
         route.addFirst(src);
     }
 
@@ -990,17 +920,11 @@ public class DecemberW3 {
         for(char ch : p.toCharArray()){
             p_map.put(ch, p_map.getOrDefault(ch, 0) + 1 );
         }
-
         HashMap<Character, Integer> s_map = new HashMap<Character, Integer>();
-
         List<Integer> result = new ArrayList<>();
-
         int n = s.length();
-
         for(int i = 0; i < s.length(); i++) {
-
             int j = i;
-
             s_map.putAll(p_map);
             char next_char = s.charAt(j);
 

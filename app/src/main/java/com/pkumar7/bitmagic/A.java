@@ -9,6 +9,19 @@ class A {
     public static void main(String[] args) {
 
     }
+    /*
+     * 1863. Sum of All Subset XOR Totals
+     * https://leetcode.com/problems/sum-of-all-subset-xor-totals/
+     * */
+    public int subsetXORSum(int[] nums) {
+        int n = nums.length;
+        int bits = 0;
+        for (int i = 0; i < n; ++i){
+            bits |= nums[i];
+        }
+        int ans = bits * (int)Math.pow(2, n-1);
+        return ans;
+    }
 
     /* 1611. Minimum One Bit Operations to Make Integers Zero
      * https://leetcode.com/problems/minimum-one-bit-operations-to-make-integers-zero/

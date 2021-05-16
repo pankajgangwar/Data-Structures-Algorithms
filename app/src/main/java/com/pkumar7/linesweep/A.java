@@ -7,6 +7,23 @@ import java.util.Arrays;
  */
 class A {
 
+    /*
+    * https://leetcode.com/problems/maximum-population-year/
+    * */
+    public int maximumPopulation(int[][] logs) {
+        int res = 0;
+        int[] years = new int[2051];
+        for(int[] l : logs){
+            years[l[0]]++;
+            years[l[1]]--;
+        }
+        for (int i = 1950; i <= 2050 ; i++) {
+            years[i] += years[i - 1];
+            res = years[i] > years[res] ? i : res;
+        }
+        return res;
+    }
+
     /*1589. Maximum Sum Obtained of Any Permutation
      * https://leetcode.com/problems/maximum-sum-obtained-of-any-permutation/
      * */

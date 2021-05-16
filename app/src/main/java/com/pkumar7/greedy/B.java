@@ -18,6 +18,22 @@ import java.util.TreeMap;
 public class B {
 
 	/*
+	 * https://leetcode.com/problems/maximum-distance-between-a-pair-of-values/
+	 * */
+	public int maxDistance(int[] nums1, int[] nums2) {
+		int max_distance = 0;
+		int i = 0, j = 0;
+		while (i < nums1.length && j < nums2.length){
+			if(nums1[i] > nums2[j]){
+				i++;
+			}else{
+				max_distance = Math.max(max_distance, j++ - i);
+			}
+		}
+		return max_distance;
+	}
+
+	/*
 	* https://leetcode.com/problems/maximum-score-of-a-good-subarray/
 	* */
 	public int maximumScore(int[] nums, int k) {

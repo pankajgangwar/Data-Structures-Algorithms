@@ -14,6 +14,35 @@ class C {
 
     }
 
+    /* 1806. Minimum Number of Operations to Reinitialize a Permutation
+     * https://leetcode.com/problems/minimum-number-of-operations-to-reinitialize-a-permutation/
+     * */
+    public int reinitializePermutation(int n) {
+        int[] perm = new int[n];
+        int[] arr = new int[n];
+        for (int i = 0; i < n; i++) {
+            perm[i] = i;
+        }
+        Arrays.fill(arr, 0);
+        int[] orgPerm = perm.clone();
+        int count = 0;
+        do{
+            Arrays.fill(arr, 0);
+            for (int i = 0; i < n; i++) {
+                if(i%2==0){
+                    arr[i] = perm[i / 2];
+                }else{
+                    arr[i] = perm[n / 2 + (i - 1) / 2];
+                }
+            }
+            perm = Arrays.copyOf(arr, arr.length);
+            System.out.println(Arrays.toString(perm));
+            count++;
+        } while (!Arrays.equals(perm, orgPerm));
+
+        return count;
+    }
+
     /* 1710. Maximum Units on a Truck
      * https://leetcode.com/problems/maximum-units-on-a-truck/
      * */

@@ -7,6 +7,62 @@ import java.util.Arrays;
  */
 class A {
 
+    /* 881. Boats to Save People
+     * https://leetcode.com/problems/boats-to-save-people/
+     * */
+    public int numRescueBoats(int[] arr, int limit) {
+        int n = arr.length;
+        Integer[] people = new Integer[n];
+        for (int i = 0; i < n; i++) {
+            people[i] = arr[i];
+        }
+        Arrays.sort(people, (a, b) -> b - a);
+        int boats = 0;
+        for (int i = 0, j = n - 1; i <= j; ) {
+            if (people[i] + people[j] <= limit) {
+                i += 1;
+                j -= 1;
+            } else if (people[i] + people[j] > limit) {
+                i += 1;
+            }
+            boats += 1;
+        }
+        return boats;
+    }
+
+    /* 1861. Rotating the Box
+     *  https://leetcode.com/problems/rotating-the-box/
+     * */
+    public char[][] rotateTheBox(char[][] box) {
+        int m = box.length;
+        int n = box[0].length;
+        char[][] res = new char[n][m];
+        for (int i = 0; i < m; i++) {
+            int count = 0;
+            for (int j = n - 1; j >= 0;) {
+                int start = j;
+                while (start >= 0 && box[i][start] != '*'){
+                    if(box[i][start] == '#'){
+                        count++;
+                    }
+                    start--;
+                }
+                while (count-- > 0){
+                    res[j--][m - i] = '#';
+                }
+                while (j > start){
+                    res[j--][m - i] = '.';
+                }
+                if(start >= 0){
+                    res[start][m - i] = '*';
+                    j = start - 1;
+                    count = 0;
+                }
+            }
+        }
+        return res;
+    }
+
     /*
     828. Count Unique Characters of All Substrings of a Given String
     https://leetcode.com/problems/count-unique-characters-of-all-substrings-of-a-given-string/

@@ -18,6 +18,38 @@ class B {
         System.out.println("status = " + status);
     }
 
+    /* 1864. Minimum Number of Swaps to Make the Binary String Alternating
+    * https://leetcode.com/problems/minimum-number-of-swaps-to-make-the-binary-string-alternating/
+    * */
+    public int minSwaps(String s) {
+        int zero = 0;
+        for (int i = 0; i < s.length(); i++) {
+            if(s.charAt(i) == '0'){
+                zero++;
+            }
+        }
+        int ones = s.length() - zero;
+        int abs = Math.abs(ones - zero);
+        if(abs > 1) return -1;
+        if(ones > zero){
+            return helper(s, '1');
+        }else if(zero > ones){
+            return helper(s, '0');
+        }
+        return Math.min(helper(s, '1'), helper(s, '0'));
+    }
+
+    public int helper(String s, char start){
+        int swaps = 0;
+        for(char ch : s.toCharArray()){
+            if(ch != start){
+                swaps++;
+            }
+            start = start == '0' ? '1' : '0';
+        }
+        return swaps / 2;
+    }
+
     /*
      * https://leetcode.com/problems/minimum-changes-to-make-alternating-binary-string/
      * */

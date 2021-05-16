@@ -21,6 +21,46 @@ class A {
         System.out.println("res = " + res);
     }
 
+    /* 1808. Maximize Number of Nice Divisors
+    * https://leetcode.com/problems/maximize-number-of-nice-divisors/
+    * */
+    public int maxNiceDivisors(int n) {
+        int mod = (int)1e9+7;
+        if(n <= 3) return n;
+        long maxProduct = n;
+        switch (n % 3){
+            case 0:
+                maxProduct = modpow(3, n / 3, mod);
+                break;
+            case 1:
+                maxProduct = 4 * modpow(3, n / 3 - 1, mod);
+                break;
+            case 2:
+                maxProduct = 2 * modpow(3, n / 3, mod);
+                break;
+        }
+        return (int)(maxProduct  % mod);
+    }
+
+    public long modpow(long base, long pow, int mod) {
+        /*long result = 1;
+        while (pow > 0) {
+            if ((pow & 1) == 1)
+                result = result * base % modulus;
+            base = base * base % modulus;
+            pow >>= 1;
+        }
+        return result;*/
+        if (pow == 1) return base;
+        if (pow == 0) return 1;
+        long k1 = modpow(base, pow / 2, mod);
+        if (pow % 2 == 0) {
+            return (k1 * k1) % mod;
+        } else {
+            return (k1*k1*base) % mod;
+        }
+    }
+
     /* 1690. Stone Game VII
      * https://leetcode.com/problems/stone-game-vii/
      * */

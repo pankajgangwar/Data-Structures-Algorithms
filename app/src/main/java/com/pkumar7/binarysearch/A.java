@@ -15,6 +15,38 @@ class A {
         w2.kthSmallestPrimeFraction(new int[] {1, 2, 3, 5}, 3);
     }
 
+    /* 1870. Minimum Speed to Arrive on Time
+    * https://leetcode.com/problems/minimum-speed-to-arrive-on-time/
+    * */
+    public int minSpeedOnTime(int[] dist, double hour) {
+        int high = 100000000;
+        int low = 1;
+        int minHrs = -1;
+        while (low <= high){
+            int mid = (low + high) / 2;
+            if(canTravel(mid, dist, hour)){
+                high = mid - 1;
+                minHrs = mid;
+            }else{
+                low = mid + 1;
+            }
+        }
+        return minHrs;
+    }
+
+    public boolean canTravel(int speed, int[] dist, double hours){
+        double total_hrs = 0;
+        int n = dist.length;
+        for (int i = 0; i < n; i++) {
+            if(i == n - 1){
+                total_hrs += (double) dist[i] / speed;
+            }else{
+                total_hrs += Math.ceil((double) dist[i] / speed);
+            }
+        }
+        return total_hrs <= hours;
+    }
+
     /*
      * https://leetcode.com/problems/maximum-value-at-a-given-index-in-a-bounded-array
      * */

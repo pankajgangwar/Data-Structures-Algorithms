@@ -1,8 +1,12 @@
 package com.pkumar7.hashmap;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Currency;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -10,6 +14,60 @@ import java.util.TreeMap;
  * Created by Pankaj Kumar on 27/December/2020
  */
 class B {
+
+    public static void main(String[] args) {
+        B curr = new B();
+        String[] arr1 = new String[]{"a","b","ba","bca","bda","bdca"};
+        String[] arr2 = new String[]{"xbc","pcxbcf","xb","cxbc","pcxbc"};
+        int res = curr.longestStrChainDp(arr2);
+        System.out.println("Res : "+ res);
+    }
+    /*
+    * https://leetcode.com/problems/longest-string-chain/
+    * 1048. Longest String Chain
+    * */
+    public int longestStrChainDp(String[] words) {
+        int len = words.length;
+        if(len <= 1) return len;
+        Arrays.sort(words, (a, b) -> a.length() - b.length());
+        HashMap<String, Integer> map = new HashMap<>();
+        for (int i = 0; i < words.length; i++) {
+            map.put(words[i], i);
+        }
+        int[] dp = new int[words.length + 1];
+        Arrays.fill(dp, 1);
+
+        for (int i = 0; i < words.length; i++) {
+            for (int j = 0; j < words[i].length(); j++) {
+                String prev = words[i].substring(0, j) + words[i].substring(j+1);
+                if(map.containsKey(prev)){
+                    int prevIdx = map.get(prev);
+                    if(prevIdx < i){
+                        dp[i] = Math.max(dp[i], dp[prevIdx] + 1);
+                    }
+                }
+            }
+        }
+        return Arrays.stream(dp).max().getAsInt();
+    }
+
+    public int longestStrChain(String[] words) {
+        int len = words.length;
+        if(len <= 1) return len;
+        Arrays.sort(words, (a, b) -> a.length() - b.length());
+        int res = 0;
+        HashMap<String, Integer> map = new HashMap<>();
+        for (int i = 0; i < words.length; i++) {
+            int best = 0;
+            for (int j = 0; j < words[i].length(); j++) {
+                String prev = words[i].substring(0, j) + words[i].substring(j+1);
+                best = Math.max(best, map.getOrDefault(prev, 0) + 1);
+            }
+            map.put(words[i], best);
+            res = Math.max(res, best);
+        }
+        return res;
+    }
 
     /* 1865. Finding Pairs With a Certain Sum
     * https://leetcode.com/problems/finding-pairs-with-a-certain-sum/

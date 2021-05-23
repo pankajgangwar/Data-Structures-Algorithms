@@ -2,9 +2,11 @@ package com.pkumar7.bfs;
 
 import com.pkumar7.TreeNode;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -16,6 +18,69 @@ import java.util.Queue;
  * Created by Pankaj Kumar on 16/August/2020
  */
 class A {
+
+    /* 1871. Jump Game VII
+     * https://leetcode.com/problems/jump-game-vii/
+     * */
+    public boolean canReach(String s, int minJump, int maxJump) {
+        /*
+        * i + minJump <= j <= min(i + maxJump, s.length - 1), and
+          s[j] == '0'
+        * */
+        //return dfs(0, minJump, maxJump, s);
+        return usingDeque(s, minJump, maxJump);
+    }
+
+    public boolean bfs(String s, int minJump, int maxJump){
+        Queue<Integer> bfs = new LinkedList<>();
+        bfs.offer(0);
+        int max = 0;
+        while(!bfs.isEmpty()){
+            int i = bfs.poll();
+            for (int j = Math.max(i + minJump, max + 1); j <= Math.min(i + maxJump, s.length() -1); j++) {
+                if(s.charAt(j) == '0'){
+                    if(j == s.length() - 1) return true;
+                    bfs.offer(j);
+                }
+            }
+            max = Math.max(max, i + maxJump);
+        }
+        return false;
+    }
+
+    public boolean usingDeque(String s, int minJump, int maxJump){
+        Deque<Integer> deQueue = new ArrayDeque<>();
+        deQueue.offer(0);
+        int len = s.length();
+        for (int i = 1; i < len; i++) {
+            while (!deQueue.isEmpty() && deQueue.peekFirst() < i - maxJump){
+                deQueue.pollFirst();
+            }
+            if(s.charAt(i) == '0' && !deQueue.isEmpty() && deQueue.peekFirst() <= i - minJump){
+                deQueue.offer(i);
+            }
+        }
+        return !deQueue.isEmpty() && deQueue.peekLast() == s.length() -1;
+    }
+
+    HashMap<Integer, Boolean> cache = new HashMap<>();
+    public boolean dfs(int curr, int minJump, int maxJump, String s){
+        int len = s.length();
+        if(curr == len - 1) return true;
+        if(curr < 0 || curr >= len) return false;
+        if(cache.containsKey(curr)) return cache.get(curr);
+        int minPos = curr + minJump;
+        int maxPos = Math.min(curr + maxJump, len - 1);
+        for (int j = minPos; j <= maxPos ; j++) {
+            if(s.charAt(j) == '0'){
+                if(dfs(j, minJump, maxJump, s)){
+                    return true;
+                }
+            }
+        }
+        cache.put(curr, false);
+        return false;
+    }
 
     /* 711. Number of Distinct Islands II
     * https://leetcode.com/problems/number-of-distinct-islands-ii/

@@ -15,6 +15,40 @@ import java.util.TreeSet;
  */
 class A {
 
+    /* 1882. Process Tasks Using Servers
+     * https://leetcode.com/problems/process-tasks-using-servers/
+     * */
+    public int[] assignTasks(int[] servers, int[] tasks) {
+        PriorityQueue<int[]> freeServer = new PriorityQueue<int[]>(
+                (a,b) -> (a[0] == b[0] ? a[1] - b[1] : a[0] - b[0]) // w, idx, avail_t
+        );
+        PriorityQueue<int[]> usedServer = new PriorityQueue<int[]>(
+                (a,b) -> (a[2] == b[2] ?
+                        (a[0] == b[0] ? a[1] - b[1] : a[0] - b[0]) : (a[2] - b[2])) // w, idx, avail_t
+        );
+        for (int i = 0; i < servers.length; i++) {
+            freeServer.offer(new int[]{servers[i], i, 0 }); // w, idx, avail_t
+        }
+        int[] res = new int[tasks.length];
+        for (int i = 0; i < tasks.length; i++) {
+            while (!usedServer.isEmpty() && usedServer.peek()[2] <= i){
+                freeServer.offer(usedServer.poll());
+            }
+            int[] c;
+            if(!freeServer.isEmpty()){
+                c = freeServer.poll();
+                res[i] = c[1];
+                c[2] = i + tasks[i];
+            }else{
+                c = usedServer.poll();
+                res[i] = c[1];
+                c[2] += tasks[i];
+            }
+            usedServer.offer(c);
+        }
+        return res;
+    }
+
     /* 1801. Number of Orders in the Backlog
     * https://leetcode.com/problems/number-of-orders-in-the-backlog/
     * */

@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Stack;
+import java.util.TreeSet;
 
 import javax.sound.sampled.Line;
 
@@ -19,6 +20,28 @@ class A {
         A cur = new A();
         String res = cur.convertToTitle(52);
         System.out.println("num = " + res);
+    }
+
+    /*
+     * https://leetcode.com/problems/get-biggest-three-rhombus-sums-in-a-grid/
+     * */
+    public int[] getBiggestThree(int[][] g) {
+        TreeSet<Integer> s = new TreeSet<>(Collections.reverseOrder());
+        for (int i = 0; i < g.length; ++i)
+            for (int j = 0; j < g[0].length; ++j)
+                for (int sz = 0; i + sz < g.length && i - sz >= 0 && j + 2 * sz < g[0].length; ++sz) {
+                    int x = i, y = j, r_sum = 0;
+                    do r_sum += g[x++][y++]; while (x < i + sz);
+                    if (sz > 0) {
+                        do r_sum += g[x--][y++]; while (y < j + 2 * sz);
+                        do r_sum += g[x--][y--]; while (x > i - sz);
+                        do r_sum += g[x++][y--]; while (x < i);
+                    }
+                    s.add(r_sum);
+                }
+
+        return s.stream().limit(3).mapToInt(Integer::intValue).toArray();
+
     }
 
     /* 1860. Incremental Memory Leak

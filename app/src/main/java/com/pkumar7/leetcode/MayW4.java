@@ -718,7 +718,6 @@ public class MayW4 {
         }
         return res;
     }
-    
 
     /*
     LC : 296

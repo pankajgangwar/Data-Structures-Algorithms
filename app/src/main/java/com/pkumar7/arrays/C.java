@@ -14,6 +14,22 @@ class C {
 
     }
 
+    /* 1877. Minimize Maximum Pair Sum in Array
+     * https://leetcode.com/problems/minimize-maximum-pair-sum-in-array/
+     * */
+    public int minPairSum(int[] nums) {
+        int n = nums.length;
+        Arrays.sort(nums);
+        int i = 0, j = n - 1;
+        int max = 0;
+        while (i < n && j >= 0 ){
+            max = Math.max(nums[i] + nums[j], max);
+            i++;
+            j--;
+        }
+        return max;
+    }
+
     /* 1806. Minimum Number of Operations to Reinitialize a Permutation
      * https://leetcode.com/problems/minimum-number-of-operations-to-reinitialize-a-permutation/
      * */

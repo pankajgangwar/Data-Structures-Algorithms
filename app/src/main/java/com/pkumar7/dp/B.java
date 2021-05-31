@@ -13,6 +13,33 @@ class B {
         current.findNumberOfLIS(new int[] {1, 3, 5, 4, 7});
     }
 
+    /*
+     * https://leetcode.com/problems/minimum-skips-to-arrive-at-meeting-on-time/
+     * */
+    public int minSkips(int[] dist, int speed, int hoursBefore) {
+        int[][] dp = new int[dist.length + 1][dist.length + 1];
+        for (int i = 0; i <= dist.length; i++) {
+            Arrays.fill(dp[i], -1);
+        }
+        int n = dist.length;
+        for (int i = 0; i <= dist.length; i++) {
+            if(dfs(dp, dist, speed, n - 1, i) <= (long) hoursBefore * speed){
+                return i;
+            }
+        }
+        return -1;
+    }
+    public int dfs(int[][] dp, int[] arr, int speed, int i, int k){
+        if(i < 0) return 0;
+        if(dp[i][k] != -1) return dp[i][k];
+
+        int res = (dfs(dp, arr, speed, i-1, k) + arr[i] + speed - 1) / speed * speed;
+        if(k > 0) // can use skip
+            res = Math.min(res, arr[i] + dfs(dp, arr, speed, i-1, k-1));
+
+        return dp[i][k] = res;
+    }
+
     /*  1774. Closest Dessert Cost
         https://leetcode.com/problems/closest-dessert-cost/
     */

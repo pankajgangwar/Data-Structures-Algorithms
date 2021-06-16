@@ -7,6 +7,24 @@ import java.util.Arrays;
  */
 class A {
 
+    /* 1750. Minimum Length of String After Deleting Similar Ends
+     * https://leetcode.com/problems/minimum-length-of-string-after-deleting-similar-ends/
+     * */
+    public int minimumLength(String s) {
+        int i = 0, j = s.length() - 1;
+        int n = s.length();
+        while (i < j && s.charAt(i) == s.charAt(j)){
+            char start = s.charAt(i);
+            while(i <= j && s.charAt(i) == start){
+                i++;
+            }
+            while(i <= j && s.charAt(j) == start){
+                --j;
+            }
+        }
+        return j - i + 1;
+    }
+
     /* 881. Boats to Save People
      * https://leetcode.com/problems/boats-to-save-people/
      * */

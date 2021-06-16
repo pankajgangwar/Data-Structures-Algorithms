@@ -1,14 +1,15 @@
 package com.pkumar7;
 
-import com.pkumar7.unionfind.UnionFind;
-
 import java.math.BigInteger;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
+
 
 /**
  * Created by Pankaj Kumar on 14/August/2020
@@ -29,28 +30,206 @@ class Current {
 
     //https://leetcode.com/problems/odd-even-jump/
     // https://leetcode.com/problems/remove-boxes/
-
     public static void main(String[] args) {
         Current current = new Current();
-        int c_k = 3;
-        //int[] res = current.mostCompetitive(c, c_k);
-        //System.out.println("res = " + Arrays.toString(res));
-        int[] arr = {1, -1, -2, 4, -7, 3};
-        int[] nums = new int[] {6, 10, 6};
-        //int res = current.longestPalindrome("cacb", "cbba");
+        int[] r = new int[]{3,2,1,4,5,6};
     }
 
+    public String shortestSuperstring(String[] words) {
+        LinkedList<String> list = new LinkedList<>(Arrays.asList(words));
+        return dfs(list);
+    }
 
-    public boolean check(int[] nums) {
-        int n = nums.length;
-        int k = 0;
-        for (int i = 0; i < nums.length; i++) {
-            if (nums[i] > nums[(i + 1) % n]) {
-                k++;
+    // pre - 3, 9, 20, 15, 7
+    // in - 9, 3, 15, 20, 7
+
+    public static String shortestSuperstring1(String[] A) {
+        int n = A.length;
+        int[][] graph = new int[n][n];
+
+        // Build the graph
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                graph[i][j] = calc(A[i], A[j]);
+                graph[j][i] = calc(A[j], A[i]);
             }
-            if (k > 1) return false;
         }
-        return true;
+
+        // Creating dp array
+        int[][] dp = new int[1 << n][n];
+
+        // Creating path array
+        int[][] path = new int[1 << n][n];
+        int last = -1, min = Integer.MAX_VALUE;
+
+        // start TSP DP
+        for (int i = 1; i < (1 << n); i++) {
+            Arrays.fill(dp[i], Integer.MAX_VALUE);
+
+            // Iterate j from 0 to n - 1
+            for (int j = 0; j < n; j++) {
+                if ((i & (1 << j)) > 0) {
+                    int prev = i - (1 << j);
+
+                    // Check if prev is zero
+                    if (prev == 0) {
+                        dp[i][j] = A[j].length();
+                    } else {
+                        // Iterate k from 0 to n - 1
+                        for (int k = 0; k < n; k++) {
+                            if (dp[prev][k] < Integer.MAX_VALUE &&
+                                    dp[prev][k] + graph[k][j] < dp[i][j]) {
+                                dp[i][j] = dp[prev][k] + graph[k][j];
+                                path[i][j] = k;
+                            }
+                        }
+                    }
+                }
+                if (i == (1 << n) - 1 && dp[i][j] < min) {
+                    min = dp[i][j];
+                    last = j;
+                }
+            }
+        }
+
+        // Build the path
+        StringBuilder sb = new StringBuilder();
+        int cur = (1 << n) - 1;
+
+        // Creating a stack
+        Stack<Integer> stack = new Stack<>();
+
+        // Untill cur is zero
+        // push last
+        while (cur > 0) {
+            stack.push(last);
+            int temp = cur;
+            cur -= (1 << last);
+            last = path[temp][last];
+        }
+
+        // Build the result
+        int i = stack.pop();
+        sb.append(A[i]);
+
+        // Untill stack is empty
+        while (!stack.isEmpty()) {
+            int j = stack.pop();
+            sb.append(A[j].substring(A[j].length() -
+                    graph[i][j]));
+            i = j;
+        }
+        return sb.toString();
+    }
+
+    public static int calc(String a, String b) {
+        for (int i = 1; i < a.length(); i++) {
+            if (b.startsWith(a.substring(i))) {
+                return b.length() - a.length() + i;
+            }
+        }
+        return b.length();
+    }
+
+    public String dfs(LinkedList<String> words){
+        int n = words.size();
+        if(n == 1) return words.get(0);
+        String shortestStr = "";
+        int max = -1;
+        int index1 = 0, index2 = 0;
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = i + 1; j < n; j++) {
+                String merge = merge(words.get(i), words.get(j));
+                int savedLen = words.get(i).length() + words.get(j).length() - merge.length();
+                if(savedLen > max){
+                    max = savedLen;
+                    shortestStr = merge;
+                    index1 = i;
+                    index2 = j;
+                }
+            }
+        }
+        String s1 = words.get(index1);
+        String s2 = words.get(index2);
+        words.remove(s1);
+        words.remove(s2);
+        words.add(shortestStr);
+        return dfs(words);
+    }
+
+    public String merge(String s1, String s2){
+        String shortest = "";
+        int len1 = s1.length();
+        int len2 = s2.length();
+        int shortLen = Integer.MAX_VALUE;
+        // pankaj
+        // ajpan -> ajpankaj, pankajpan
+        int overlap1 = 0;
+        for (int i = 1; i < len1 && i < len2; i++) {
+            String prefix = s1.substring(0, i);
+            String suffix = s2.substring(len2 - i);
+            if(prefix.equals(suffix) && overlap1 < prefix.length()){
+                overlap1 = prefix.length();
+            }
+        }
+        int overlap2 = 0;
+        for (int i = s1.length() - 1 ; i >= 0; i--) {
+            String suffix = s1.substring(i);
+            String prefix = s2.substring(len2 - i);
+            if(prefix.equals(suffix) && overlap2 < prefix.length()){
+                overlap2 = prefix.length();
+            }
+        }
+        return shortest;
+    }
+
+    //"(name)is(age)yearsold"
+    //[["name","bob"],["age","two"]]
+    public String evaluate(String s, List<List<String>> knowledge) {
+        HashMap<String, String> map = new HashMap<>();
+        for(List<String> keys : knowledge){
+            map.putIfAbsent(keys.get(0), keys.get(1));
+        }
+        StringBuilder out = new StringBuilder();
+        for (int i = 0; i < s.length();) {
+            if(s.charAt(i) == '('){
+                StringBuilder key = new StringBuilder();
+                int j = i+1;
+                while (s.charAt(j) != ')'){
+                    key.append(s.charAt(j));
+                    j++;
+                }
+                out.append(map.getOrDefault(key.toString(), "?"));
+                i = j + 1;
+            }else{
+                out.append(s.charAt(i));
+                i = i + 1;
+            }
+        }
+        return out.toString();
+    }
+
+    public int numDifferentIntegers(String word) {
+        StringBuilder out = new StringBuilder();
+        HashSet<Long> set = new HashSet<>();
+        char[] arr = word.toCharArray();
+
+        for (int i = 0; i < arr.length; i++) {
+            if(Character.isDigit(arr[i])){
+                out.append(arr[i]);
+            }else if(out.length() > 0){
+                BigInteger bigInteger = new BigInteger(out.toString());
+                //set.add(Integer.valueOf(out.toString()));
+                set.add(bigInteger.longValue());
+                out = new StringBuilder();
+            }
+        }
+        if(out.length() > 0){
+            BigInteger bigInteger = new BigInteger(out.toString());
+            //set.add(Integer.valueOf(out.toString()));
+            set.add(bigInteger.longValue());
+        }
+        return set.size();
     }
 
     /* 1726. Tuple with Same Product
@@ -69,64 +248,6 @@ class Current {
         return res;
     }
 
-    /* 881. Boats to Save People
-     * https://leetcode.com/problems/boats-to-save-people/
-     * */
-    public int numRescueBoats(int[] arr, int limit) {
-        int n = arr.length;
-        Integer[] people = new Integer[n];
-        for (int i = 0; i < n; i++) {
-            people[i] = arr[i];
-        }
-        Arrays.sort(people, (a, b) -> b - a);
-        int boats = 0;
-        for (int i = 0, j = n - 1; i <= j; ) {
-            if (people[i] + people[j] <= limit) {
-                i += 1;
-                j -= 1;
-            } else if (people[i] + people[j] > limit) {
-                i += 1;
-            }
-            boats += 1;
-        }
-        return boats;
-    }
-
-    /* 1722. Minimize Hamming Distance After Swap Operations
-     * https://leetcode.com/problems/minimize-hamming-distance-after-swap-operations/
-     * */
-    public int minimumHammingDistance(int[] source, int[] target, int[][] allowedSwaps) {
-        int n = source.length;
-        List<Integer> t = new ArrayList<>();
-        for (int i = 0; i < target.length; i++) {
-            t.add(target[i]);
-        }
-        UnionFind unionfind = new UnionFind(n);
-        for (int[] s : allowedSwaps) {
-            unionfind.union(s[0], s[1]);
-        }
-        HashMap<Integer, HashMap<Integer, Integer>> map = new HashMap<Integer, HashMap<Integer, Integer>>();
-        for (int i = 0; i < source.length; i++) {
-            int a = source[i];
-            int root = unionfind.find(i);
-            map.putIfAbsent(root, new HashMap<Integer, Integer>());
-            HashMap<Integer, Integer> store = map.get(root);
-            store.put(a, store.getOrDefault(a, 0) + 1);
-        }
-        int res = 0;
-        for (int i = 0; i < target.length; i++) {
-            int a = target[i];
-            int root = unionfind.find(i);
-            HashMap<Integer, Integer> store = map.getOrDefault(root, new HashMap<Integer, Integer>());
-            if (store.getOrDefault(a, 0) == 0) res++;
-            else store.put(a, store.get(a) - 1);
-        }
-        return res;
-    }
-
-    /*
-     * https://cses.fi/problemset/task/1687/
-     * */
     public static List<Long> getMaxArea(int w, int h, List<Boolean> isVertical, List<Integer> distance) {
         List<Long> res = new ArrayList<Long>();
         List<Integer> hList = new ArrayList<>();

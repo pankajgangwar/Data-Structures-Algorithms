@@ -13,6 +13,27 @@ class A {
         current.countRangeSum(new int[]{-2, 5, -1}, -2, 2);
     }
 
+    /* 1887. Reduction Operations to Make the Array Elements Equal
+     * https://leetcode.com/problems/reduction-operations-to-make-the-array-elements-equal/
+     * */
+    public int reductionOperations(int[] nums) {
+        Arrays.sort(nums);
+        int n = nums.length;
+        int i = n - 1;
+        int opr = 0;
+        if(nums[0] == nums[n - 1]) return opr;
+        while (i >= 0){
+            int j = i;
+            while (i >= 0 && nums[i] == nums[j]){
+                --i;
+            }
+            if(i >= 0){
+                opr += n - i - 1;
+            }
+        }
+        return opr;
+    }
+
     /* 327. Count of Range Sum
      * https://leetcode.com/problems/count-of-range-sum/
      * */

@@ -14,6 +14,58 @@ class C {
 
     }
 
+    /* 1899. Merge Triplets to Form Target Triplet
+     * https://leetcode.com/problems/merge-triplets-to-form-target-triplet/
+     * */
+    public boolean  mergeTriplets(int[][] triplets, int[] target) {
+        int a = 0, b = 0, c = 0;
+        for(int[] t : triplets){
+            if(t[0] <= target[0] && t[1] <= target[1] && t[2] <= target[2]){
+                a = Math.max(a, t[0]);
+                b = Math.max(b, t[1]);
+                c = Math.max(c, t[2]);
+            }
+        }
+        return (a == target[0] && b == target[1] && c == target[2]);
+    }
+
+    /* 1895. Largest Magic Square
+     * https://leetcode.com/problems/largest-magic-square/
+     * */
+    public int largestMagicSquare(int[][] grid) {
+        int m = grid.length;
+        int n = grid[0].length;
+        for (int size = Math.min(m, n); size > 1; size--) {
+            for (int row = 0; row <= m - size ; row++) {
+                for (int col = 0; col <= n - size; col++) {
+                    boolean flag = true;
+                    int rowSum = 0, colSum = 0, diagSum = 0, antiDiagSum = 0;
+                    for (int i = 0; i < size; i++) rowSum += grid[row][col + i];
+                    for (int i = 0; i < size; i++) colSum += grid[row + i][col];
+                    for (int i = 0; i < size; i++) diagSum += grid[row + i][col + i];
+                    for (int i = 0; i < size; i++) antiDiagSum += grid[row + i][col + (size - 1) - i];
+                    if(rowSum != colSum || colSum != diagSum || diagSum != antiDiagSum) continue;
+
+                    for (int i = 1; i < size && flag; i++) {
+                        int tempRowSum = 0;
+                        for (int j = 0; j < size; j++) tempRowSum += grid[row + i][col + j];
+                        if(tempRowSum != rowSum) flag = false;
+                    }
+                    if(!flag) continue;
+
+                    for (int i = 1; i < size && flag; i++) {
+                        int tempColSum = 0;
+                        for (int j = 0; j < size; j++) tempColSum += grid[row + j][col + i];
+                        if(tempColSum != rowSum) flag = false;
+                    }
+                    if(!flag) continue;
+                    return size;
+                }
+            }
+        }
+        return 1;
+    }
+
     /* 1877. Minimize Maximum Pair Sum in Array
      * https://leetcode.com/problems/minimize-maximum-pair-sum-in-array/
      * */

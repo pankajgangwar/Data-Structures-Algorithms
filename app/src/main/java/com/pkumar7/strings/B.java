@@ -18,6 +18,44 @@ class B {
         System.out.println("status = " + status);
     }
 
+    /* 1888. Minimum Number of Flips to Make the Binary String Alternating
+     * https://leetcode.com/problems/minimum-number-of-flips-to-make-the-binary-string-alternating/
+     * */
+    public int minFlips(String s) {
+        s += s;
+        StringBuilder first = new StringBuilder();
+        StringBuilder second = new StringBuilder();
+        char ch = '0';
+        for (int i = 0; i < s.length(); i++) {
+            first.append(ch);
+            ch = ch == '0' ? '1' : '0';
+            second.append(ch);
+        }
+        int op1 = 0, op2 = 0;
+        int n = s.length() / 2;
+        int ans = Integer.MAX_VALUE;
+        for (int i = 0; i < n*2; i++) {
+            if(s.charAt(i) != first.charAt(i)){
+                op1++;
+            }
+            if(s.charAt(i) != second.charAt(i)){
+                op2++;
+            }
+            if(i >= n){
+                if(s.charAt(i - n) != first.charAt(i - n)){
+                    op1--;
+                }
+                if(s.charAt(i - n) != second.charAt(i - n)){
+                    op2--;
+                }
+            }
+            if(i >= n - 1){
+                ans = Math.min(ans, Math.min(op1, op2));
+            }
+        }
+        return ans;
+    }
+
     /* 1864. Minimum Number of Swaps to Make the Binary String Alternating
     * https://leetcode.com/problems/minimum-number-of-swaps-to-make-the-binary-string-alternating/
     * */

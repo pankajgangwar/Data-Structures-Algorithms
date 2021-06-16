@@ -1122,7 +1122,7 @@ public class NovemberW4 {
         }
     }
 
-    /*  
+    /*  https://leetcode.com/problems/egg-drop-with-2-eggs-and-n-floors/
         https://leetcode.com/problems/super-egg-drop/
         https://leetcode.com/problems/super-egg-drop/discuss/159055/Java-DP-solution-from-O(KN2)-to-O(KNlogN)
     */
@@ -1163,7 +1163,6 @@ public class NovemberW4 {
                 high = mid;
             }
         }
-
         memo[K][N] = min;
         return memo[K][N];
     }
@@ -1188,6 +1187,4 @@ public class NovemberW4 {
         memo[K][N] = min;
         return memo[K][N];
     }
-
-
 }

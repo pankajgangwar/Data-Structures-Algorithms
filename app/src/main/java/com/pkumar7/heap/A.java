@@ -1,5 +1,6 @@
 package com.pkumar7.heap;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -14,6 +15,61 @@ import java.util.TreeSet;
  * Created by Pankaj Kumar on 29/August/2020
  */
 class A {
+
+    /* 1383. Maximum Performance of a Team
+     * https://leetcode.com/problems/maximum-performance-of-a-team/
+     * */
+    public int maxPerformance(int n, int[] speed, int[] efficiency, int k) {
+        int[][] emp = new int[n][2];
+        for (int i = 0; i < n; i++) {
+            emp[i] = new int[]{efficiency[i], speed[i]};
+        }
+        Arrays.sort(emp, (a,b) -> -a[0] + b[0]);
+        PriorityQueue<int[]> minHeap = new PriorityQueue<>((a,b) -> a[1] == b[1] ? a[0] - b[0] : a[1] - b[1]);
+        long sumSpeed = 0;
+        long minEff = 0;
+        long maxPerf = 0;
+        for (int i = 0; i < n ; i++) {
+            minHeap.offer(emp[i]);
+            minEff = emp[i][0];
+            sumSpeed += emp[i][1];
+            if(minHeap.size() > k && !minHeap.isEmpty()){
+                sumSpeed -= minHeap.poll()[1];
+            }
+            maxPerf = Math.max(maxPerf, minEff * sumSpeed);
+        }
+        return(int) (maxPerf % (long)(1e9 + 7));
+    }
+
+    /* 1834. Single-Threaded CPU
+     * https://leetcode.com/problems/single-threaded-cpu/
+     * */
+    public int[] getOrder(int[][] arr) {
+        PriorityQueue<int[]> availableTask = new PriorityQueue<>((a,b) ->
+                a[1] == b[1] ? a[2] - b[2] : a[1] - b[1]);
+        int[][] tasks = new int[arr.length][3];
+        for (int i = 0; i < arr.length; i++) {
+            tasks[i] = new int[]{arr[i][0],arr[i][1],i};
+        }
+        Arrays.sort(tasks, (a, b) -> a[0] - b[0]);
+        int taskIdx = 0;
+        int resIdx = 0;
+        int[] res =  new int[tasks.length];
+        int time = 0;
+        while (resIdx < res.length){
+            while(taskIdx < tasks.length && tasks[taskIdx][0] <= time) {
+                availableTask.offer(tasks[taskIdx++]);
+            }
+            if(availableTask.isEmpty()){
+                time = tasks[taskIdx][0];
+                continue;
+            }
+            int[] bestFit = availableTask.poll();
+            res[resIdx++] = bestFit[2];
+            time += bestFit[1];
+        }
+        return res;
+    }
 
     /* 1882. Process Tasks Using Servers
      * https://leetcode.com/problems/process-tasks-using-servers/

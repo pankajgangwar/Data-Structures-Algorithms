@@ -17,6 +17,20 @@ import java.util.TreeMap;
 
 public class B {
 
+	/* 1749. Maximum Absolute Sum of Any Subarray
+	 * https://leetcode.com/problems/maximum-absolute-sum-of-any-subarray/
+	 * */
+	public int maxAbsoluteSum(int[] nums) {
+		int sum = 0;
+		int max = 0, min = 0;
+		for (int i = 0; i < nums.length; i++) {
+			sum += nums[i];
+			min = Math.min(min, sum);
+			max = Math.max(max, sum);
+		}
+		return max - min;
+	}
+
 	/*
 	 * https://leetcode.com/problems/maximum-distance-between-a-pair-of-values/
 	 * */

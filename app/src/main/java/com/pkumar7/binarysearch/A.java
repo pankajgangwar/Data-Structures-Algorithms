@@ -15,6 +15,100 @@ class A {
         w2.kthSmallestPrimeFraction(new int[] {1, 2, 3, 5}, 3);
     }
 
+    /* 1898. Maximum Number of Removable Characters
+     * https://leetcode.com/problems/maximum-number-of-removable-characters/
+     * */
+    public int maximumRemovals(String s, String t, int[] removable) {
+        int low = 0, high = removable.length - 1;
+        int max = 0;
+        while (low <= high){
+            int mid = low + (high - low) / 2;
+            if(isStillSubsequence(mid, removable, s, t)){
+                low = mid + 1;
+                max = mid + 1;
+            }else{
+                high = mid - 1;
+            }
+        }
+        return max;
+    }
+
+    private boolean isStillSubsequence(int mid, int[] removable, String s, String t) {
+        StringBuilder out = new StringBuilder(s);
+        for (int i = 0; i <= mid; i++) {
+            out.setCharAt(removable[i], '#');
+        }
+        StringBuilder xx = new StringBuilder();
+        for (int i = 0; i < out.length(); i++) {
+            if(out.charAt(i) != '#'){
+                xx.append(out.charAt(i));
+            }
+        }
+        return helperCommonSubSeqDP(xx.toString(), t);
+    }
+
+    public boolean helperCommonSubSeqDP(String s, String t){
+        int n = s.length();
+        int m = t.length();
+        int i = 0, j = 0;
+        while (i < n && j < m){
+            if(s.charAt(i) == t.charAt(j)){
+                i++;
+                j++;
+            }else{
+                i++;
+            }
+        }
+        return j == m;
+    }
+
+
+    /*  1889. Minimum Space Wasted From Packaging
+     * https://leetcode.com/problems/minimum-space-wasted-from-packaging/
+     * */
+    public int minWastedSpace(int[] packages, int[][] boxes) {
+        Arrays.sort(packages);
+        long minTotalBoxSize = Long.MAX_VALUE;
+        for (int i = 0; i < boxes.length; i++) {
+            Arrays.sort(boxes[i]);
+            int nextIdx = 0;
+            long totalBoxSize = 0;
+            for(int box : boxes[i]){
+                int idx = searchLargestElementLessThanOrEqualTo(packages, box, nextIdx);
+                long packageCnt = idx - nextIdx + 1;
+                totalBoxSize += packageCnt * box;
+                nextIdx = idx + 1;
+            }
+            if(nextIdx == packages.length){
+                minTotalBoxSize = Math.min(minTotalBoxSize, totalBoxSize);
+            }
+        }
+        if(minTotalBoxSize == Long.MAX_VALUE){
+            return -1;
+        }
+        long packageSum = 0;
+        for(int p : packages){
+            packageSum += p;
+        }
+        long minWaste = minTotalBoxSize - packageSum;
+        return (int)(minWaste % (long)(1e9 + 7));
+    }
+
+    private int searchLargestElementLessThanOrEqualTo(int[] packages, int box, int left) {
+        int right = packages.length - 1;
+        int ans = left - 1;
+        while (left <= right){
+            int mid = left + (right - left) / 2;
+            if(packages[mid] <= box){
+                ans = mid;
+                left = mid + 1;
+            }else{
+                right = mid - 1;
+            }
+        }
+        return ans;
+    }
+
     /* 1870. Minimum Speed to Arrive on Time
     * https://leetcode.com/problems/minimum-speed-to-arrive-on-time/
     * */

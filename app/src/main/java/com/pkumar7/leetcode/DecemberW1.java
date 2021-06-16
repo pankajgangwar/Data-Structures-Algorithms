@@ -1,7 +1,6 @@
 package com.pkumar7.leetcode;
 import com.pkumar7.TreeNode;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -235,9 +234,8 @@ public class DecemberW1 {
     }
 
     /*
+        106. Construct Binary Tree from Inorder and Postorder Traversal
         https://leetcode.com/problems/construct-binary-tree-from-inorder-and-postorder-traversal/
-        To-Do
-        Revisit - To understand pointers movement
     */
     public TreeNode buildTree(int[] inorder, int[] postorder) {
         if(inorder == null || inorder.length == 0 || postorder == null || postorder.length == 0)
@@ -247,46 +245,40 @@ public class DecemberW1 {
         for(int i = 0; i < inorder.length; i++){
             map.put(inorder[i], i);
         }
-
-        return buildTreeRec(inorder, 0, inorder.length -1, postorder, 0, postorder.length -1, map);
+        postIdx = postorder.length - 1;
+        return buildFromPostOrder( 0, inorder.length -1, postorder, map);
     }
 
-    public TreeNode buildTreeRec(int[] inorder, int is, int ie, int[] postorder, int ps, int pe, HashMap<Integer,Integer> map){
-        if(ps > pe || is > ie) return null;
-        TreeNode root = new TreeNode(postorder[pe]);
-        int ri = map.get(postorder[pe]);
+    int postIdx = 0;
+    public TreeNode buildFromPostOrder(int left, int right, int[] postorder, HashMap<Integer,Integer> mapInorder){
+        if(left > right) return null;
+        TreeNode root = new TreeNode(postorder[postIdx--]);
+        int ri = mapInorder.get(root.val);
 
-        root.left = buildTreeRec(inorder, is, ri -1, postorder, ps, ps + ri - is -1, map);
-        root.right = buildTreeRec(inorder, ri+1, ie, postorder, ps + ri - is, pe -1 , map);
+        root.right = buildFromPostOrder(ri + 1, right , postorder, mapInorder);
+        root.left = buildFromPostOrder(  left, ri - 1, postorder, mapInorder);
 
         return root;
     }
 
-    /*
+    /*  105. Construct Binary Tree from Preorder and Inorder Traversal
         https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/
-        To-do
-        Revisit to memorize the pointers movement
     */
+    int preIdx = 0;
     public TreeNode buildTreePreInor(int[] preorder, int[] inorder) {
         HashMap<Integer,Integer> map = new HashMap<>();
         for(int i = 0; i < inorder.length; i++){
             map.put(inorder[i], i);
         }
-
-        return buildTreePreInorRec(preorder, 0, preorder.length - 1, inorder, 0, inorder.length -1, map);
+        return helper(preorder, 0, preorder.length - 1, map);
     }
 
-    public TreeNode buildTreePreInorRec(int[] preorder, int preS, int preE, int[] inorder, int inS, int inE, HashMap<Integer,Integer> map){
-        if(preS > preE || inS > inE){
-            return null;
-        }
-
-        TreeNode root = new TreeNode(preorder[preS]);
-        int ri = map.get(preorder[preS]);
-
-        root.left = buildTreePreInorRec(preorder, preS + 1, preS + ri - inS, inorder, inS, ri -1, map);
-        root.right = buildTreePreInorRec(preorder, preS + ri - inS + 1, preE, inorder, ri + 1, inE, map);
-
+    public TreeNode helper(int[] preorder, int left, int right, HashMap<Integer,Integer> mapInorder){
+        if(left > right) return null;
+        TreeNode root = new TreeNode(preorder[preIdx++]);
+        int inIdx = mapInorder.get(root.val);
+        root.left = helper(preorder, left, inIdx - 1, mapInorder);
+        root.right = helper(preorder, inIdx + 1, right, mapInorder);
         return root;
     }
 

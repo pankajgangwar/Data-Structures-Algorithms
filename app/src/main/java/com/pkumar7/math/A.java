@@ -22,6 +22,26 @@ class A {
         System.out.println("num = " + res);
     }
 
+    /* 1904. The Number of Full Rounds You Have Played
+       : Time
+    * https://leetcode.com/problems/the-number-of-full-rounds-you-have-played/
+    * */
+    public int numberOfRounds(String startTime, String finishTime) {
+        String[] st = startTime.split(":");
+        int shr = Integer.parseInt(st[0]);
+        int smin = Integer.parseInt(st[1]);
+
+        String[] et = finishTime.split(":");
+        int ehr = Integer.parseInt(et[0]);
+        int emin = Integer.parseInt(et[1]);
+        int start = 60*shr + smin;
+        int finish = 60*ehr + emin;
+        if(start > finish) {
+            finish += 60*24;
+        }
+        return Math.max(0 , finish / 15 - (start + 14) / 15);
+    }
+
     /*
      * https://leetcode.com/problems/get-biggest-three-rhombus-sums-in-a-grid/
      * */

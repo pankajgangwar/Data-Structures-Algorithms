@@ -16,6 +16,44 @@ class B {
         b.distributeCandies(7, 4);
     }
 
+    /* 1905. Count Sub Islands
+     * https://leetcode.com/problems/count-sub-islands/
+     * */
+    public int countSubIslands(int[][] grid1, int[][] grid2) {
+        int res = 0;
+        for (int i = 0; i < grid1.length; i++) {
+            for (int j = 0; j < grid1[i].length; j++) {
+                if(grid2[i][j] == 1){
+                    if(isSubIsland(grid1, grid2, i, j)){
+                        ++res;
+                    }
+                }
+            }
+        }
+        return res;
+    }
+
+    private boolean isSubIsland(int[][] grid1, int[][] grid2,
+                                int curr_x, int curr_y) {
+        if(!isSafe(curr_x, curr_y, grid2)) return true;
+        grid2[curr_x][curr_y] = 0;
+        boolean status = true;
+        status &= isSubIsland(grid1, grid2, curr_x - 1 , curr_y);
+        status &= isSubIsland(grid1, grid2, curr_x  , curr_y - 1);
+        status &= isSubIsland(grid1, grid2, curr_x + 1 , curr_y);
+        status &= isSubIsland(grid1, grid2, curr_x  , curr_y + 1);
+        return (status && grid1[curr_x][curr_y] == 1);
+    }
+
+    boolean isSafe(int i, int j, int[][] grid){
+        int m = grid.length;
+        int n = grid[0].length;
+        if(i < 0 || j < 0 || i >= m || j >= n || grid[i][j] == 0 ){
+            return false;
+        }
+        return true;
+    }
+
     /* 1743. Restore the Array From Adjacent Pairs
      * https://leetcode.com/problems/restore-the-array-from-adjacent-pairs/
      * */

@@ -14,6 +14,93 @@ class C {
 
     }
 
+    /*
+     * 775. Global and Local Inversions
+     * https://leetcode.com/problems/global-and-local-inversions/
+     * */
+    public boolean isIdealPermutation(int[] nums) {
+        int globalInversions = 0;
+        int localInversions = 0;
+        int n = nums.length;
+        int[] temp = nums.clone();
+        globalInversions = mergesort(temp, 0, nums.length - 1);
+        for (int i = 0; i < n - 1; i++) {
+            if(nums[i] > nums[i + 1] ){
+                ++localInversions;
+            }
+        }
+        return globalInversions == localInversions;
+    }
+    public int mergesort(int[] nums, int low, int high){
+        if(low == high){
+            return 0;
+        }
+        int mid = low + (high - low) / 2;
+        int left = mergesort(nums, low, mid);
+        int right = mergesort(nums, mid + 1, high);
+        return left + right + merge(nums, low, mid, high);
+    }
+
+    private int merge(int[] nums, int low,int mid, int high) {
+        int i = low, j = mid + 1;
+        int countInversions = 0;
+        int n = high - low + 1;
+        int[] temp = new int[n];
+        int idx = 0;
+        while (i <= mid && j <= high){
+            if (nums[i] > nums[j]){
+                temp[idx++] = nums[j++];
+                countInversions += (mid - i + 1);
+            }else{
+                temp[idx++] = nums[i++];
+            }
+        }
+
+        while (i <= mid) {
+            temp[idx++] = nums[i++];
+        }
+        while (j <= high) {
+            temp[idx++] = nums[j++];
+        }
+        for (int k = 0; k < temp.length; k++) {
+            nums[low + k] = temp[k];
+        }
+        return countInversions;
+    }
+
+    /* 795. Number of Subarrays with Bounded Maximum
+     * https://leetcode.com/problems/number-of-subarrays-with-bounded-maximum/
+     * */
+    public int numSubarrayBoundedMax(int[] nums, int left, int right) {
+        //return count(nums, right) - count(nums, left - 1);
+        return helper(nums, left, right);
+    }
+
+    public int helper(int[] nums, int L, int R){
+        int res = 0;
+        int left = -1, right = -1;
+        for(int i = 0; i < nums.length; i++){
+            if(nums[i] >= L) right = i;
+            if(nums[i] > R) left = i;
+            res += (right - left);
+        }
+        return res;
+    }
+
+    public int count(int[] nums, int bound){
+        int count = 0;
+        int temp = 0;
+        for (int i = 0; i < nums.length; i++) {
+            if(nums[i] <= bound){
+                temp += 1;
+                count += temp;
+            }else{
+                temp = 0;
+            }
+        }
+        return count;
+    }
+
     /* 1899. Merge Triplets to Form Target Triplet
      * https://leetcode.com/problems/merge-triplets-to-form-target-triplet/
      * */

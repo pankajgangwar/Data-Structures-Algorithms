@@ -14,36 +14,11 @@ import java.util.Set;
 public class LeetCodeProblems {
 
     public static void main(String args[]){
-        //LeetCodeProblems problems = new LeetCodeProblems();
-        int nums[] = new int[]{1,3,6,5};
-        //problems.smallestDistancePair(nums, 3);
-
-        int arr[] = {1,2,3,4};
-        //call_array(arr[0], arr);
-        //System.out.println(arr[0] +""  + arr[1]);
-
-        new LeetCodeProblems();
-
-        //reverseWords("agoda best apps");
-
-        List<Integer> list = new ArrayList<>();
-        list.add(5);
-        list.add(23);
-        list.add(20);
-        list.add(23);
-        list.add(5);
-        list.add(20);
-        list.add(6);
-        list.add(7);
-        list.add(0);
-
-        getFirstTwoElementWithoutPairs(list);
 
     }
 
 
     public static List<Integer> getFirstTwoElementWithoutPairs(List<Integer> list){
-
         Map<Integer,Integer> mMap = new HashMap<>();
         for (int i = 0; i < list.size(); i++) {
             int ele = list.get(i);
@@ -165,7 +140,6 @@ public class LeetCodeProblems {
      */
     public int maxArea(int[] height) {
         int max_area = 0;
-
         for (int i = 0; i < height.length; i++) {
             for (int j = i+1; j < height.length; j++) {
                 max_area = Math.max(max_area,
@@ -180,9 +154,7 @@ public class LeetCodeProblems {
         int maxArea = 0;
 
         while(l < r){
-
             maxArea = Math.max(maxArea, Math.min(height[l],height[r]) *(r - l));
-
             if(height[l] < height[r]){
                 l++;
             }else{
@@ -191,7 +163,6 @@ public class LeetCodeProblems {
         }
         return maxArea;
     }
-
 }
 
 

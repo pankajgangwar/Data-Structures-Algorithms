@@ -512,19 +512,13 @@ class JuneW2 {
     */
     public int numMatchingSubseq(String target, String[] words) {
         int count = 0;
-        HashMap<String, Boolean> map = new HashMap<>();
-        for(String source : words){
-            if(map.containsKey(source)){
-                if(map.get(source)){
-                    count++;
-                }
-                continue;
-            }
-            if(isSubSequence(source, target)){
-                count++;
-                map.put(source, true);
-            }else{
-                map.put(source, false);
+        HashMap<String, Integer> occMap = new HashMap<>();
+        for (int i = 0; i < words.length; i++) {
+            occMap.put(words[i], occMap.getOrDefault(words[i], 0) + 1);
+        }
+        for(Map.Entry<String,Integer> entry : occMap.entrySet()){
+            if(isSubSequence(entry.getKey(), target)){
+                count += entry.getValue();
             }
         }
         return count;

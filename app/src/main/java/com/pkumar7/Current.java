@@ -35,7 +35,7 @@ class Current {
     // https://leetcode.com/problems/remove-boxes/
     public static void main(String[] args) {
         Current current = new Current();
-        int[] r = new int[]{3,2,1,4,5,6};
+
     }
 
 

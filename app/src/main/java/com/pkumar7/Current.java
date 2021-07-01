@@ -6,8 +6,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Stack;
 
 
@@ -35,12 +38,19 @@ class Current {
         int[] r = new int[]{3,2,1,4,5,6};
     }
 
+
+
+    public long wonderfulSubstrings(String word) {
+        return 0;
+    }
+
     public String shortestSuperstring(String[] words) {
         LinkedList<String> list = new LinkedList<>(Arrays.asList(words));
         return dfs(list);
     }
 
     // pre - 3, 9, 20, 15, 7
+    // in - 9, 3, 15, 20, 7
     // in - 9, 3, 15, 20, 7
 
     public static String shortestSuperstring1(String[] A) {

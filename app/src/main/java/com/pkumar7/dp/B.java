@@ -14,6 +14,20 @@ class B {
     }
 
     /*
+     * https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/
+     * https://leetcode.com/problems/maximum-alternating-subsequence-sum/
+     * 1911. Maximum Alternating Subsequence Sum
+     * */
+    public long maxAlternatingSum(int[] nums) {
+        int n = nums.length;
+        long maxDiff = nums[0];
+        for (int i = 1; i < n; i++) {
+            maxDiff += Math.max(nums[i] - nums[i - 1], 0);
+        }
+        return maxDiff;
+    }
+
+    /*
      * https://leetcode.com/problems/minimum-skips-to-arrive-at-meeting-on-time/
      * */
     public int minSkips(int[] dist, int speed, int hoursBefore) {

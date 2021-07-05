@@ -13,6 +13,48 @@ class B {
         current.findNumberOfLIS(new int[] {1, 3, 5, 4, 7});
     }
 
+    /* 1220. Count Vowels Permutation
+    * https://leetcode.com/problems/count-vowels-permutation/
+    * */
+    public int countVowelPermutation(int n) {
+        int vowels = 5;
+        long[][] dp = new long[n + 1][vowels + 1];
+        int mod = (int)1e9 + 7;
+        // a  = 1, e = 2, i = 3, o = 4 , u = 5
+        // dp[i][j] : No. of strings of len i that ends with vowels j
+        // dp[0][0] : 0
+        // dp[1][j] : 1
+        // allowed = ea, ae, ie, io, uo, au
+        // not allowed = ii
+
+        for(int j = 1; j <= vowels; j++){
+            dp[1][j] = 1;
+        }
+
+        for(int i = 1; i <= n; i++){
+            for(int j = 1; j <= vowels; j++){
+                if(j == 1){
+                    dp[i][j] += (dp[i - 1][j + 1] % mod);
+                }else if(j == 2){
+                    dp[i][j] += (dp[i - 1][j + 1] % mod) + (dp[i - 1][j - 1] % mod);
+                }else if(j == 4){
+                    dp[i][j] += (dp[i - 1][j - 1] % mod) + (dp[i - 1][j + 1] % mod);
+                }else if(j == 5){
+                    dp[i][j] += dp[i - 1][j - 4] % mod;
+                }else{
+                    dp[i][j] += dp[i - 1][j - 1] + dp[i - 1][j - 2] + dp[i - 1][j + 1] + dp[i - 1][j + 2];
+                }
+            }
+        }
+
+        long res = 0;
+        for(int j = 1; j <= vowels; j++){
+            long ans = (dp[n][j] + mod) % mod;
+            res = (res + ans) % mod;
+        }
+        return (int)res;
+    }
+
     /*
      * https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/
      * https://leetcode.com/problems/maximum-alternating-subsequence-sum/

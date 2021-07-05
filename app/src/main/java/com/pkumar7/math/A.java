@@ -22,6 +22,40 @@ class A {
         System.out.println("num = " + res);
     }
 
+    /*
+    * https://leetcode.com/problems/count-good-numbers/
+    * 1922. Count Good Numbers
+    * */
+    public int countGoodNumbers(long n) {
+        int ans = 0;
+        int mod = (int)1e9 + 7;
+        long evenPos = n / 2;
+        long oddPos = n / 2;
+        if(n % 2 != 0){
+            evenPos += 1;
+        }
+        ans = (int)((power(5, evenPos) % mod) * (power(4, oddPos) % mod) % mod);
+        return ans;
+    }
+
+
+    public long power(long x, long y) {
+        long temp;
+        int mod = (int)1e9 + 7;
+        if (y == 0){
+            return 1;
+        }
+        temp = power(x, y / 2) % mod;
+        if (y % 2 == 0){
+            return temp * temp;
+        } else {
+            if (y > 0)
+                return x * temp * temp;
+            else
+                return (temp * temp) / x;
+        }
+    }
+
     /* 1904. The Number of Full Rounds You Have Played
        : Time
     * https://leetcode.com/problems/the-number-of-full-rounds-you-have-played/

@@ -1,6 +1,7 @@
 package com.pkumar7.heap;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -8,6 +9,29 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 public class B {
+
+    /*
+    https://leetcode.com/problems/eliminate-maximum-number-of-monsters/
+    1921. Eliminate Maximum Number of Monsters
+    * */
+    public int eliminateMaximum(int[] dist, int[] speed) {
+        int n = dist.length;
+        Double[][] arr = new Double[n][3];
+        for (int i = 0; i < n; i++) {
+            double time = (double)dist[i] / speed[i];
+            arr[i] = new Double[]{time, (double) dist[i], (double) speed[i]};
+        }
+        Arrays.sort(arr, (a, b) -> Double.compare(a[0], b[0]));
+        double time = 0;
+        int res = 0;
+        if(arr[0][0] == time) return res;
+        int next = 0;
+        while(next < n && time < arr[next][0]){
+            time++;
+            next++;res++;
+        }
+        return res;
+    }
 
     /* 355. Design Twitter
      * https://leetcode.com/problems/design-twitter/

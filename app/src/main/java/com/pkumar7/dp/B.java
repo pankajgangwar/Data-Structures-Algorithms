@@ -56,6 +56,33 @@ class B {
     }
 
     /*
+     * https://leetcode.com/problems/student-attendance-record-ii/
+     * 552. Student Attendance Record II
+     * */
+    public int checkRecord(int n) {
+        long[][] dp = new long[n + 1][3];
+
+        dp[0][0] = dp[0][1] = dp[0][2] = 1;
+
+        dp[1][0] = 1; // ends with P
+        dp[1][1] = 1; // ends with L
+        dp[1][2] = dp[1][0] + dp[1][1];// ends with P or L
+        // dp[i][2] = dp[i][0] + dp[i][1]
+        int mod = (int)1e9 + 7;
+        for(int i = 2; i <= n; i++){
+            dp[i][0] = (dp[i - 1][0] + dp[i - 1][1]) % mod;
+            dp[i][1] = (dp[i - 1][0] + dp[i - 2][0]) % mod;
+            dp[i][2] = (dp[i][0] + dp[i][1]) % mod;
+        }
+        long res = dp[n][2];
+        for(int i = 0; i < n; i++){ // insert A at i
+            long temp = (dp[i][2] * dp[n - i - 1][2]) % mod; // ways on left * ways on right
+            res = (res + temp) % mod;
+        }
+        return (int)res;
+    }
+
+    /*
      * https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/
      * https://leetcode.com/problems/maximum-alternating-subsequence-sum/
      * 1911. Maximum Alternating Subsequence Sum

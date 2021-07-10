@@ -21,9 +21,8 @@ public class SeptemberW3 {
         //int maxUniValLength = w3.numDecodings("123");
         //System.out.println(maxUniValLength);
 
-        String temp = "123";
-        String sub = temp.substring(1, 3);
-        System.out.println("sub "+ sub);
+        int res = w3.numDecodingsII("**");
+        System.out.println("res "+ res);
     }
 
     /**
@@ -179,6 +178,48 @@ public class SeptemberW3 {
         }
     }
 
+    /*
+    * https://leetcode.com/problems/decode-ways-ii/
+    * 639. Decode Ways II
+    * */
+    public int numDecodingsII(String s) {
+        HashMap<String,Integer> starMap = new HashMap<>();
+        starMap.put("1*", 9);
+        starMap.put("2*", 6);
+        starMap.put("**", 15);
+        starMap.put("*0", 2);
+        starMap.put("*1", 2);
+        starMap.put("*2", 2);
+        starMap.put("*3", 2);
+        starMap.put("*4", 2);
+        starMap.put("*5", 2);
+        starMap.put("*6", 2);
+        starMap.put("*7", 1);
+        starMap.put("*8", 1);
+        starMap.put("*9", 1);
+
+        int n = s.length();
+        long[] dp = new long[n + 1];
+        dp[n] = 1;
+        int mod = (int)1e9 + 7;
+        for (int i = n-1; i >= 0 ; i--) {
+            if(s.charAt(i) == '0'){
+                dp[i] = 0;
+            }else{
+                dp[i] = ((s.charAt(i) == '*') ? 9 : 1) * dp[i + 1];
+                if(i + 2 <= n){
+                    String sub = s.substring(i, i + 2);
+                    if(sub.indexOf("*") >= 0) {
+                        dp[i] = (dp[i] + starMap.getOrDefault(sub, 0) * dp[i + 2]) % mod;
+                    }else if(s.charAt(i) == '1' || s.charAt(i) == '2' && s.charAt(i + 1) < '7'){
+                        dp[i] = (dp[i] + dp[i + 2]) % mod;
+                    }
+                }
+            }
+        }
+        return (int)dp[0];
+    }
+
     /**
      * https://leetcode.com/problems/decode-ways/
      * http://www.gorecursion.com/algorithm/2016/11/20/1d-dynamic1.html
@@ -189,10 +230,32 @@ public class SeptemberW3 {
      *
      * **/
     public int numDecodings(String string) {
-        int[] memo = new int[string.length() + 1];
+        /*int[] memo = new int[string.length() + 1];
         Arrays.fill(memo, -1);
-        return numWaysDecodingMemo(string, 0, memo);
+        return numWaysDecodingMemo(string, 0, memo);*/
         //return numWaysDecodingDFS(string, 0);
+        return waysToDecodeDP(string);
+    }
+
+    public int waysToDecodeDP(String s){
+        int n = s.length();
+        int[] dp = new int[n + 1];
+
+        dp[0] = 1;
+        //dp[i] : ways to decode string s of len n ends at i
+
+        for(int i = 1; i <= n; i++){
+            if(s.charAt(i - 1) != '0'){
+                dp[i] += dp[i - 1];
+            }
+            if(i - 2 >= 0) {
+                int val = Integer.parseInt(s.substring(i - 2, i));
+                if(val >= 10 && val <= 26){
+                    dp[i] += dp[i - 2];
+                }
+            }
+        }
+        return dp[n];
     }
 
     public int numWaysDecodingMemo(String string, int pos, int[] memo){

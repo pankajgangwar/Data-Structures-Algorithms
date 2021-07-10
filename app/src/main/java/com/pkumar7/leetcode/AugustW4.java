@@ -18,6 +18,8 @@ import java.util.TreeSet;
 
 public class AugustW4 {
 
+
+
     /** https://leetcode.com/problems/invalid-transactions/
      * 1169. Invalid Transactions
      * */
@@ -289,9 +291,11 @@ public class AugustW4 {
     }
     public static void main(String args[]){
         AugustW4 w4 = new AugustW4();
-        int[] arr =  new int[]{3,5,1,4,7,2,6};
-        w4.quickSort(arr, 0, arr.length -1);
-        System.out.println("arr = " + Arrays.toString(arr));
+        int[][] matrix = new int[][]{
+                {1,0,1},
+                {0,-2,3}
+        };
+        w4.maxSumSubmatrix(matrix, 2);
     }
 
     public void quickSort(int[] arr, int low, int high){
@@ -385,8 +389,7 @@ public class AugustW4 {
                 for (int i = 0; i < rows; i++) {
                     dp[i] += matrix[i][right];
                 }
-                max_curr = Math.max(max_curr,getMaxSumSubArrayKadanes(dp, max_sum_allowed));
-
+                max_curr = Math.max(max_curr,maxSumSubArrayNoLargerThanK(dp, max_sum_allowed));
             }
         }
         return max_curr;
@@ -396,7 +399,7 @@ public class AugustW4 {
      * https://stackoverflow.com/questions/39084147/largest-sum-of-contiguous-subarray-no-larger-than-k
      * Max Sub-array sum no larger than k
      * */
-    public int getMaxSumSubArrayKadanes(int[] nums, int allowed){
+    public int maxSumSubArrayNoLargerThanK(int[] nums, int allowed){
         int max = Integer.MIN_VALUE;
         int sum = 0;
         TreeSet<Integer> s = new TreeSet();
@@ -409,7 +412,6 @@ public class AugustW4 {
             if(gap != null) max = Math.max(max, sum - gap);
             s.add(t);
         }
-
         return max;
     }
 

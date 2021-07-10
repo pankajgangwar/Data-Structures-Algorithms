@@ -107,16 +107,28 @@ public class MarchW3 {
     /* https://leetcode.com/problems/find-the-longest-substring-containing-vowels-in-even-counts/
     * https://leetcode.com/problems/find-the-longest-substring-containing-vowels-in-even-counts/discuss/534135/C%2B%2BJava-with-picture
     * */
-    char[] c_m = {1,0,0,0,2,0,0,0,4,0,0,0,0,0,8,0,0,0,0,0,16,0,0,0,0,0};
     public int findTheLongestSubstring(String s) {
-        int mask = 0, res = 0;
-        int[] m = new int[32];
-        Arrays.fill(m, -1);
-        for (int i = 0; i < s.length(); ++i) {
-            mask ^= c_m[s.charAt(i) - 'a'];
-            if (mask != 0 && m[mask] == -1)
-                m[mask] = i;
-            res = Math.max(res, i - m[mask]);
+        int state = 0, res = 0;
+
+        HashMap<Character, Integer> vowelsMap = new HashMap<>();
+        vowelsMap.put('a',0);
+        vowelsMap.put('e',1);
+        vowelsMap.put('i',2);
+        vowelsMap.put('o',3);
+        vowelsMap.put('u',4);
+
+        HashMap<Integer, Integer> stateToIndex = new HashMap<>();
+        stateToIndex.put(state, -1);
+
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            if(vowelsMap.containsKey(ch)){
+                int bit = vowelsMap.get(ch);
+                int shift = (1 << bit);
+                state = state ^ shift;
+            }
+            stateToIndex.putIfAbsent(state, i);
+            res = Math.max(res, i - stateToIndex.get(state) );
         }
         return res;
     }
@@ -811,9 +823,9 @@ public class MarchW3 {
 
     public static void main(String[] args) {
         MarchW3 w3 = new MarchW3();
-        //w3.findTheLongestSubstring("eleetminicoworoep");
+        w3.findTheLongestSubstring("leetcodueisgreat");
         //w3.findPoisonedDuration(new int[]{1,4}, 2);
-        w3.binarianShortestArray();
+       // w3.binarianShortestArray();
     }
 
     /* https://coderanch.com/t/680417/java/Find-shortest-array-condition */

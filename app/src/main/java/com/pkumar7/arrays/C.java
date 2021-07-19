@@ -14,6 +14,50 @@ class C {
 
     }
 
+    /* 927. Three Equal Parts
+     * https://leetcode.com/problems/three-equal-parts/
+     * */
+    public int[] threeEqualParts(int[] arr) {
+        int[] nores = new int[2];
+        Arrays.fill(nores, -1);
+        int n = arr.length;
+        int ones = Arrays.stream(arr).sum();
+        if (ones % 3 != 0) return nores;
+        int currOnes = 0;
+        int req = ones / 3;
+        if(req == 0) return new int[]{0,2};
+        int thirdIndex = n - 1;
+        for (int i = n - 1; i >= 0; --i) {
+            if (arr[i] == 1) {
+                ++currOnes;
+            }
+            if (currOnes == req) {
+                thirdIndex = i;
+                break;
+            }
+        }
+
+        int firstIdx = findIndex(arr, 0, thirdIndex);
+        if(firstIdx == - 1) return nores;
+
+
+        int secondIdx = findIndex(arr, firstIdx, thirdIndex);
+        if(secondIdx == - 1) return nores;
+
+        return new int[]{firstIdx - 1, secondIdx };
+    }
+
+    public int findIndex(int[] arr, int left, int right){
+        int n = arr.length;
+        while (left < n && arr[left] == 0) left++;
+        while (right < n ){
+            if(arr[left] != arr[right]) return -1;
+            left++;
+            right++;
+        }
+        return left;
+    }
+
     /*
      * 775. Global and Local Inversions
      * https://leetcode.com/problems/global-and-local-inversions/
@@ -373,19 +417,6 @@ class C {
             }
         }
         return Math.min(evens, odds);
-    }
-
-    /* 1014. Best Sightseeing Pair
-     * https://leetcode.com/problems/best-sightseeing-pair/
-     * */
-    public int maxScoreSightseeingPair(int[] arr) {
-        int maxscore = Integer.MIN_VALUE;
-        for (int i = 0; i < arr.length; i++) {
-            for (int j = i + 1; j < arr.length; j++) {
-                maxscore = Math.max(maxscore, arr[i] + arr[j] - (j - i));
-            }
-        }
-        return maxscore;
     }
 
     /* 1685. Sum of Absolute Differences in a Sorted Array

@@ -3,6 +3,7 @@ package com.pkumar7.arrays;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -12,7 +13,7 @@ class A {
 
     public static void main(String[] args) {
         A a = new A();
-        a.countBalancingElements(Arrays.asList(5, 5, 2, 5, 8));
+        a.fourSum(new int[]{5, 5, 2, 5, 8}, 0);
     }
 
     /* 1572. Matrix Diagonal Sum
@@ -141,7 +142,50 @@ class A {
      * */
     public List<List<Integer>> fourSum(int[] nums, int target) {
         Arrays.sort(nums);
+        //return fourSumSolve(nums, target);
         return  findKSum(nums, 4, target, 0);
+    }
+
+    public List<List<Integer>> fourSumSolve(int[] nums, int target) {
+        Arrays.sort(nums);
+
+        int n = nums.length;
+
+        HashSet<List<Integer>> res = new HashSet<>();
+
+        int i = 0, j = i + 1;
+
+        while( i < n - 3 ){
+            int a = nums[i];
+            int b = nums[j];
+            for(int k = j + 1; k < n - 1; k++){
+                for(int l = k + 1; l < n; l++){
+                    int c = nums[k];
+                    int d = nums[l];
+                    if(a+b+c+d == target){
+                        List<Integer> q = new ArrayList<>();
+                        q.add(a);
+                        q.add(b);
+                        q.add(c);
+                        q.add(d);
+                        res.add(q);
+                    }else if(a+b+c+d > target){
+                        break;
+                    }
+                }
+            }
+            j += 1;
+            if(j == n){
+                i += 1;
+                j = i + 1;
+            }
+
+        }
+        List<List<Integer>> ret = new ArrayList<>();
+        for(List<Integer> ans : res){
+            ret.add(ans);
+        }
+        return ret;
     }
 
     public List<List<Integer>> findKSum(int[] nums, int k, int target, int index){

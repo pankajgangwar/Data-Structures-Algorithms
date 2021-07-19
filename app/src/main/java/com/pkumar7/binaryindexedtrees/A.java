@@ -1,5 +1,6 @@
 package com.pkumar7.binaryindexedtrees;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -23,6 +24,13 @@ class A {
         int[] nums = new int[]{-2, 5, -1};
         //int res = current.countRangeSum(nums, -2, 2);
         //System.out.println("res = " + res);
+        List<Integer> res = new ArrayList<>();
+        res.add(3);
+        res.add(9);
+        res.add(5);
+        res.add(8);
+        int ans = current.sortedSum(res);
+        System.out.println(ans);
     }
 
     /* HackerRank problems
@@ -38,10 +46,9 @@ class A {
         private void update(int i, int delta) {
             while(i < size){
                 tree[i] += delta;
-                i += i & (-i);
+                i += lsb(i);
             }
         }
-
         public long add(int i){
             long s = 0;
             while(i > 0){
@@ -50,13 +57,11 @@ class A {
             }
             return s;
         }
-
         public int lsb(int i){
             return i & -i;
         }
-
     }
-    public static int sortedSum(List<Integer> a) {
+    public int sortedSum(List<Integer> a) {
         int n = (int)1e6 + 1, m = (int)1e9 + 7;
         int len = a.size();
         BIT prefix = new BIT(n);
@@ -64,14 +69,14 @@ class A {
         long fn = a.get(0);
         long ans = fn, totalSum = fn;
         prefix.update(a.get(0), 1);
-        prefix.update(a.get(0), a.get(0));
+        postFix.update(a.get(0), a.get(0));
         for (int i = 1; i < len; i++) {
             int rank = (int)prefix.add(a.get(i)) + 1;
             long sumGreaterThanI = totalSum - postFix.add(a.get(i));
             fn = (fn + rank * 1l * a.get(i) + sumGreaterThanI) % m;
             ans = (ans + fn) % m;
             prefix.update(a.get(i), 1);
-            prefix.update(a.get(i), a.get(i));
+            postFix.update(a.get(i), a.get(i));
             totalSum += a.get(i);
         }
         return (int)ans;

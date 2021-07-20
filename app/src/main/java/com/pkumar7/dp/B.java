@@ -1,8 +1,10 @@
 package com.pkumar7.dp;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
+import java.util.List;
 
 /**
  * Created by Pankaj Kumar on 20/December/2020
@@ -11,6 +13,57 @@ class B {
     public static void main(String[] args) {
         B current = new B();
         current.findNumberOfLIS(new int[] {1, 3, 5, 4, 7});
+    }
+
+    /*
+     * https://leetcode.com/problems/painting-a-grid-with-three-different-colors/
+     * 1931. Painting a Grid With Three Different Colors
+     * */
+    int mod = (int) 1e9 + 7;
+    List<String> moves = new ArrayList<>();
+    int[][] memo;
+
+    public int colorTheGrid(int m, int n) {
+        moves.clear();
+        fill("", m, -1);
+        memo = new int[n + 1][moves.size() + 1];
+        for (int i = 0; i <= n; i++) {
+            Arrays.fill(memo[i], -1);
+        }
+        int res = 0;
+        for (int idx = 0; idx < moves.size(); idx++) {
+            res = (res + solve(n - 1, idx, m) % mod) % mod;
+        }
+        return res;
+    }
+
+    private int solve(int n, int lastIdx, int m) {
+        if (n == 0) return 1;
+        int res = 0;
+        if (memo[n][lastIdx] != -1) return memo[n][lastIdx];
+        String lastMove = moves.get(lastIdx);
+        for (int idx = 0; idx < moves.size(); idx++) {
+            String currMove = moves.get(idx);
+            boolean same = false;
+            for (int i = 0; i < m; i++) {
+                if (currMove.charAt(i) == lastMove.charAt(i)) same = true;
+            }
+            if (!same) res = (res + solve(n - 1, idx, m) % mod) % mod;
+        }
+        memo[n][lastIdx] = res % mod;
+        return memo[n][lastIdx];
+    }
+
+    public void fill(String s, int row, int prevCol) {
+        if (row == 0) {
+            moves.add(s);
+            return;
+        }
+        for (int i = 1; i <= 3; i++) {
+            if (i == prevCol) continue;
+            String mCol = String.valueOf(i);
+            fill(s + mCol, row - 1, i);
+        }
     }
 
     /* 1014. Best Sightseeing Pair
@@ -24,8 +77,39 @@ class B {
         int res = 0;
         for (int i = 1; i < n; i++) {
             left[i] = Math.max(left[i - 1] - 1, arr[i]); // -1 for moving towards second spot
-            res = Math.max(res, left[i - 1] - 1 + arr[i]);// maximize ans with curr + prev max - 1
+            res = Math.max(res, left[i - 1] - 1 + arr[i]);// maximize ans with curr + prev_max - 1
         }
+        return res;
+    }
+
+    /*
+    * https://leetcode.com/problems/minimum-falling-path-sum/
+    * 931. Minimum Falling Path Sum
+    * */
+    public int minFallingPathSum(int[][] matrix) {
+        int m = matrix.length;
+        int n = matrix[0].length;
+
+        int[][] dp = new int[m][n];
+
+        for(int i = 0; i < m; i++){
+            for(int j = 0; j < n; j++){
+                if(i == 0){
+                    dp[i][j] = matrix[i][j];
+                }else{
+                    int min1 = Integer.MAX_VALUE;
+                    int min2 = Integer.MAX_VALUE;
+                    if(j >= 1){
+                        min1 = Math.min(dp[i - 1][j] + matrix[i][j], dp[i - 1][j - 1] + matrix[i][j]);
+                    }
+                    if(j < n - 1){
+                        min2 = Math.min(dp[i - 1][j] + matrix[i][j], dp[i - 1][j + 1] + matrix[i][j]);
+                    }
+                    dp[i][j] = Math.min(min1, min2);
+                }
+            }
+        }
+        int res =  Arrays.stream(dp[m - 1]).min().getAsInt();
         return res;
     }
 

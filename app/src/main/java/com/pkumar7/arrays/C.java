@@ -14,6 +14,45 @@ class C {
 
     }
 
+    /*
+    * https://leetcode.com/problems/partition-array-into-disjoint-intervals/
+    * 915. Partition Array into Disjoint Intervals
+    * */
+    public int partitionDisjoint(int[] nums) {
+        int n = nums.length;
+        int[] min_right = new int[n];
+        int[] max_left = new int[n];
+
+        int min = Integer.MAX_VALUE;
+        for(int i = n - 1; i >= 0; i--){
+            min = Math.min(min, nums[i]);
+            min_right[i] = min;
+        }
+
+        int max = Integer.MIN_VALUE;
+        for(int i = 0; i < n; i++){
+            max = Math.max(max, nums[i]);
+            max_left[i] = max;
+        }
+
+        for(int i = 0; i < n - 1; i++){
+            if(max_left[i] <= min_right[i + 1]){
+                return i + 1;
+            }
+        }
+        return -1;
+    }
+
+    public int partitionDisjointSpaceOptimal(int[] a) {
+        int localMax = a[0], partitionIdx = 0, max = localMax;
+        for (int i = 1; i < a.length; i++)
+            if (localMax > a[i]) {
+                localMax = max;
+                partitionIdx = i;
+            } else max = Math.max(max, a[i]);
+        return partitionIdx + 1;
+    }
+
     /* 927. Three Equal Parts
      * https://leetcode.com/problems/three-equal-parts/
      * */

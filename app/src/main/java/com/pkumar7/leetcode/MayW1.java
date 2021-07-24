@@ -435,9 +435,11 @@ public class MayW1 {
         return true;
     }
 
-    /* [[3,4],[4,5],[5]] */
+    /*
+    https://leetcode.com/problems/number-of-ways-to-wear-different-hats-to-each-other/
+    1434. Number of Ways to Wear Different Hats to Each Other
+    */
     int mod = (int)1e9+7;
-    /* https://leetcode.com/problems/number-of-ways-to-wear-different-hats-to-each-other/ */
     public int numberWays(List<List<Integer>> hats) {
         int[] memo = new int[hats.size()];
         Arrays.fill(memo, -1);

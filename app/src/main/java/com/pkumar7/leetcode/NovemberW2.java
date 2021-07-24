@@ -165,40 +165,36 @@ public class NovemberW2 {
         return new ArrayList<List<String>>(map.values());
     }
 
-    /**
+    /*
+     * https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+     * https://www.geeksforgeeks.org/shuffle-a-given-array-using-fisher-yates-shuffle-algorithm/
      * https://leetcode.com/problems/shuffle-an-array/
-     * 384. Shuffle an Array
-     **/
-    int[] nums;
-
-    public void Solution(int[] nums) {
-        this.nums = nums;
-    }
-
-    /**
-     * Resets the array to its original configuration and return it.
-     */
-    public int[] reset() {
-        return this.nums;
-    }
-
-    /**
-     * Returns a random shuffling of the array.
-     */
-    public int[] shuffle() {
-        int[] cloned = nums.clone();
-        Random random = new Random();
-        for (int j = 1; j < nums.length; j++) {
-            int k = random.nextInt(j + 1);
-            swap(cloned, k, j);
+     * */
+    class Solution {
+        int[] org;
+        int[] temp;
+        public Solution(int[] nums) {
+            org = nums.clone();
         }
-        return cloned;
-    }
 
-    public void swap(int[] arr, int i, int j) {
-        int temp = arr[i];
-        arr[i] = arr[j];
-        arr[j] = temp;
+        /** Resets the array to its original configuration and return it. */
+        public int[] reset() {
+            return org;
+        }
+
+        /** Returns a random shuffling of the array. */
+        public int[] shuffle() {
+            temp = org.clone();
+            int n = temp.length;
+            Random r = new Random();
+            for (int i = n - 1 ; i >= 0 ; i--) {
+                int val = temp[i];
+                int rIdx = r.nextInt(i + 1);
+                temp[i] = temp[rIdx];
+                temp[rIdx] = val;
+            }
+            return temp;
+        }
     }
 
     /*

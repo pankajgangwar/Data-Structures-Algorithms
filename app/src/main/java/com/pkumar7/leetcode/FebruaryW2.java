@@ -48,41 +48,18 @@ public class FebruaryW2 {
         return false;
     }
 
+    /*
+    * https://leetcode.com/problems/maximum-students-taking-exam/
+    * 1349. Maximum Students Taking Exam
+    * */
     public int maxStudents(char[][] seats) {
-        int colWise = 0;
         int m = seats.length;
         int n = seats[0].length;
-        char[][] copy = new char[m][n];
-
+        int[][] dp = new int[m + 1][n + 1];
         for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                copy[i][j] = seats[i][j];
-            }
-        }
 
-        for (int j = 0; j < seats[0].length; j++) {
-            for (int i = 0; i < seats.length; i++) {
-                if(seats[i][j] == '.'){
-                    if(ifSafeToPlace(seats, i, j, m, n)){
-                        colWise++;
-                        seats[i][j] = 's';
-                    }
-                }
-            }
         }
-
-        int rowWise = 0;
-        for (int i = 0; i < seats.length; i++) {
-            for (int j = 0; j < seats[0].length; j++) {
-                if(copy[i][j] == '.'){
-                    if(ifSafeToPlace(copy, i, j, m, n)){
-                        rowWise++;
-                        copy[i][j] = 's';
-                    }
-                }
-            }
-        }
-        return Math.max(rowWise, colWise);
+        return 0;
     }
 
     private boolean ifSafeToPlace(char[][] seats, int i, int j, int m, int n) {

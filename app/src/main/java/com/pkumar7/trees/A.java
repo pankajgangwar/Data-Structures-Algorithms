@@ -6,10 +6,12 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 import java.util.TreeMap;
 
 /**
@@ -19,6 +21,59 @@ class A {
     public static void main(String[] args) {
         A current = new A();
         current.increasingBST(null);
+    }
+
+    /* 1932. Merge BSTs to Create Single BST
+     * https://leetcode.com/problems/merge-bsts-to-create-single-bst/
+     * */
+    public TreeNode canMerge(List<TreeNode> trees) {
+        HashMap<Integer, TreeNode> map = new HashMap<>();
+        Set<TreeNode> deletedSet = new HashSet<>();
+        HashMap<TreeNode, TreeNode> parentMap = new HashMap<>();
+        for(TreeNode t : trees){
+            map.putIfAbsent(t.val, t);
+        }
+        for (TreeNode root : trees){
+            if(root.left != null && map.containsKey(root.left.val) && !deletedSet.contains(map.get(root.left.val))){
+                TreeNode parent = parentMap.getOrDefault(root, null);
+                if(parent != map.get(root.left.val)){
+                    root.left = map.get(root.left.val);
+                    parentMap.put(map.get(root.left.val), root);
+                    deletedSet.add(map.get(root.left.val));
+                }
+            }
+            if(root.right != null && map.containsKey(root.right.val) && !deletedSet.contains(map.get(root.right.val))){
+                TreeNode parent = parentMap.getOrDefault(root, null);
+                if(parent != map.get(root.right.val)){
+                    root.right = map.get(root.right.val);
+                    parentMap.put(map.get(root.right.val), root);
+                    deletedSet.add(map.get(root.right.val));
+                }
+            }
+        }
+        if(deletedSet.size() != trees.size() -1){
+            return null;
+        }
+        for(TreeNode r : trees){
+            if(!deletedSet.contains(r)){
+                if(isValidBST(r)){
+                    return r;
+                }
+            }
+        }
+        return null;
+    }
+
+    public boolean isValidBST(TreeNode root) {
+        return validateBSTRec(root, Long.MIN_VALUE, Long.MAX_VALUE);
+    }
+
+    public boolean validateBSTRec(TreeNode root,long min, long max){
+        if(root == null) return true;
+
+        if(root.val <= min || root.val >= max) return false;
+
+        return validateBSTRec(root.left, min, root.val) && validateBSTRec(root.right, root.val, max);
     }
 
     /*

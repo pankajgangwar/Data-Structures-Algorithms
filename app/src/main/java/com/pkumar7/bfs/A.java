@@ -19,6 +19,47 @@ import java.util.Queue;
  */
 class A {
 
+    /*
+     *  1926. Nearest Exit from Entrance in Maze
+     * https://leetcode.com/problems/nearest-exit-from-entrance-in-maze/
+     * */
+    public int nearestExit(char[][] maze, int[] entrance) {
+        Queue<int[]> bfs = new LinkedList<>();
+        bfs.offer(entrance);
+        int m = maze.length;
+        int n = maze[0].length;
+
+        int[][] dirs = new int[][]{{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+
+        int steps = 0;
+        while (!bfs.isEmpty()) {
+            int size = bfs.size();
+            while (size-- > 0) {
+                int[] curr = bfs.poll();
+                if (hasReachedBorder(curr, maze) && !Arrays.equals(entrance, curr)) {
+                    System.out.println(" Returning steps ");
+                    return steps;
+                }
+                for (int i = 0; i < dirs.length; i++) {
+                    int next_x = dirs[i][0] + curr[0];
+                    int next_y = dirs[i][1] + curr[1];
+                    if (next_x >= 0 && next_x < m && next_y >= 0 && next_y < n && maze[next_x][next_y] == '.') {
+                        maze[next_x][next_y] = '+';
+                        bfs.offer(new int[]{next_x, next_y});
+                    }
+                }
+            }
+            steps += 1;
+        }
+        return steps;
+    }
+
+    public boolean hasReachedBorder(int[] curr, char[][] maze) {
+        int m = maze.length;
+        int n = maze[0].length;
+        return curr[0] == 0 || curr[0] == m - 1 || curr[1] == 0 || curr[1] == n - 1;
+    }
+
     /* 1871. Jump Game VII
      * https://leetcode.com/problems/jump-game-vii/
      * */

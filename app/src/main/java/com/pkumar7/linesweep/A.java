@@ -1,11 +1,41 @@
 package com.pkumar7.linesweep;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by Pankaj Kumar on 14/August/2020
  */
 class A {
+
+    /*
+     * https://leetcode.com/problems/describe-the-painting/
+     * 1943. Describe the Painting
+     * */
+    public List<List<Long>> splitPainting(int[][] segments) {
+        Arrays.sort(segments, (a,b) -> a[0] - b[0]);
+        int n = segments.length;
+        List<List<Long>> res = new ArrayList<>();
+        long[] mix = new long[200000];
+        boolean[] end = new boolean[200000];
+        long sum = 0;
+        long last_i = 0;
+        for (int i = 0; i < segments.length; i++) {
+            mix[segments[i][0]] += segments[i][2];
+            mix[segments[i][1]] -= segments[i][2];
+            end[segments[i][0]] = end[segments[i][1]] = true;
+        }
+
+        for (int i = 0; i < 200000; i++) {
+            if(end[i] && sum > 0){
+                res.add(Arrays.asList(last_i, (long)i, sum));
+            }
+            last_i = end[i] ? i : last_i;
+            sum += mix[i];
+        }
+        return res;
+    }
 
     /*
     * https://leetcode.com/problems/maximum-population-year/

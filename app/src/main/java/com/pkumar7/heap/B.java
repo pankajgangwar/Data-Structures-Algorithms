@@ -10,6 +10,42 @@ import java.util.PriorityQueue;
 
 public class B {
 
+    /* 1942. The Number of the Smallest Unoccupied Chair
+     * https://leetcode.com/problems/the-number-of-the-smallest-unoccupied-chair/
+     * */
+    public int smallestChair(int[][] times, int targetFriend) {
+        int[][] xx = new int[times.length][3];
+        for (int i = 0; i < times.length; i++) {
+            xx[i] = new int[]{times[i][0], times[i][1], i};
+        }
+        Arrays.sort(xx, (a,b) -> a[0] - b[0]);
+        PriorityQueue<int[]> occupied = new PriorityQueue<>((a,b) -> a[0] - b[0]);// [endtime, seatNumber]
+        PriorityQueue<Integer> available = new PriorityQueue<>();
+        int chair = 0;
+        for (int i = 0; i < xx.length; i++) {
+            int[] a = xx[i];
+            int start = a[0];
+            int end = a[1];
+            int person = a[2];
+            while (!occupied.isEmpty() && occupied.peek()[0] <= start){
+                available.offer(occupied.poll()[1]);
+            }
+            if(!available.isEmpty()){
+                int minSeat = available.poll();
+                if(person == targetFriend){
+                    return minSeat;
+                }
+                occupied.offer(new int[]{end, minSeat});
+            }else{
+                if(person == targetFriend){
+                    return chair;
+                }
+                occupied.offer(new int[]{end, chair++});
+            }
+        }
+        return -1;//Should not happen
+    }
+
     /*
     https://leetcode.com/problems/eliminate-maximum-number-of-monsters/
     1921. Eliminate Maximum Number of Monsters

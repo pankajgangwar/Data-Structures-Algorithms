@@ -25,6 +25,31 @@ class B {
         System.out.println("Res : "+ res);
     }
 
+    /* 1930. Unique Length-3 Palindromic Subsequences
+     * https://leetcode.com/problems/unique-length-3-palindromic-subsequences/
+     * */
+    public int countPalindromicSubsequence(String s) {
+        HashMap<Character, LinkedList<Integer>> map = new HashMap<>();
+        for (int i = 0; i < s.length(); i++) {
+            map.putIfAbsent(s.charAt(i), new LinkedList<>());
+            map.get(s.charAt(i)).add(i);
+        }
+        int res = 0;
+        for(Map.Entry<Character, LinkedList<Integer>> entry : map.entrySet()){
+            LinkedList<Integer> list = entry.getValue();
+            int size = list.size();
+            if(size == 1){
+                continue;
+            }
+            int first = list.peekFirst();
+            int second = list.peekLast();
+            if(first + 1 != second){
+                res += s.substring(first + 1, second).chars().distinct().count();
+            }
+        }
+        return res;
+    }
+
     /*
      * 381. Insert Delete GetRandom O(1) - Duplicates allowed
      * https://leetcode.com/problems/insert-delete-getrandom-o1-duplicates-allowed/

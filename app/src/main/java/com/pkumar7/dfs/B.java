@@ -1,6 +1,9 @@
 package com.pkumar7.dfs;
 
+import com.pkumar7.utils.Utils;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -14,6 +17,54 @@ class B {
     public static void main(String[] args) {
         B b = new B();
         b.distributeCandies(7, 4);
+    }
+
+    /* 1947. Maximum Compatibility Score Sum
+     * https://leetcode.com/problems/maximum-compatibility-score-sum/
+     * */
+    public int maxCompatibilitySum(int[][] students, int[][] mentors) {
+        int[] m = new int[mentors.length];
+        for (int i = 0; i < mentors.length; i++) {
+            m[i] = i;
+        }
+        int score = 0;
+        do{
+            int curr = 0;
+            for (int i = 0; i < m.length; i++) {
+                curr += genCompat(students[i], mentors[m[i]]);
+            }
+            score = Math.max(score, curr);
+        }while (Utils.nextPermutation(m));
+
+        return score;
+    }
+
+    public int genCompat(int[] a, int b[]){
+        int score = 0;
+        for (int i = 0; i < a.length; i++) {
+            if(a[i] == b[i]) score++;
+        }
+        return score;
+    }
+
+    public int maxCompatibilitySumDfs(int[][] students, int[][] mentors) {
+        int n = students.length;
+        int[] dp = new int[n];
+        Arrays.fill(dp, -1);
+        boolean[] visited = new boolean[n];
+        return dfs(students, mentors, 0, dp, visited);
+    }
+
+    public int dfs(int[][] s, int[][] m, int sIdx, int[] dp, boolean[] visited){
+        if(sIdx == s.length) return 0;
+        int score = 0;
+        for (int i = 0; i < m.length; i++) {
+            if(visited[i]) continue;
+            visited[i] = true;
+            score = Math.max(score, genCompat(s[sIdx], m[i]) + dfs(s, m, sIdx + 1, dp, visited));
+            visited[i] = false;
+        }
+        return score;
     }
 
     /* 1905. Count Sub Islands

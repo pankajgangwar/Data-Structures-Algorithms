@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Pankaj Kumar on 08/October/2020
@@ -65,6 +66,64 @@ class B {
             visited[i] = false;
         }
         return score;
+    }
+
+    /*
+     * 827. Making A Large Island
+     * https://leetcode.com/problems/making-a-large-island/
+     * */
+    public int largestIsland(int[][] grid) {
+        int row = grid.length;
+        int col = grid[0].length;
+        HashMap<Integer, Integer> map = new HashMap<>();
+        int max_area = 1;
+        int color = 2;
+        map.put(0, 0);
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[0].length; j++) {
+                if(grid[i][j] == 1){
+                    int area = paint(i, j, grid, color);
+                    map.put(color, area);
+                    color++;
+                }
+            }
+        }
+        max_area = map.getOrDefault(2, 0);
+
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[0].length; j++) {
+                if(grid[i][j] == 0){
+                    Set<Integer> neig = new HashSet<>();
+                    if(i > 0 && grid[i - 1][j] > 1) neig.add(grid[i - 1][j]);
+                    if(j > 0 && grid[i][j - 1] > 1) neig.add(grid[i][j - 1]);
+                    if(i < row - 1 && grid[i + 1][j] > 1) neig.add(grid[i + 1][j]);
+                    if(j < col - 1 && grid[i][j + 1] > 1) neig.add(grid[i][j + 1]);
+
+                    int size = 1;
+                    for(int island : neig) size += map.get(island);
+                    max_area = Math.max(max_area, size);
+                }
+            }
+        }
+
+        return max_area;
+    }
+
+    public int paint(int curr_x, int curr_y, int[][]grid, int color) {
+        int row = grid.length;
+        int col = grid[0].length;
+        grid[curr_x][curr_y] = color;
+        int[][] dirs = new int[][]{{1,0},{0,1},{0,-1},{-1,0}};
+        int area = 0;
+        for (int i = 0; i < dirs.length; i++) {
+            int next_x = dirs[i][0] + curr_x;
+            int next_y = dirs[i][1] + curr_y;
+            if(next_x < 0 || next_x >= row || next_y < 0 || next_y >= col
+                    || grid[next_x][next_y] == 0 || grid[next_x][next_y] == color) continue;
+
+            area += paint(next_x, next_y, grid, color);
+        }
+        return area + 1;
     }
 
     /* 1905. Count Sub Islands

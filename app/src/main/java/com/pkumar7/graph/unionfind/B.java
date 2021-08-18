@@ -18,10 +18,61 @@ public class B {
 
 	/*
 	* https://leetcode.com/problems/bricks-falling-when-hit/
+	* https://leetcode.com/problems/contain-virus/
 	* 803. Bricks Falling When Hit
 	* */
 	public int[] hitBricks(int[][] grid, int[][] hits) {
-		return new int[]{};
+		int n = hits.length;
+		int rows = grid.length;
+		int cols = grid[0].length;
+
+		UnionFind unionFind = new UnionFind(rows * cols + 1);
+		for(int[] h : hits){
+			int x = h[0], y = h[1];
+			if(grid[x][y] == 1) grid[x][y] = 2;
+		}
+
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < cols; j++) {
+				if(grid[i][j] == 1){
+					unionAround(i, j, unionFind, grid);
+				}
+			}
+		}
+		int bricksLeft = unionFind.size[unionFind.find(0)];
+		int[] res = new int[n];
+		for (int i = n - 1; i >=0 ; i--) {
+			int[] h = hits[i];
+			int x = h[0];
+			int y = h[1];
+			if(grid[x][y] == 2){
+				grid[x][y] = 1;
+				unionAround(x, y, unionFind, grid);
+				int newNumBricksLeft = unionFind.size[unionFind.find(0)];
+				res[i] = Math.max(newNumBricksLeft - bricksLeft - 1, 0);
+				bricksLeft = newNumBricksLeft;
+			}
+		}
+		return res;
+	}
+
+	public void unionAround(int x, int y, UnionFind uf, int[][] grid ){
+		int rows = grid.length;
+		int cols = grid[0].length;
+
+		int[] dx = new int[]{0, 0, 1, -1};
+		int[] dy = new int[]{1, -1, 0, 0};
+		for (int j = 0; j < dx.length; j++) {
+			int next_x = dx[j] + x;
+			int next_y = dy[j] + y;
+			if (next_x >= 0 && next_x < rows && next_y >= 0 && next_y < cols
+					&& grid[next_x][next_y] == 1) {
+				uf.union(index(x, y, cols), index(next_x, next_y, cols));
+			}
+		}
+		if(x == 0){
+			uf.union(0, index(x, y, cols));
+		}
 	}
 
 	/*

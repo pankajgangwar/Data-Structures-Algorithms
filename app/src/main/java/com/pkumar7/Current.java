@@ -11,6 +11,9 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 import java.util.Stack;
 
 
@@ -36,6 +39,10 @@ class Current {
     public static void main(String[] args) {
         Current current = new Current();
 
+    }
+
+    public int minSpaceWastedKResizing(int[] nums, int k) {
+        return 0;
     }
 
     /*

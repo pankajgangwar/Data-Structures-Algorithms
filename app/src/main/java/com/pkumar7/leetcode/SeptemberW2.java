@@ -14,8 +14,8 @@ import java.util.Set;
 public class SeptemberW2 {
     public static void main(String[] args) {
         SeptemberW2 w2 = new SeptemberW2();
-        int[] nums = new int[]{1,2,3};
-        w2.subsets(nums);
+        int[] nums = new int[]{1,2,2};
+        w2.subsetsWithDup(nums);
     }
 
     /**
@@ -114,20 +114,8 @@ public class SeptemberW2 {
         }
     }
 
-    /**
+    /** Subsets II
      * https://leetcode.com/problems/subsets-ii/
-     *
-     * Input: [1,2,2]
-     * Output:
-     * [
-     *   [2],
-     *   [1],
-     *   [1,2,2],
-     *   [2,2],
-     *   [1,2],
-     *   []
-     * ]
-     *
      * */
     public List<List<Integer>> subsetsWithDup(int[] nums) {
         List<List<Integer>> result = new ArrayList<>();
@@ -136,7 +124,7 @@ public class SeptemberW2 {
         return result;
     }
 
-    public void subsetWithDupRec(int []nums, List<List<Integer>> result, List<Integer> tempList, int start){
+    public void subsetWithDupRec(int[] nums, List<List<Integer>> result, List<Integer> tempList, int start){
         result.add(new ArrayList<>(tempList));
         for (int i = start; i < nums.length; i++) {
             if(i > start && nums[i] == nums[i-1])continue;

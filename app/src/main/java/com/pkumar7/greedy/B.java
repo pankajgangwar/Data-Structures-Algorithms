@@ -17,6 +17,50 @@ import java.util.TreeMap;
 
 public class B {
 
+	/* 1958. Check if Move is Legal
+	 * https://leetcode.com/problems/check-if-move-is-legal/
+	 * */
+	public boolean checkMove(char[][] board, int rMove, int cMove, char color) {
+		int rows = board.length;
+		int cols = board[0].length;
+
+		int[][] dirs = new int[][]{{0, 1}, {1, 1}, {1, 0}, {-1, 1}, {-1, 0}, {-1, -1}, {0, -1}, {1, -1}};
+		for (int i = 0; i < dirs.length; i++) {
+			int next_x = dirs[i][0] + rMove;
+			int next_y = dirs[i][1] + cMove;
+			int count = 0;
+			while (next_x < rows && next_y < cols && next_x >= 0 && next_y >= 0 ){
+				count += 1;
+				if(board[next_x][next_y] == color){
+					if(count >= 2){
+						return true;
+					}
+					break;
+				}else if(board[next_x][next_y] == '.'){
+					break;
+				}
+				next_x += dirs[i][0];
+				next_y += dirs[i][1];
+			}
+		}
+		return false;
+	}
+
+	/*
+	* https://leetcode.com/problems/maximum-number-of-weeks-for-which-you-can-work/
+	* */
+	public long numberOfWeeks(int[] milestones) {
+		long[] arr = Arrays.stream(milestones).mapToLong(i -> i).toArray();
+		long sum = Arrays.stream(arr).sum();
+		int max = Arrays.stream(milestones).max().getAsInt();
+
+		if(max > (sum - max)){
+			return 2 * (sum - max) + 1;
+		}else{
+			return sum;
+		}
+	}
+
 	/*
 	 * https://leetcode.com/problems/minimum-cost-to-reach-destination-in-time/
 	 * 1928. Minimum Cost to Reach Destination in Time

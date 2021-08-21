@@ -1,17 +1,129 @@
 package com.pkumar7.graph.unionfind;
 
-import com.pkumar7.graph.unionfind.UnionFind;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
+
+import javax.security.auth.login.AccountException;
 
 public class B {
 	public static void main(String[] args) {
 
 	}
+
+	/*
+	* https://leetcode.com/problems/bricks-falling-when-hit/
+	* https://leetcode.com/problems/contain-virus/
+	* 803. Bricks Falling When Hit
+	* */
+	public int[] hitBricks(int[][] grid, int[][] hits) {
+		int n = hits.length;
+		int rows = grid.length;
+		int cols = grid[0].length;
+
+		UnionFind unionFind = new UnionFind(rows * cols + 1);
+		for(int[] h : hits){
+			int x = h[0], y = h[1];
+			if(grid[x][y] == 1) grid[x][y] = 2;
+		}
+
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < cols; j++) {
+				if(grid[i][j] == 1){
+					unionAround(i, j, unionFind, grid);
+				}
+			}
+		}
+		int bricksLeft = unionFind.size[unionFind.find(0)];
+		int[] res = new int[n];
+		for (int i = n - 1; i >=0 ; i--) {
+			int[] h = hits[i];
+			int x = h[0];
+			int y = h[1];
+			if(grid[x][y] == 2){
+				grid[x][y] = 1;
+				unionAround(x, y, unionFind, grid);
+				int newNumBricksLeft = unionFind.size[unionFind.find(0)];
+				res[i] = Math.max(newNumBricksLeft - bricksLeft - 1, 0);
+				bricksLeft = newNumBricksLeft;
+			}
+		}
+		return res;
+	}
+
+	public void unionAround(int x, int y, UnionFind uf, int[][] grid ){
+		int rows = grid.length;
+		int cols = grid[0].length;
+
+		int[] dx = new int[]{0, 0, 1, -1};
+		int[] dy = new int[]{1, -1, 0, 0};
+		for (int j = 0; j < dx.length; j++) {
+			int next_x = dx[j] + x;
+			int next_y = dy[j] + y;
+			if (next_x >= 0 && next_x < rows && next_y >= 0 && next_y < cols
+					&& grid[next_x][next_y] == 1) {
+				uf.union(index(x, y, cols), index(next_x, next_y, cols));
+			}
+		}
+		if(x == 0){
+			uf.union(0, index(x, y, cols));
+		}
+	}
+
+	/*
+	 * https://leetcode.com/problems/last-day-where-you-can-still-cross/
+	 * Similar : https://leetcode.com/problems/bricks-falling-when-hit/
+	 * 1970. Last Day Where You Can Still Cross
+	 * */
+	public int latestDayToCross(int row, int col, int[][] cells) {
+		return latestDayToCrossUnionFind(row, col, cells);
+	}
+
+	public int latestDayToCrossUnionFind(int row, int col, int[][] cells) {
+		UnionFind unionFind = new UnionFind(row * col + 2);
+		int[][] grid = new int[row][col];
+		for (int i = 0; i < row; i++) {
+			Arrays.fill(grid[i], 1);
+		}
+		for (int i = cells.length - 1; i >= 0; i--) {
+			int[] cc = cells[i];
+			cc[0] -= 1;
+			cc[1] -= 1;
+
+			grid[cc[0]][cc[1]] = 0;
+			int[] dx = new int[]{0, 0, 1, -1};
+			int[] dy = new int[]{1, -1, 0, 0};
+			for (int j = 0; j < dx.length; j++) {
+				int next_x = dx[j] + cc[0];
+				int next_y = dy[j] + cc[1];
+				if (next_x >= 0 && next_x < row && next_y >= 0 && next_y < col
+						&& grid[next_x][next_y] == 0) {
+					unionFind.union(index(cc[0], cc[1], col), index(next_x, next_y, col));
+				}
+			}
+			if(cc[0] == 0){
+				unionFind.union(0, index(cc[0], cc[1], col));
+			}
+			if(cc[0] == row - 1){
+				unionFind.union(row*col + 1, index(cc[0], cc[1], col));
+			}
+
+			if(unionFind.find(0) == unionFind.find(row*col + 1)){
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	public int index(int x, int y, int col){
+		return x * col + y + 1;
+	}
+
 
 	/* 1722. Minimize Hamming Distance After Swap Operations
 	 * https://leetcode.com/problems/minimize-hamming-distance-after-swap-operations/

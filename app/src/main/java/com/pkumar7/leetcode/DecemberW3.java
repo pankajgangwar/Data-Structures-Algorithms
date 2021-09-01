@@ -266,6 +266,10 @@ public class DecemberW3 {
         return max;
     }
 
+
+    /*
+    * KMP algorithm
+    * */
     public int maxFreqFailed(String s, int maxLetters, int minSize, int maxSize) {
         int n = s.length();
         int maxsub = 0;
@@ -323,10 +327,13 @@ public class DecemberW3 {
         return occurances;
     }
 
+    /*
+    * Computer longest prefix which is also a suffix
+    * */
     void computeLPSArray(String pat, int M, int lps[]) {
         int len = 0;
         int i = 1;
-        lps[0] = 0; // lps[0] is always 0
+        lps[0] = 0; // lps[0] is always 0 : Longest prefix substring
 
         while (i < M) {
             if (pat.charAt(i) == pat.charAt(len)) {

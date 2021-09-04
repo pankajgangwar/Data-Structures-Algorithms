@@ -416,6 +416,38 @@ class A {
         return false;
     }
 
+    public int binarySearchSqrt(int number){
+        if(number == 0 || number == 1){
+            return number;
+        }
+        long start = 1, end = number, ans = 0;
+        while(start <= end){
+            long mid = (start + end) / 2;
+            if (mid * mid == number){
+                return (int)mid;
+            }
+            if(mid * mid < number){
+                start = mid + 1;
+                ans = mid;
+            }else{
+                end = mid - 1;
+            }
+        }
+        return (int)ans;
+    }
+
+    public int linearSqrt(int number){
+        int root = 1;
+        if(number == 0 || number == 1) return number;
+
+        int x = 1;
+        while(x <= number){
+            root += 1;
+            x = root * root;
+        }
+        return root - 1;
+    }
+
     /*
     1552. Magnetic Force Between Two Balls
     https://leetcode.com/problems/magnetic-force-between-two-balls/

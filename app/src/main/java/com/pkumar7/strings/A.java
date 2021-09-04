@@ -16,18 +16,34 @@ import java.util.Stack;
 class A {
     public static void main(String[] args) {
         A a = new A();
-        //String res = a.intToRoman(8);
-        //System.out.println("res = " + res);
-        a.function(null);
+        a.shortestPalindrome("abcd");
     }
 
-    public void function(Object t){
-        System.out.println(" second ");
+    /*
+     * 1781. Sum of Beauty of All Substrings
+     * https://leetcode.com/problems/sum-of-beauty-of-all-substrings/
+     * */
+    public int beautySum(String s) {
+        int res = 0;
+        for (int i = 0; i < s.length(); i++) {
+            int[] freq = new int[26];
+            int max = Integer.MIN_VALUE;
+            int min = 0;
+            for (int j = i; j < s.length(); j++) {
+                int ch = s.charAt(j) - 'a';
+                max = Math.max(max, ++freq[ch]);
+                if (min >= freq[ch] - 1){
+                    min = freq[ch];
+                    for (int k = 0; k < 26; k++) {
+                        min = Math.min(min, freq[k] == 0 ? Integer.MAX_VALUE : freq[k]);
+                    }
+                }
+                res += (max - min);
+            }
+        }
+        return res;
     }
 
-    public void function(Thread t){
-        System.out.println(" first ");
-    }
 
     /*
     564. Find the Closest Palindrome
@@ -186,12 +202,12 @@ class A {
     * https://leetcode.com/problems/shortest-palindrome/
     * */
     public String shortestPalindrome(String s) {
+        s = "aa";
         String curr = s + "#" + new StringBuilder(s).reverse().toString();
         int[] table = computeKMPTable(curr.toCharArray());
         String res = new StringBuilder(
                 s.substring(table[table.length - 1])).reverse().toString()
                 + s;
-        System.out.println("res = " + res);
         return res;
     }
 
@@ -530,38 +546,11 @@ class A {
         return false;
     }
 
-
-    //https://www.geeksforgeeks.org/kmp-algorithm-for-pattern-searching/
-    /**
-     * KMP Algorithm of pattern matching
-     * https://www.youtube.com/watch?v=GTJr8OvyEVQ
-     *
-     */
-    public void KMP(char[]text, char[] pattern) {
-        int N = text.length;
-        int M = pattern.length;
-
-        int lps[] = computeKMPTable(pattern);
-        int i = 0;
-        int j = 0;
-        while(i < N) {
-            if(text[i] == pattern[j]) {
-                i++;
-                j++;
-            }
-            if (j == M) {
-                System.out.println("Pattern found at: " + (i - j));
-                j = lps[j -1];
-            } else if (i < N && text[i] != pattern[j]) {
-                if (j != 0) {
-                    j = lps[j - 1];
-                } else {
-                    i++;
-                }
-            }
-        }
-    }
-
+    /*
+     * Computer longest prefix which is also a suffix
+     * or appears anywhere in the pattern
+     * Create pie table first
+     * */
     private int[] computeKMPTable(char[] pattern) {
         int lps[] = new int[pattern.length];
         int len = 0;
@@ -591,11 +580,9 @@ class A {
 	/*
 	 * Input: "abab"
 	   Output: True
-	   Explanation: It's the substring "ab" twice.
 
 	   Input: "abcabcabcabc"
 	   Output: True
-	   Explanation: It's the substring "abc" four times. (And the substring "abcabc" twice.)
 
 	   Input: "aba"
 	   Output: False

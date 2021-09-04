@@ -7,6 +7,55 @@ import java.util.List;
  * Created by Pankaj Kumar on 29/August/2020
  */
 class A {
+
+    /*
+    * https://leetcode.com/problems/sudoku-solver/
+    * 37. Sudoku Solver
+    * */
+    public boolean solveSudoku(char[][] board) {
+        boolean isFilled = true;
+        int row_to_fill = 0, col_to_fill = 0;
+        outer : for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                if (board[i][j] == '.') {
+                    row_to_fill = i;
+                    col_to_fill = j;
+                    isFilled = false;
+                    break outer;
+                }
+            }
+        }
+        if (isFilled) return true;
+        for (char num = '1' ; num <= '9'; num++) {
+            if (isSafe(num, row_to_fill, col_to_fill, board)) {
+                board[row_to_fill][col_to_fill] = num;
+                if (solveSudoku(board)) {
+                    return true;
+                }
+                board[row_to_fill][col_to_fill] = '.';
+            }
+        }
+        return false;
+    }
+
+    public boolean isSafe(char num, int i, int j, char[][] board) {
+        for (int row = 0; row < board.length; row++) {
+            if (board[row][j] == num) return false;
+        }
+        for (int col = 0; col < board[0].length; col++) {
+            if (board[i][col] == num) return false;
+        }
+
+        int start_row = i - i % 3;
+        int start_col = j - j % 3;
+        for (int row = start_row; row < start_row + 3; row++) {
+            for (int col = start_col; col < start_col + 3; col++) {
+                if (board[row][col] == num) return false;
+            }
+        }
+        return true;
+    }
+
     /*
      * 51. N-Queens
      * https://leetcode.com/problems/n-queens/

@@ -1,5 +1,7 @@
 package com.pkumar7;
 
+import com.sun.javafx.logging.JFRInputEvent;
+
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,6 +12,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,7 +41,9 @@ class Current {
     // https://leetcode.com/problems/remove-boxes/
     public static void main(String[] args) {
         Current current = new Current();
-
+        int[][] mat = new int[][]{
+                {1}, {2}, {3}
+        };
     }
 
     public int minSpaceWastedKResizing(int[] nums, int k) {
@@ -151,9 +156,9 @@ class Current {
         return b.length();
     }
 
-    public String dfs(LinkedList<String> words){
+    public String dfs(LinkedList<String> words) {
         int n = words.size();
-        if(n == 1) return words.get(0);
+        if (n == 1) return words.get(0);
         String shortestStr = "";
         int max = -1;
         int index1 = 0, index2 = 0;
@@ -161,7 +166,7 @@ class Current {
             for (int j = i + 1; j < n; j++) {
                 String merge = merge(words.get(i), words.get(j));
                 int savedLen = words.get(i).length() + words.get(j).length() - merge.length();
-                if(savedLen > max){
+                if (savedLen > max) {
                     max = savedLen;
                     shortestStr = merge;
                     index1 = i;
@@ -177,7 +182,7 @@ class Current {
         return dfs(words);
     }
 
-    public String merge(String s1, String s2){
+    public String merge(String s1, String s2) {
         String shortest = "";
         int len1 = s1.length();
         int len2 = s2.length();
@@ -188,15 +193,15 @@ class Current {
         for (int i = 1; i < len1 && i < len2; i++) {
             String prefix = s1.substring(0, i);
             String suffix = s2.substring(len2 - i);
-            if(prefix.equals(suffix) && overlap1 < prefix.length()){
+            if (prefix.equals(suffix) && overlap1 < prefix.length()) {
                 overlap1 = prefix.length();
             }
         }
         int overlap2 = 0;
-        for (int i = s1.length() - 1 ; i >= 0; i--) {
+        for (int i = s1.length() - 1; i >= 0; i--) {
             String suffix = s1.substring(i);
             String prefix = s2.substring(len2 - i);
-            if(prefix.equals(suffix) && overlap2 < prefix.length()){
+            if (prefix.equals(suffix) && overlap2 < prefix.length()) {
                 overlap2 = prefix.length();
             }
         }
@@ -207,21 +212,21 @@ class Current {
     //[["name","bob"],["age","two"]]
     public String evaluate(String s, List<List<String>> knowledge) {
         HashMap<String, String> map = new HashMap<>();
-        for(List<String> keys : knowledge){
+        for (List<String> keys : knowledge) {
             map.putIfAbsent(keys.get(0), keys.get(1));
         }
         StringBuilder out = new StringBuilder();
-        for (int i = 0; i < s.length();) {
-            if(s.charAt(i) == '('){
+        for (int i = 0; i < s.length(); ) {
+            if (s.charAt(i) == '(') {
                 StringBuilder key = new StringBuilder();
-                int j = i+1;
-                while (s.charAt(j) != ')'){
+                int j = i + 1;
+                while (s.charAt(j) != ')') {
                     key.append(s.charAt(j));
                     j++;
                 }
                 out.append(map.getOrDefault(key.toString(), "?"));
                 i = j + 1;
-            }else{
+            } else {
                 out.append(s.charAt(i));
                 i = i + 1;
             }
@@ -235,16 +240,16 @@ class Current {
         char[] arr = word.toCharArray();
 
         for (int i = 0; i < arr.length; i++) {
-            if(Character.isDigit(arr[i])){
+            if (Character.isDigit(arr[i])) {
                 out.append(arr[i]);
-            }else if(out.length() > 0){
+            } else if (out.length() > 0) {
                 BigInteger bigInteger = new BigInteger(out.toString());
                 //set.add(Integer.valueOf(out.toString()));
                 set.add(bigInteger.longValue());
                 out = new StringBuilder();
             }
         }
-        if(out.length() > 0){
+        if (out.length() > 0) {
             BigInteger bigInteger = new BigInteger(out.toString());
             //set.add(Integer.valueOf(out.toString()));
             set.add(bigInteger.longValue());
@@ -295,14 +300,14 @@ class Current {
 
     public static int maxArea(List<Integer> hList, List<Integer> vList) {
         long H = 0;
-        for (int i = 1; i < hList.size() ; i++) {
-            H = Math.max(H, (long)hList.get(i) - hList.get(i - 1));
+        for (int i = 1; i < hList.size(); i++) {
+            H = Math.max(H, (long) hList.get(i) - hList.get(i - 1));
         }
         long W = 0;
-        for (int i = 1; i < vList.size() ; i++) {
-            W = Math.max(W, (long)vList.get(i) - vList.get(i - 1));
+        for (int i = 1; i < vList.size(); i++) {
+            W = Math.max(W, (long) vList.get(i) - vList.get(i - 1));
         }
-        return (int) (H * W % (int)(1e9 + 7));
+        return (int) (H * W % (int) (1e9 + 7));
     }
 
     /* HackerRank problems*/
@@ -328,13 +333,13 @@ class Current {
     }
 
     /* 1642. Furthest Building You Can Reach
-    * https://leetcode.com/problems/furthest-building-you-can-reach/
-    * */
+     * https://leetcode.com/problems/furthest-building-you-can-reach/
+     * */
 
 
     /* 1505. Minimum Possible Integer After at Most K Adjacent Swaps On Digits
-    * https://leetcode.com/problems/minimum-possible-integer-after-at-most-k-adjacent-swaps-on-digits/
-    * */
+     * https://leetcode.com/problems/minimum-possible-integer-after-at-most-k-adjacent-swaps-on-digits/
+     * */
     public String minInteger(String num, int k) {
         return null;
     }

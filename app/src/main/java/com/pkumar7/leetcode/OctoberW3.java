@@ -403,7 +403,6 @@ public class OctoberW3 extends BoyerMooreAlgorithm {
                     }
                 }
             }
-
             if(foundEnd){
                 break;
             }

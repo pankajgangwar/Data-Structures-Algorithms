@@ -3,6 +3,7 @@ package com.pkumar7.hashmap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,54 @@ class A {
 
     public static void main(String[] args) {
 
+    }
+
+    /*
+    * 36. Valid Sudoku
+    * https://leetcode.com/problems/valid-sudoku/
+    * */
+    public boolean isValidSudoku(char[][] board) {
+        HashMap<Integer, HashSet<Integer>> colMap = new HashMap<>();
+        HashMap<Integer, HashSet<Integer>> rowMap = new HashMap<>();
+
+        for (int i = 0; i < board.length; i++) {
+            rowMap.putIfAbsent(i, new HashSet<Integer>());
+            for (int j = 0; j < board[i].length; j++) {
+                if (board[i][j] == '.') continue;
+                int num = board[i][j] - '0';
+
+                colMap.putIfAbsent(j, new HashSet<>());
+                if (colMap.get(j).contains(num)) return false;
+                colMap.get(j).add(num);
+
+                if (rowMap.get(i).contains(num)) return false;
+                rowMap.get(i).add(num);
+            }
+        }
+
+        for (int i = 0; i < board.length; i+= 3 ) {
+            for (int j = 0; j < board[0].length; j+= 3) {
+                if (!checkInBoxes(i, j, board)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public boolean checkInBoxes(int row, int col, char[][] board) {
+        HashSet<Integer> boxes = new HashSet<>();
+        for (int i = row; i < row + 3 ; i++ ) {
+            for (int j = col; j < col + 3; j++) {
+                if (board[i][j] == '.') continue;
+                int num = board[i][j] - '0';
+                if (boxes.contains(num)) {
+                    return false;
+                }
+                boxes.add(num);
+            }
+        }
+        return true;
     }
 
     /* 1640. Check Array Formation Through Concatenation

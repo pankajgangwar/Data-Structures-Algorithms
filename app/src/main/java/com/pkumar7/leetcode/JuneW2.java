@@ -79,7 +79,6 @@ class JuneW2 {
     }
 
 
-
     /*
     LC : 5454
     https://leetcode.com/problems/least-number-of-unique-integers-after-k-removals/
@@ -187,114 +186,6 @@ class JuneW2 {
             }
         }
         return res;
-    }
-
-    /* LC : 743
-    https://leetcode.com/problems/network-delay-time/
-    */
-    public int networkDelayTime(int[][] times, int N, int K) {
-        int maxTime = findMaxTimeDijikstra(times, N, K);
-        System.out.println("maxTime = " + maxTime);
-        return maxTime ;
-    }
-
-    // https://cp-algorithms.com/graph/bellman_ford.html
-    public int findMaxBellmanFord(int[][] time, int N, int K){
-        // Bellman-Ford O(N*E)
-        // Runs N-1 times for relaxation
-        // Single source shortest path
-        // Can be used to detect negative cycles regardless of the starting node.
-        // Doesn't work for negative weight cycles
-        double[] disTo = new double[N];
-        Arrays.fill(disTo, Double.POSITIVE_INFINITY);
-        disTo[K - 1] = 0;
-        for (int i = 1; i <= N; i++) {
-            for (int[]edges : time){
-                int u = edges[0] - 1, v = edges[1] - 1, w = edges[2];
-                if(disTo[u] + w < disTo[v]){
-                    disTo[v] = disTo[u] + w;
-                }
-            }
-        }
-        double res = Double.MIN_VALUE;
-        for (double val : disTo){
-            res = Math.max(res, val);
-        }
-        return res == Double.POSITIVE_INFINITY ? -1 : (int)res;
-    }
-
-    public int findMaxFloydWarshall(int[][] times, int N, int K){
-        // Floyd–Warshall algorithm O(n^3)
-        double[][] distTo = new double[N][N];
-        for (int i = 0; i < N; i++) {
-            Arrays.fill(distTo[i], Double.POSITIVE_INFINITY);
-        }
-        for (int i = 0; i < N; i++) {
-            distTo[i][i] = 0;
-        }
-        for (int[] edge : times) {
-            int src = edge[0];
-            int dst = edge[1];
-            distTo[src - 1][dst - 1] = edge[2];
-        }
-
-        for (int k = 0; k < N; k++) {
-            for (int i = 0; i < N; i++) {
-                for (int j = 0; j < N; j++) {
-                    if(distTo[i][j] > distTo[i][k] + distTo[k][j]){
-                        distTo[i][j] = distTo[i][k] + distTo[k][j];
-                    }
-                }
-            }
-        }
-        double max = Double.MIN_VALUE;
-        for (int i = 0; i < N; i++) {
-            if(distTo[K-1][i] == Double.POSITIVE_INFINITY) return -1;
-            max = Math.max(max, distTo[K - 1][i]);
-        }
-        return (int)max;
-    }
-
-    public int findMaxTimeDijikstra(int[][] times, int N, int K){
-        LinkedList<int[]>[] graph = new LinkedList[N];
-        for (int i = 0; i < N; i++) {
-            graph[i] = new LinkedList<>();
-        }
-        for (int i = 0; i < times.length; i++) {
-            int src = times[i][0] - 1;
-            int dst = times[i][1] - 1;
-            int time = times[i][2];
-            graph[src].add(new int[]{dst, time});
-        }
-        boolean[] visited = new boolean[N];
-        Arrays.fill(visited, false);
-
-        PriorityQueue<int[]> pq = new PriorityQueue<>((a,b) -> a[1] - b[1]);
-        pq.offer(new int[]{K - 1, 0});
-        int totalTime = 0;
-        while (!pq.isEmpty()){
-            int[] cur = pq.poll();
-            int currSrc = cur[0];
-            int currtime = cur[1];
-            if(visited[currSrc]) continue;
-            visited[currSrc] = true;
-            totalTime = Math.max(totalTime, currtime);
-            N--;
-            for (int i = 0; i < graph[currSrc].size(); i++) {
-                int[] next = graph[currSrc].get(i);
-                int nextSrc = next[0];
-                int time = next[1];
-                time = currtime + time;
-                pq.offer(new int[]{nextSrc, time});
-            }
-        }
-        for (int i = 0; i < visited.length; i++) {
-            if(!visited[i]){
-                totalTime = 0;
-                break;
-            }
-        }
-        return N == 0 ? totalTime : -1;
     }
 
     /*

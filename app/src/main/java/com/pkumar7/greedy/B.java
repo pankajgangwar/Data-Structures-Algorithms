@@ -3,6 +3,7 @@ package com.pkumar7.greedy;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,6 +17,52 @@ import java.util.TreeMap;
 */
 
 public class B {
+
+
+	public int countPaths(int n, int[][] roads) {
+		PriorityQueue<long[]> pq = new PriorityQueue<>(Comparator.comparingLong(a -> a[1]));
+		HashMap<Integer, List<int[]>> graph = new HashMap<>();
+
+		long[] minTime = new long[n];
+		Arrays.fill(minTime, Long.MAX_VALUE);
+
+		for (int i = 0; i < roads.length; i++) {
+			int src = roads[i][0];
+			int dst = roads[i][1];
+			int time = roads[i][2];
+			graph.putIfAbsent(src, new ArrayList<>());
+			graph.putIfAbsent(dst, new ArrayList<>());
+			graph.get(src).add(new int[]{dst, time});
+			graph.get(dst).add(new int[]{src, time});
+		}
+
+		minTime[0] = 0;
+		long mod = (long)1e9 + 7;
+		int[] ways = new int[n];
+		ways[0] = 1;
+
+		pq.offer(new long[]{0, 0});
+
+		while (!pq.isEmpty()) {
+			long[] curr = pq.poll();
+			int src = (int)curr[0];
+			long time = curr[1];
+			if(minTime[src] < time) continue;
+			for (int[] adj : graph.getOrDefault(src, new ArrayList<>())) {
+				int next_src = adj[0];
+				int next_time = adj[1];
+				long total_time = time + next_time;
+				if (minTime[next_src] > total_time) {
+					minTime[next_src] = total_time;
+					ways[next_src] = ways[src];
+					pq.offer(new long[]{next_src, minTime[next_src]});
+				}else if(minTime[next_src] == total_time){
+					ways[next_src] = (ways[next_src] + ways[src]) % (int)mod;
+				}
+			}
+		}
+		return ways[n - 1];
+	}
 
 	/* 1958. Check if Move is Legal
 	 * https://leetcode.com/problems/check-if-move-is-legal/
@@ -68,7 +115,7 @@ public class B {
 	 * */
 	public int minCost(int maxTime, int[][] edges, int[] passingFees) {
 		// [src, time, cost]
-		PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> Integer.compare(a[2], b[2]));
+		PriorityQueue<int[]> pq = new PriorityQueue<>(Comparator.comparingInt(a -> a[2]));
 		HashMap<Integer, List<int[]>> graph = new HashMap<>();
 		int n = passingFees.length;
 

@@ -20,6 +20,44 @@ class B {
         b.distributeCandies(7, 4);
     }
 
+    /* 1981. Minimize the Difference Between Target and Chosen Elements
+    * https://leetcode.com/problems/minimize-the-difference-between-target-and-chosen-elements/
+    * */
+    Integer[][] memo;
+    public int minimizeTheDifference(int[][] mat, int target) {
+        int m = mat.length;
+        int n = mat[0].length;
+        memo = new Integer[m + 1][70*70];
+        dfsMemo(mat, target,0, 0);
+        return (int)minAbsDiff;
+    }
+
+    long minAbsDiff = Long.MAX_VALUE;
+    public long dfsMemo(int[][] mat, int target, int sum, int row){
+        if(row == mat.length){
+            minAbsDiff = Math.min(minAbsDiff, Math.abs(target - sum));
+            return minAbsDiff;
+        }
+        if(memo[row][sum] != null){
+            return memo[row][sum];
+        }
+        long ss = 0;
+        for (int col = 0; col < mat[0].length; col++) {
+            ss = Math.min(ss, dfsMemo(mat, target,  sum + mat[row][col], row + 1));
+        }
+        return memo[row][sum] = (int)ss;
+    }
+
+    public void dfs(int[][] mat, int target, int sum, int row){
+        if(row == mat.length){
+            minAbsDiff = Math.min(minAbsDiff, Math.abs(target - sum));
+            return;
+        }
+        for (int col = 0; col < mat[0].length; col++) {
+            dfs(mat, target, sum + mat[row][col], row + 1);
+        }
+    }
+
     /* 1947. Maximum Compatibility Score Sum
      * https://leetcode.com/problems/maximum-compatibility-score-sum/
      * */

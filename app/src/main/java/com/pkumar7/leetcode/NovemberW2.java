@@ -23,8 +23,8 @@ import java.util.TreeMap;
 
 public class NovemberW2 {
     public static void main(String args[]) {
-        String[] words = new String[]{"Pankaj", "Kumar", "Gangwar","Pankaj","Pooja","Pankaj","Pooja"};
-        frequentStrings(words);
+        NovemberW2 obj = new NovemberW2();
+        obj.subArrayPrefixSum(new int[]{3,1,4},4);
     }
 
     /**
@@ -804,13 +804,6 @@ public class NovemberW2 {
     /**
     560. Subarray Sum Equals K
     https://leetcode.com/problems/subarray-sum-equals-k/
-
-    Given an array of integers and an integer k, you need to find the total number of continuous subarrays whose sum equals to k.
-
-    Example 1:
-    Input:nums = [1,1,1], k = 2
-    Output: 2
-
     */
     public int subarraySum(int[] nums, int k) {
         //subArraySumRec(nums, k, 0, 0);
@@ -818,28 +811,11 @@ public class NovemberW2 {
         return subArrayPrefixSum(nums, k);
     }
 
-    public int bruteForce(int[] nums, int target){
-        int count = 0;
-        for(int i = 0; i < nums.length; ++i){
-            for(int j = i + 1; j < nums.length; ++j){
-                int sum = 0;
-                for(int k = i; k < j; ++k){
-                    sum+= nums[k];
-                }
-                if(sum == target){
-                    count++;
-                }
-            }
-        }
-        return count;
-    }
-
-
     public int subArrayPrefixSum(int[] nums, int target){
         Map<Integer, Integer> prefixSumMap = new HashMap<>();
-        
         int sum = 0;
         int count = 0;
+        prefixSumMap.put(0, 1);
         for(int i = 0; i < nums.length; i++){
             sum += nums[i];
             if(prefixSumMap.containsKey(sum - target)){

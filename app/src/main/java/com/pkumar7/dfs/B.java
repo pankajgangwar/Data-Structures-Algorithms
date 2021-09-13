@@ -18,6 +18,73 @@ class B {
     public static void main(String[] args) {
         B b = new B();
         b.distributeCandies(7, 4);
+
+        /*["623986800","3","887298","695","794","6888794705","269409","59930972","723091307","726368","8028385786","378585"]
+        11*/
+    }
+
+    /* 282. Expression Add Operators
+     * https://leetcode.com/problems/expression-add-operators/
+     * */
+    public List<String> addOperators(String num, int target) {
+        List<String> res = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
+        dfs(res, sb, num, 0, target, 0, 0);
+        return res;
+
+    }
+    public void dfs(List<String> res, StringBuilder sb, String num, int pos, int target, long prev, long multi) {
+        if(pos == num.length()) {
+            if(target == prev) res.add(sb.toString());
+            return;
+        }
+        for(int i = pos; i < num.length(); i++) {
+            if(num.charAt(pos) == '0' && i != pos) break;
+            long curr = Long.parseLong(num.substring(pos, i + 1));
+            int len = sb.length();
+            if(pos == 0) {
+                dfs(res, sb.append(curr), num, i + 1, target, curr, curr);
+                sb.setLength(len);
+            } else {
+                dfs(res, sb.append("+").append(curr), num, i + 1, target, prev + curr, curr);
+                sb.setLength(len);
+                dfs(res, sb.append("-").append(curr), num, i + 1, target, prev - curr, -curr);
+                sb.setLength(len);
+                dfs(res, sb.append("*").append(curr), num, i + 1, target, prev - multi + multi * curr, multi * curr);
+                sb.setLength(len);
+            }
+        }
+    }
+
+    /* 2002. Maximum Product of the Length of Two Palindromic Subsequences
+    * https://leetcode.com/problems/maximum-product-of-the-length-of-two-palindromic-subsequences/
+    * */
+    int max = 1;
+    public int maxProduct(String s) {
+        int n = s.length();
+        dfs(0, "", "", s.toCharArray());
+        return max;
+    }
+
+    public void dfs(int i, String s1, String s2, char[] arr){
+        if(i >= arr.length){
+            if(isPal(s1) && isPal(s2)){
+                max = Math.max(max, s1.length() * s2.length());
+            }
+            return;
+        }
+        dfs(i + 1, s1 + arr[i], s2, arr);
+        dfs(i + 1, s1, s2 + arr[i], arr);
+        dfs(i + 1, s1, s2, arr);
+    }
+
+    private boolean isPal(String s) {
+        int i = 0, j = s.length() - 1;
+        while (i <= j && s.charAt(i) == s.charAt(j)){
+            i += 1;
+            j -= 1;
+        }
+        return i > j;
     }
 
     /* 1981. Minimize the Difference Between Target and Chosen Elements

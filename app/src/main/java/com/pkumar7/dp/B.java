@@ -4,6 +4,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -13,6 +14,54 @@ class B {
     public static void main(String[] args) {
         B current = new B();
         current.findNumberOfLIS(new int[] {1, 3, 5, 4, 7});
+    }
+
+    /*
+    * https://leetcode.com/problems/minimum-number-of-work-sessions-to-finish-the-tasks/
+    * https://cses.fi/problemset/task/1653/
+    * https://usaco.guide/gold/dp-bitmasks?lang=cpp
+    * 1986. Minimum Number of Work Sessions to Finish the Tasks
+    * */
+    public int minSessions(int[] tasks, int sessionTime) {
+        return dfs(0, tasks, sessionTime);
+    }
+
+    List<Integer> sessions = new ArrayList<>();
+    HashMap<String, Integer> sessiondp = new HashMap<>();
+    public int dfs(int pos, int[] tasks, int sessionTime){
+        int n = tasks.length;
+        if(pos >= n){
+            return 0;
+        }
+        String dpState = encodeState(sessions, pos);
+        if(sessiondp.containsKey(dpState)){
+            return sessiondp.get(dpState);
+        }
+        sessions.add(tasks[pos]);
+        int res = 1 + dfs(pos + 1, tasks, sessionTime);
+        sessions.remove(sessions.size() - 1);
+
+        for (int i = 0; i < sessions.size(); i++) {
+            if(sessions.get(i) + tasks[pos] <= sessionTime){
+                int prev = sessions.get(i);
+                prev += tasks[pos];
+                sessions.set(i, prev);
+                res = Math.min(res, dfs(pos + 1, tasks, sessionTime));
+                prev -= tasks[pos];
+                sessions.set(i, prev);
+            }
+        }
+        sessiondp.put(dpState, res);
+        return res;
+    }
+
+    private String encodeState(List<Integer> sessions, int pos) {
+        StringBuilder out = new StringBuilder(pos);
+        out.append("$");
+        for (int i = 0; i < sessions.size(); i++) {
+            out.append(sessions.get(i)).append("$");
+        }
+        return out.toString();
     }
 
     /* 600. Non-negative Integers without Consecutive Ones

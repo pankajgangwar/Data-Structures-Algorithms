@@ -1,11 +1,53 @@
 package com.pkumar7.twopointers;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by Pankaj Kumar on 21/August/2020
  */
 class A {
+
+    /* 1570. Dot Product of Two Sparse Vectors
+    * https://leetcode.com/problems/dot-product-of-two-sparse-vectors/
+    * */
+    class SparseVector {
+        List<int[]> data = new ArrayList<>();
+        SparseVector(int[] nums) {
+            for (int i = 0; i < nums.length; i++) {
+                if(nums[i] != 0){
+                    data.add(new int[]{i, nums[i]});
+                }
+            }
+        }
+
+        // Return the dotProduct of two sparse vectors
+        public int dotProduct(SparseVector vec) {
+            List<int[]> otherData = vec.getData();
+            int prod = 0;
+            int i = 0, j = 0;
+            while (i < data.size() && j < otherData.size()){
+                int[] d = data.get(i);
+                int[] o = otherData.get(j);
+                if(d[0] < o[0]){
+                    i += 1;
+                }else if(d[0] > o[0]){
+                    j += 1;
+                }else{
+                    prod += (d[1] * o[1]);
+                    i += 1;
+                    j += 1;
+                }
+            }
+            return prod;
+        }
+
+        public List<int[]> getData(){
+            return data;
+        }
+    }
+
 
     /* 1750. Minimum Length of String After Deleting Similar Ends
      * https://leetcode.com/problems/minimum-length-of-string-after-deleting-similar-ends/

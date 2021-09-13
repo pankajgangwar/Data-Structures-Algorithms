@@ -198,33 +198,93 @@ public class AugustW2 {
      * https://www.hackerrank.com/challenges/dynamic-programming-classics-the-longest-common-subsequence/problem
      * https://leetcode.com/problems/maximum-length-of-repeated-subarray/
      * Common subsequence of contigous subarray
+     * Rabin-Karp Algorithm
      */
-    public int findLength(int[] A, int[] B) {
-        if(A.length == 0 || B.length == 0)
-            return 0;
-
-        return longestCommonSubsequence(A,B);
+    public int findLength(int[] a, int[] b){
+        return rollingHashSol(a, b);
+        //return dfs(a, b, a.length, b.length, 0);
     }
 
-    public int longestCommonSubsequence(int[] A, int[] B){
-        int m = A.length;
-        int n = B.length;
+    long BASE = 101L, MOD = 1000000007L;
+    public int rollingHashSol(int[] a, int[] b){
+        int min = Math.min(a.length, b.length);
+        int max = Math.max(a.length, b.length);
+        long[] pow = new long[max + 1];
+        long[] hash_a = new long[a.length + 1];
+        long[] hash_b = new long[b.length + 1];
 
-        int[][] lcs = new int[m + 1][n + 1];
-        int length = 0;
-        for (int i = 0; i <= m; i++) {
-            for (int j = 0; j <= n ; j++) {
-                if(i == 0 || j == 0)
-                    lcs[i][j] = 0;
-                else {
-                    if (A[i -1] == B[j - 1]){
-                        lcs[i][j] = lcs[i - 1][j - 1] + 1;
-                        length = Math.max(length, lcs[i][j]);
-                    }
+        pow[0] = 1;
+        for(int i = 1; i <= max; ++i){
+            pow[i] = pow[i-1] * BASE % MOD;
+        }
+
+        for (int i = 1; i <= a.length; i++) {
+            hash_a[i] = (hash_a[i-1] * BASE + a[i - 1]) % MOD;
+        }
+
+        for (int i = 1; i <= b.length; i++) {
+            hash_b[i] = (hash_b[i-1] * BASE + b[i - 1]) % MOD;
+        }
+
+        int low = 1, high = min;
+        int ans = 0;
+        while (low <= high){
+            int mid = (low + high) / 2;
+            HashSet<Long> seen = new HashSet<>();
+            for (int i = 1; i + mid - 1 <= a.length ; i++) {
+                long hashA = getHash(i - 1 , i + mid - 1, hash_a, pow);
+                seen.add(hashA);
+            }
+            boolean found = false;
+            for (int i = 1; i + mid - 1 <= b.length; i++) {
+                long hashB = getHash(i - 1, i + mid - 1, hash_b, pow);
+                if(seen.contains(hashB)){
+                    found = true;
+                    break;
                 }
+            }
+            if(found){
+                ans = mid;
+                low = mid + 1;
+            }else{
+                high = mid - 1;
+            }
+        }
+        return ans;
+    }
+
+    public long getHash(int l, int r, long[] hash, long[] pow ){
+        return (hash[r] - hash[l] * pow[r - l] % MOD + MOD) % MOD;
+    }
+
+    public int dpSol(int[] nums1, int[] nums2) {
+        int n = nums1.length;
+        int m = nums2.length;
+        int[][] dp = new int[n + 1][m + 1];
+        //dp[i][j] = max lcs that ends with i and j
+        int length = 0;
+        for(int i = 1; i <= n; i++) {
+            for(int j = 1; j <= m; j++) {
+                if(nums1[i - 1] == nums2[j - 1]){
+                    dp[i][j] = 1 + dp[i - 1][j - 1];
+                }
+                length = Math.max(length, dp[i][j]);
             }
         }
         return length;
+    }
+
+    public int dfs(int[] a, int[] b, int m, int n, int runningLen){
+        if(m <= 0 || n <= 0){
+            return runningLen;
+        }
+        int res1 = runningLen;
+        if(a[m - 1] == b[n - 1]){
+            res1 = dfs(a, b, m - 1, n - 1, runningLen + 1);
+        }
+        int res2 = dfs(a, b, m - 1, n, 0);
+        int res3 = dfs(a, b, m, n - 1, 0);
+        return Math.max(res1, Math.max(res2, res3));
     }
 
     /**

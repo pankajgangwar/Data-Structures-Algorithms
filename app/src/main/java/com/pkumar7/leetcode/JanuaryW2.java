@@ -578,7 +578,6 @@ public class JanuaryW2 {
         public int distinctEchoSubstrings(String text) {
             preHash();
             makeHash(text);
-            System.out.println("PreComputation done !!");
             int ans = 0;
             for(int l = 1; l*2 <= text.length(); l++){
                 TreeSet<Long> set = new TreeSet<>();
@@ -588,7 +587,6 @@ public class JanuaryW2 {
                 }
                 ans += set.size();
             }
-            System.out.println(ans);
             return ans;
         }
     }

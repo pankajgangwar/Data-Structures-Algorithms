@@ -16,6 +16,28 @@ class B {
         current.findNumberOfLIS(new int[] {1, 3, 5, 4, 7});
     }
 
+    /* 1216. Valid Palindrome III
+     * https://leetcode.com/problems/valid-palindrome-iii/
+     * */
+    public boolean isValidPalindrome(String s, int k) {
+        int n = s.length();
+        int[][] dp = new int[n][n];
+
+        for(int i = n - 1; i >= 0; i--){
+            dp[i][i] = 1;
+            for(int j = i + 1; j < n; j++ ){
+                if(s.charAt(i) != s.charAt(j)){
+                    dp[i][j] = Math.max(dp[i+1][j], dp[i][j-1]);
+                }else{
+                    dp[i][j] = 2 + dp[i+1][j-1];
+                }
+            }
+        }
+        int maxlen = dp[0][n-1];
+        return n - maxlen <= k;
+    }
+
+
     /*
     * https://leetcode.com/problems/minimum-number-of-work-sessions-to-finish-the-tasks/
     * https://cses.fi/problemset/task/1653/

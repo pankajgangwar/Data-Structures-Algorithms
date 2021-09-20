@@ -914,27 +914,23 @@ public class JanuaryW3 {
         return root;
     }
 
-    /* https://leetcode.com/problems/video-stitching/
-    *  Revisit
+    /* 1024. Video Stitching
+    * https://leetcode.com/problems/video-stitching/
     * */
-    public int videoStitching(int[][] clips, int T) {
+    public int videoStitching(int[][] clips, int time) {
         Arrays.sort(clips, (a,b) -> a[0] - b[0]);
-
-        int[] curr = clips[0];
-        if(curr[0] != 0){
-            return -1;// None of the interval starts with 0
-        }
-        return minClipsGreedy(clips, T);
-    }
-
-    public int minClipsGreedy(int[][] clips, int T){
-        Arrays.sort(clips, (a,b) -> a[0] - b[0]);
+        int start = 0;
+        int end = 0;
+        int i = 0;
         int res = 0;
-        for (int i = 0, start = 0, end = 0 ; start < T; start = end ,res++) {
-            for (; i < clips.length && start >= clips[i][0] ; ++i) {
+        while(start < time){
+            while (i < clips.length && start >= clips[i][0]){
                 end = Math.max(end, clips[i][1]);
+                i++;
             }
             if(start == end) return -1;
+            start = end;
+            res += 1;
         }
         return res;
     }
@@ -952,9 +948,12 @@ public class JanuaryW3 {
         return min;
     }
 
-    /* https://leetcode.com/problems/minimum-number-of-taps-to-open-to-water-a-garden/ */
+    /*
+    1326. Minimum Number of Taps to Open to Water a Garden
+    https://leetcode.com/problems/minimum-number-of-taps-to-open-to-water-a-garden/
+    */
     public int minTaps(int n, int[] ranges) {
-        int[][] intervals = new int[2][ranges.length];
+        int[][] intervals = new int[ranges.length][2];
         for (int i = 0; i < ranges.length; i++) {
             int curr = ranges[i];
             int min = i - curr;
@@ -967,10 +966,16 @@ public class JanuaryW3 {
         Arrays.sort(intervals, (a,b) -> a[0] - b[0]);
 
         int res = 0;
-        for (int i = 0, start = 0, end = 0; start < n; start = end, res++) {
-            for (; i < intervals.length && start >= intervals[i][0]; ++i) {
+        int start = 0, end = 0;
+        int i = 0;
+        while (start < n) {
+            if(res >= n) return -1;
+            while (i < intervals.length && start >= intervals[i][0]) {
                 end = Math.max(end , intervals[i][1]);
+                i++;
             }
+            res++;
+            start = end;
         }
         return res;
     }

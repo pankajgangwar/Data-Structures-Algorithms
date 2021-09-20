@@ -1,4 +1,4 @@
-package com.pkumar7.bfs;
+package com.pkumar7.graph.bfs;
 
 import com.pkumar7.TreeNode;
 
@@ -37,7 +37,6 @@ class A {
             while (size-- > 0) {
                 int[] curr = bfs.poll();
                 if (hasReachedBorder(curr, maze) && !Arrays.equals(entrance, curr)) {
-                    System.out.println(" Returning steps ");
                     return steps;
                 }
                 for (int i = 0; i < dirs.length; i++) {

@@ -3,9 +3,147 @@ package com.pkumar7.trees;
 import com.pkumar7.TreeNode;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
 public class B {
+
+    /*
+    * https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree-ii/
+    * 1644. Lowest Common Ancestor of a Binary Tree II
+    * */
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        TreeNode lca = findLCA(root, p, q);
+        if(sets.contains(p.val) && sets.contains(q.val)) return lca;
+        return null;
+    }
+
+    HashSet<Integer> sets = new HashSet<>();
+    public void helper(TreeNode root){
+        if(root == null) return;
+        sets.add(root.val);
+        helper(root.left);
+        helper(root.right);
+    }
+
+    public TreeNode findLCA(TreeNode root, TreeNode p, TreeNode q) {
+        if(root == null) return root;
+        if(root == p || root == q) {
+            dfs(root);
+            return root;
+        }
+        sets.add(root.val);
+        TreeNode left = findLCA(root.left, p, q);
+        TreeNode right = findLCA(root.right, p, q);
+        if(left != null && right != null){
+            return root;
+        }
+        if(left != null && right == null){
+            return left;
+        }
+        if(right != null && left == null){
+            return right;
+        }
+        return null;
+    }
+
+    /*
+    * https://leetcode.com/problems/range-sum-of-bst/
+    * 938. Range Sum of BST
+    * */
+    public int rangeSumBST(TreeNode root, int low, int high) {
+        if(root == null) return 0;
+        int sum = 0;
+        if(root.val > high) return rangeSumBST(root.left, low, high);
+        if(root.val < low) return rangeSumBST(root.right, low, high);
+        sum += root.val;
+        sum += rangeSumBST(root.left, low, high);
+        sum += rangeSumBST(root.right, low, high);
+        return sum;
+    }
+
+    /* 623. Add One Row to Tree
+    * https://leetcode.com/problems/add-one-row-to-tree/https://leetcode.com/problems/add-one-row-to-tree/
+    * */
+    public TreeNode addOneRow(TreeNode root, int val, int depth) {
+        return bfs(root, val, depth);
+    }
+
+    public TreeNode bfs(TreeNode root, int val , int depth) {
+        if (depth == 1) {
+            TreeNode newRoot = new TreeNode(val);
+            newRoot.left = root;
+            return newRoot;
+        }
+        Queue<TreeNode> q = new LinkedList<>();
+        q.offer(root);
+
+        int currD = 0;
+        outer : while (!q.isEmpty()) {
+            int size = q.size();
+            currD += 1;
+            while (size-- > 0) {
+                TreeNode curr = q.poll();
+                if (currD + 1 == depth) {
+                    TreeNode left = new TreeNode(val);
+                    if(curr.left != null){
+                        TreeNode prevLeft = curr.left;
+                        curr.left = left;
+                        left.left = prevLeft;
+                    }else{
+                        curr.left = left;
+                    }
+
+                    TreeNode right = new TreeNode(val);
+                    if(curr.right != null){
+                        TreeNode prevRight = curr.right;
+                        curr.right = right;
+                        right.right = prevRight;
+                    }else{
+                        curr.right = right;
+                    }
+                }else{
+                    if(curr.left != null){
+                        q.offer(curr.left);
+                    }
+                    if(curr.right != null){
+                        q.offer(curr.right);
+                    }
+                }
+            }
+        }
+        return root;
+    }
+
+    /*
+    * https://leetcode.com/problems/balance-a-binary-search-tree/
+    * 1382. Balance a Binary Search Tree
+    * */
+    public TreeNode balanceBST(TreeNode root) {
+        List<Integer> sortedList = new ArrayList<>();
+        inorder(root, sortedList);
+        return constructBst(sortedList, 0, sortedList.size() - 1);
+    }
+
+    public TreeNode constructBst(List<Integer> list, int low, int high){
+        if(low > high) return null;
+        int mid = low + (high - low) / 2;
+        TreeNode root = new TreeNode(list.get(mid));
+        root.left = constructBst(list, low, mid -1);
+        root.right = constructBst(list, mid + 1, high);
+        return root;
+    }
+
+    public void inorder(TreeNode root, List<Integer> list){
+        if(root == null) return;
+        inorder(root.left, list);
+        list.add(root.val);
+        inorder(root.right, list);
+    }
 
     /*
      * 1650. Lowest Common Ancestor of a Binary Tree III

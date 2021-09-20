@@ -1,4 +1,4 @@
-package com.pkumar7.dfs;
+package com.pkumar7.graph.dfs;
 
 import java.util.ArrayList;
 import java.util.Arrays;

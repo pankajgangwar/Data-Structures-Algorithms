@@ -1,4 +1,4 @@
-package com.pkumar7.dfs;
+package com.pkumar7.graph.dfs;
 
 import com.pkumar7.utils.Utils;
 

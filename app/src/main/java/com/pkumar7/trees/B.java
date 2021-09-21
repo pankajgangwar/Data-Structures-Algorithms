@@ -4,11 +4,62 @@ import com.pkumar7.TreeNode;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+
+/* 1522. Diameter of N-Ary Tree
+* https://leetcode.com/problems/diameter-of-n-ary-tree/
+* */
+class DiameterNArrayTree{
+    class Node {
+        public int val;
+        public List<Node> children;
+        public Node() {
+            children = new ArrayList<Node>();
+        }
+        public Node(int _val) {
+            val = _val;
+            children = new ArrayList<Node>();
+        }
+        public Node(int _val,ArrayList<Node> _children) {
+            val = _val;
+            children = _children;
+        }
+    };
+
+    int diameter = 0;
+    public int diameter(Node root) {
+        maxDepth(root);
+        return diameter;
+    }
+
+    public int maxDepth(Node root){
+        if(root == null) return 0;
+        if(root.children.isEmpty()) return 1;
+        List<Integer> depths = new ArrayList<>();
+        for(Node ch : root.children){
+            int d = maxDepth(ch);
+            depths.add(d);
+        }
+        int currMax = Collections.max(depths);
+        int max = 0;
+        int secondMax = 0;
+        for(int d : depths){
+            if(max < d){
+                secondMax = max;
+                max = d;
+            }else if(secondMax < d){
+                secondMax = d;
+            }
+        }
+        diameter = Math.max(diameter, max + secondMax);
+        return currMax + 1;
+    }
+}
 
 public class B {
 

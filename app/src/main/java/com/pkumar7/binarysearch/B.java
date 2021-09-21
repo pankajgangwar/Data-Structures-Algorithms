@@ -1,11 +1,40 @@
 package com.pkumar7.binarysearch;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
 public class B {
+
+    /*
+    * 1891. Cutting Ribbons
+    * https://leetcode.com/problems/cutting-ribbons/
+    * */
+    public int maxLength(int[] ribbons, int k) {
+        int high = Arrays.stream(ribbons).max().getAsInt();
+        int low = 1;
+        int res = 0;
+        while(low <= high){
+            int mid = (low + high) / 2;
+            if(possible(mid, ribbons, k)){
+                res = mid;
+                low = mid + 1;
+            }else{
+                high = mid - 1;
+            }
+        }
+        return res;
+    }
+
+    public boolean possible(int len, int[] ribbons, int k){
+        int res = 0;
+        for(int r : ribbons){
+            res += (r / len);
+        }
+        return res >= k;
+    }
 
     /*
      * https://leetcode.com/problems/last-day-where-you-can-still-cross/

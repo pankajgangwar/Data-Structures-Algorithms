@@ -137,52 +137,23 @@ class A {
         }
     }
 
+
     /* 307. Range Sum Query - Mutable
     * https://leetcode.com/problems/range-sum-query-mutable/
     * */
-    static class NumArray {
-        int[] tree;
-        final int n;
+    class NumArray {
+        FenwickTree tree;
         public NumArray(int[] nums) {
-            n = nums.length;
-            tree = new int[n + 1];
-            for (int i = 0; i < n; i++) {
-                update(i, nums[i]);
-            }
+            int n = nums.length;
+            tree = new FenwickTree(nums, n);
         }
 
-        public void update(int i, int newval) {
-            int prevval = sumRange(i, i);
-            add(i, newval - prevval);
+        public void update(int index, int val) {
+            tree.update(index, val);
         }
 
-        public void add(int i, long v){
-            i += 1;
-            while (i < n + 1){
-                tree[i] += v;
-                i += lsb(i);
-            }
-        }
-
-        public int sumRange(int i, int j) {
-            i += 1;
-            j += 1;
-            if(j < i) throw new IllegalArgumentException("Make sure j >= i");
-            return prefixSum(j) - prefixSum(i - 1);
-        }
-
-        private int prefixSum(int i) {
-            int sum = 0;
-            while (i != 0){
-                sum += tree[i];
-                i &= ~lsb(i); // Equivalent to , i -= lsb(i);
-            }
-            return sum;
-        }
-
-        private int lsb(int i) {
-            return i & -i;
-            //return Integer.lowestOneBit(i);
+        public int sumRange(int left, int right) {
+            return tree.rangeSum(left, right);
         }
     }
 
@@ -241,56 +212,16 @@ class A {
         int mod = (int)1e9 + 7;
         int n = nums.length;
         int max = Arrays.stream(nums).max().getAsInt();
-        int[] A = new int[max + 10];
         long res = 0;
-        FenwickTree tree = new FenwickTree(A);
+        FenwickTree tree = new FenwickTree(nums, nums.length);
         for (int i = 0; i < nums.length; i++) {
             int curr = nums[i];
-            int left = tree.sumRange(0, curr - 1);
-            int right = tree.sumRange(curr + 1, max + 1);
+            int left = tree.rangeSum(0, curr - 1);
+            int right = tree.rangeSum(curr + 1, max + 1);
             res += Math.min(left, right);
             res = res % mod;
             tree.update(curr, 1);
         }
         return (int)res;
-    }
-    class FenwickTree{
-        int[] tree;
-        int A[];
-        int arr[];
-        public FenwickTree(int[] A){
-            this.A = A;
-            arr = new int[A.length];
-            tree = new int[A.length + 1];
-            for (int i = 0; i < A.length; i++) {
-                update(i, A[i]);
-            }
-        }
-        private void update(int i, int val) {
-            arr[i] += val;
-            i++;
-            while (i < tree.length){
-                tree[i] += val;
-                //i += (i & -i);
-                i += lsb(i);
-            }
-        }
-        public int sumRange(int i, int j){
-            return pre(j + 1) - pre(i);
-        }
-        public int pre(int i){
-            int sum = 0;
-            while (i != 0){
-                sum += tree[i];
-                //i-=(i&-i);
-                i &= ~lsb(i); // Equivalent to , i -= lsb(i);
-            }
-            return sum;
-        }
-
-        private int lsb(int i) {
-            //return i & -i;
-            return Integer.lowestOneBit(i);
-        }
     }
 }

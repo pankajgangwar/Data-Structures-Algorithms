@@ -460,6 +460,28 @@ public class AprilW1 {
         }
     }
 
+    /*
+    * https://leetcode.com/problems/my-calendar-iii/
+    * 732. My Calendar III
+    * */
+    class MyCalendarThree {
+        TreeMap<Integer, Integer> map = new TreeMap<>();
+        public MyCalendarThree() { }
+
+        public int book(int start, int end) {
+            map.put(start, map.getOrDefault(start, 0) + 1);
+            map.put(end, map.getOrDefault(end, 0) - 1);
+
+            int res = 0;
+            int count = 0;
+            for(int values : map.values()){
+                count += values;
+                res = Math.max(res, count);
+            }
+            return res;
+        }
+    }
+
     /* 5 0 1 4 2 3*/
     /* 0 1 2 3 4*/
     public boolean validateSequence(int[] arr , int n){

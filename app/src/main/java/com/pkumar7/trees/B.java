@@ -11,57 +11,79 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-/* 1522. Diameter of N-Ary Tree
-* https://leetcode.com/problems/diameter-of-n-ary-tree/
-* */
-class DiameterNArrayTree{
-    class Node {
-        public int val;
-        public List<Node> children;
-        public Node() {
-            children = new ArrayList<Node>();
-        }
-        public Node(int _val) {
-            val = _val;
-            children = new ArrayList<Node>();
-        }
-        public Node(int _val,ArrayList<Node> _children) {
-            val = _val;
-            children = _children;
-        }
-    };
+public class B {
 
-    int diameter = 0;
-    public int diameter(Node root) {
-        maxDepth(root);
-        return diameter;
+    /* 1522. Diameter of N-Ary Tree
+     * https://leetcode.com/problems/diameter-of-n-ary-tree/
+     * */
+    class DiameterNArrayTree{
+        class Node {
+            public int val;
+            public List<Node> children;
+            public Node() {
+                children = new ArrayList<Node>();
+            }
+            public Node(int _val) {
+                val = _val;
+                children = new ArrayList<Node>();
+            }
+            public Node(int _val,ArrayList<Node> _children) {
+                val = _val;
+                children = _children;
+            }
+        };
+
+        int diameter = 0;
+        public int diameter(Node root) {
+            maxDepth(root);
+            return diameter;
+        }
+
+        public int maxDepth(Node root){
+            if(root == null) return 0;
+            if(root.children.isEmpty()) return 1;
+            List<Integer> depths = new ArrayList<>();
+            for(Node ch : root.children){
+                int d = maxDepth(ch);
+                depths.add(d);
+            }
+            int currMax = Collections.max(depths);
+            int max = 0;
+            int secondMax = 0;
+            for(int d : depths){
+                if(max < d){
+                    secondMax = max;
+                    max = d;
+                }else if(secondMax < d){
+                    secondMax = d;
+                }
+            }
+            diameter = Math.max(diameter, max + secondMax);
+            return currMax + 1;
+        }
     }
 
-    public int maxDepth(Node root){
-        if(root == null) return 0;
-        if(root.children.isEmpty()) return 1;
-        List<Integer> depths = new ArrayList<>();
-        for(Node ch : root.children){
-            int d = maxDepth(ch);
-            depths.add(d);
-        }
-        int currMax = Collections.max(depths);
-        int max = 0;
-        int secondMax = 0;
-        for(int d : depths){
-            if(max < d){
-                secondMax = max;
-                max = d;
-            }else if(secondMax < d){
-                secondMax = d;
+    /* 1676. Lowest Common Ancestor of a Binary Tree IV
+    * https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree-iv/
+    * */
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode[] nodes) {
+        if(root == null) return null;
+
+        for(TreeNode n : nodes){
+            if(root == n){
+                return root;
             }
         }
-        diameter = Math.max(diameter, max + secondMax);
-        return currMax + 1;
-    }
-}
 
-public class B {
+        TreeNode l = lowestCommonAncestor(root.left, nodes);
+        TreeNode r = lowestCommonAncestor(root.right, nodes);
+
+        if(l != null && r == null) return l;
+        if(l == null && r != null) return r;
+        if(l != null && r != null) return root;
+
+        return null;
+    }
 
     /*
     * https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree-ii/

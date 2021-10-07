@@ -1,4 +1,3 @@
-package com.pkumar7.codeforces;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -11,19 +10,33 @@ public class Main {
     public static void main(String[] args) throws Exception {
         PrintWriter out = new PrintWriter(System.out);
         FastScanner fs = new FastScanner();
-        int t = fs.nextInt();
+       // int t = fs.nextInt();
+        int t = 1;
         while (t-- > 0) {
             int n = fs.nextInt();
-            int eggs = fs.nextInt();
-            int cb = fs.nextInt();
-            int costO = fs.nextInt();
-            int costM = fs.nextInt();
-            int costC = fs.nextInt();
-            int res = dfs(n, eggs, cb, costO, costM, costC);
+            int[] num = new int[n];
+            for (int i = 0; i < n; i++) {
+                num[i] = fs.nextInt();
+            }
+            int res = solve(num);
             out.println(res);
         }
         out.flush();
         out.close();
+    }
+
+    private static int solve(int[] num) {
+        int n = num.length;
+        int[] dp = new int[n];
+        Arrays.fill(dp, 1);
+        int res = 1;
+        for (int i = 1; i < n; i++) {
+            if(num[i] >= num[i - 1]){
+                dp[i] = dp[i - 1] + 1;
+            }
+            res = Math.max(res, dp[i]);
+        }
+        return res;
     }
 
     /*

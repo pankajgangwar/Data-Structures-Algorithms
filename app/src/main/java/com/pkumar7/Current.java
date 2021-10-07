@@ -1,23 +1,21 @@
 package com.pkumar7;
 
-import com.sun.javafx.logging.JFRInputEvent;
-
+import java.lang.reflect.Array;
 import java.math.BigInteger;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.PriorityQueue;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
 import java.util.Stack;
+
+import javafx.util.Pair;
 
 
 /**
@@ -39,11 +37,10 @@ class Current {
 
     //https://leetcode.com/problems/odd-even-jump/
     // https://leetcode.com/problems/remove-boxes/
+
     public static void main(String[] args) {
         Current current = new Current();
-        int[][] mat = new int[][]{
-                {1}, {2}, {3}
-        };
+
     }
 
     public int minSpaceWastedKResizing(int[] nums, int k) {
@@ -141,7 +138,7 @@ class Current {
         while (!stack.isEmpty()) {
             int j = stack.pop();
             sb.append(A[j].substring(A[j].length() -
-                    graph[i][j]));
+                                     graph[i][j]));
             i = j;
         }
         return sb.toString();

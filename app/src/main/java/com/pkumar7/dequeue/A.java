@@ -12,6 +12,31 @@ class A {
 
     }
 
+    /*
+     * https://leetcode.com/problems/max-value-of-equation/
+     * 1499. Max Value of Equation
+     * */
+    public int findMaxValueOfEquation(int[][] points, int k) {
+        Deque<int[]> dq = new ArrayDeque<>();
+        int res = Integer.MIN_VALUE;
+        //yi + yj + |xi - xj|
+        // (yi - xi) + (yj + xj)
+        for (int i = 0; i < points.length; i++) {
+            int[] point = points[i];
+            while(!dq.isEmpty() && point[0] - dq.peekFirst()[0] > k ){
+                dq.pollFirst();
+            }
+            if(!dq.isEmpty()){
+                res = Math.max(res, dq.peekFirst()[1] + point[1] + (point[0] - dq.peekFirst()[0]));
+            }
+            while (!dq.isEmpty() && (dq.peekLast()[1] - dq.peekLast()[0]) <= (point[1] - point[0])) {
+                dq.pollLast();
+            }
+            dq.offerLast(point);
+        }
+        return res;
+    }
+
     /* 1696. Jump Game VI
     * Similar
     * https://leetcode.com/problems/jump-game-vi/

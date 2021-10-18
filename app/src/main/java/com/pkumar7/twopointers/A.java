@@ -9,6 +9,31 @@ import java.util.List;
  */
 class A {
 
+    /*
+    * https://leetcode.com/problems/get-the-maximum-score/
+    * */
+    public int maxSum(int[] nums1, int[] nums2) {
+        int n = nums1.length;
+        int m = nums2.length;
+        int i = n - 1;
+        int j = m - 1;
+        long sum1 = 0;
+        long sum2 = 0;
+        int mod = (int)1e9 + 7;
+        while(i >= 0 || j >= 0){
+            if(i >= 0 && (j < 0 || nums1[i] > nums2[j])) {
+                sum1 += nums1[i--];
+            }else if(j >= 0 && (i < 0 || nums2[j] > nums1[i])) {
+                sum2 += nums2[j--];
+            }else {
+                sum1 = sum2 = Math.max(sum1, sum2) + nums1[i];
+                i -= 1;
+                j -= 1;
+            }
+        }
+        return (int)(Math.max(sum1, sum2) % mod);
+    }
+
     /* 1570. Dot Product of Two Sparse Vectors
     * https://leetcode.com/problems/dot-product-of-two-sparse-vectors/
     * */

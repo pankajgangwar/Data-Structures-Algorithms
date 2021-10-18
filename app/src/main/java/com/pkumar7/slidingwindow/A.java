@@ -1,5 +1,6 @@
 package com.pkumar7.slidingwindow;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -7,6 +8,25 @@ import java.util.Map;
  * Created by Pankaj Kumar on 21/August/2020
  */
 class A {
+
+    /*
+     * 1838. Frequency of the Most Frequent Element
+     * https://leetcode.com/problems/frequency-of-the-most-frequent-element/
+     * */
+    public int maxFrequency(int[] nums, int k) {
+        Arrays.sort(nums);
+        int n = nums.length;
+        int ans = 1;
+        int start = 0, end = 0;
+        int sum = 0;
+        for(; end < n; ++end){
+            sum += nums[end];
+            while ((end - start + 1) * nums[end] - sum > k) sum -= nums[start++];
+            ans = Math.max(ans, end - start + 1);
+        }
+        return ans;
+    }
+
     /*
     * 1297. Maximum Number of Occurrences of a Substring
     * https://leetcode.com/problems/maximum-number-of-occurrences-of-a-substring/

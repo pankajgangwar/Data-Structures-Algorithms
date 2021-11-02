@@ -1,6 +1,5 @@
 package com.pkumar7.bitmagic;
 
-import java.util.Arrays;
 
 /**
  * Created by Pankaj Kumar on 17/August/2020

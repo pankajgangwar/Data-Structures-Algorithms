@@ -7,6 +7,35 @@ import java.util.Queue;
 
 public class B {
 
+    /* 2059. Minimum Operations to Convert Number
+    * https://leetcode.com/problems/minimum-operations-to-convert-number/
+    * */
+    public int minimumOperations(int[] nums, int start, int goal) {
+        Queue<Integer> bfs = new LinkedList<>();
+        bfs.offer(start);
+
+        int minOp = 0;
+        HashSet<Integer> visited = new HashSet<>();
+
+        while (!bfs.isEmpty()) {
+            int size = bfs.size();
+            while (size-- > 0) {
+                int curr = bfs.poll();
+                if (curr == goal) return minOp;
+                if (curr < 0 || curr > 1000) continue;
+                if(visited.contains(curr)) continue;
+                visited.add(curr);
+                for (int i = 0; i < nums.length; i++) {
+                    bfs.offer(curr + nums[i]);
+                    bfs.offer(curr - nums[i]);
+                    bfs.offer(curr ^ nums[i]);
+                }
+            }
+            minOp += 1;
+        }
+        return -1;
+    }
+
     public int networkBecomesIdle(int[][] edges, int[] patience) {
         int n = patience.length;
         LinkedList<Integer>[] graph = new LinkedList[n];

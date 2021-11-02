@@ -1,21 +1,23 @@
 package com.pkumar7;
 
+import com.pkumar7.datastructures.ListNode;
+
 import java.lang.reflect.Array;
 import java.math.BigInteger;
-import java.util.ArrayDeque;
+import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.PriorityQueue;
+import java.util.Map;
+import java.util.Queue;
 import java.util.Stack;
-
-import javafx.util.Pair;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 
 /**
@@ -40,7 +42,6 @@ class Current {
 
     public static void main(String[] args) {
         Current current = new Current();
-
     }
 
     public int minSpaceWastedKResizing(int[] nums, int k) {

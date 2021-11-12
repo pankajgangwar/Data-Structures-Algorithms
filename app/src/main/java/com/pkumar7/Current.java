@@ -48,14 +48,6 @@ class Current {
         return 0;
     }
 
-    /*
-     * https://leetcode.com/problems/find-the-longest-substring-containing-vowels-in-even-counts/
-     * https://leetcode.com/problems/number-of-wonderful-substrings/
-     * https://leetcode.com/problems/find-longest-awesome-substring
-     * */
-    public long wonderfulSubstrings(String word) {
-        return 0;
-    }
 
     public String shortestSuperstring(String[] words) {
         LinkedList<String> list = new LinkedList<>(Arrays.asList(words));

@@ -9,6 +9,28 @@ import java.util.Map;
  */
 class A {
 
+    /* 1151. Minimum Swaps to Group All 1's Together
+     * https://leetcode.com/problems/minimum-swaps-to-group-all-1s-together/
+     * */
+    public int minSwaps(int[] arr) {
+        int count = 0;
+        for (int i = 0; i < arr.length; i++) {
+            if(arr[i] == 1) count++;
+        }
+        int zeroInWindow = 0;
+        for (int i = 0; i < count; i++) {
+            if(arr[i] == 0) zeroInWindow++;
+        }
+        int res = zeroInWindow;
+        int start = 0;
+        for (int i = count; i < arr.length ; i++) {
+            if(arr[i] == 0) zeroInWindow++;
+            if(arr[start++] == 0) zeroInWindow--;
+            res = Math.min(res, zeroInWindow);
+        }
+        return res;
+    }
+
     /*
      * 1838. Frequency of the Most Frequent Element
      * https://leetcode.com/problems/frequency-of-the-most-frequent-element/

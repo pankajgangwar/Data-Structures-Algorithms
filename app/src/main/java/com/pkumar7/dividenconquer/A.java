@@ -3,7 +3,7 @@ package com.pkumar7.dividenconquer;
 import java.util.HashSet;
 
 public class A {
-    /*
+    /* 1763. Longest Nice Substring
      * https://leetcode.com/problems/longest-nice-substring/
      * */
     public String longestNiceSubstring(String s) {

@@ -16,6 +16,23 @@ class B {
         current.findNumberOfLIS(new int[] {1, 3, 5, 4, 7});
     }
 
+    public long maxTaxiEarnings(int n, int[][] rides) {
+        Arrays.sort(rides, (a,b) -> a[0] == b[0] ? a[1] - b[1] : a[0] - b[0]);
+        long[] dp = new long[n + 1];
+        int pos = 1;
+        for (int i = 0; i < rides.length; i++) {
+            int[] ride = rides[i];
+            int start = ride[0];
+            int end = ride[1];
+            int tip = ride[2];
+            for( ; pos <= start; ++pos){
+                dp[pos] = Math.max(dp[pos], dp[pos - 1]);
+            }
+            dp[end] = Math.max(dp[end], dp[start] + end - start + tip);
+        }
+        return Arrays.stream(dp).max().getAsLong();
+    }
+
     /* 1216. Valid Palindrome III
      * https://leetcode.com/problems/valid-palindrome-iii/
      * */

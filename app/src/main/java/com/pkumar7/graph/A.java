@@ -1,5 +1,7 @@
 package com.pkumar7.graph;
 
+import com.pkumar7.graph.unionfind.UnionFind;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -226,6 +228,12 @@ class A {
      * https://leetcode.com/problems/connecting-cities-with-minimum-cost/
      * https://leetcode.com/problems/connecting-cities-with-minimum-cost/discuss/859931/JAVA-Prim's-Algorithm-with-PriorityQueue
      * */
+
+    public int minimumCost(int n, int[][] connections) {
+        //return minimumCostKruskal(n, connections);
+        return minimumCostPrims(n, connections);
+    }
+
     public int minimumCostPrims(int n, int[][] connections) {
         int i = 0, connected = 0;
         boolean[] visited = new boolean[n];
@@ -261,6 +269,30 @@ class A {
             i = curr[1];
         }
         return res;
+    }
+
+    public int minimumCostKruskals(int n, int[][] connections) {
+        Arrays.sort(connections, (a,b) -> a[2] - b[2]);
+        UnionFind unionfind = new UnionFind(n);
+        int cost = 0;
+        for(int i = 0; i < connections.length; i++) {
+            int x = connections[i][0] - 1;
+            int y = connections[i][1] - 1;
+
+            int xroot = unionfind.find(x);
+            int yroot = unionfind.find(y);
+
+            if(xroot == yroot){
+                continue;
+            }
+            unionfind.union(x, y);
+
+            cost += connections[i][2];
+        }
+        if(unionfind.getDisjointSets() != 1){
+            return -1;
+        }
+        return cost;
     }
 
     /* https://leetcode.com/problems/path-with-maximum-minimum-value/

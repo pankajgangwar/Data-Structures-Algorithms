@@ -16,6 +16,59 @@ class B {
         current.findNumberOfLIS(new int[] {1, 3, 5, 4, 7});
     }
 
+    /* 471. Encode String with Shortest Length
+     * https://leetcode.com/problems/encode-string-with-shortest-length/
+     * */
+    public String encode(String s) {
+        int n = s.length();
+        String[][] dp = new String[n][n];
+        for (int len = 1; len <= n; len++) {
+            for (int i = 0; i + len <= n; i++) {
+                int j = i + len - 1;
+                String shortest = s.substring(i, j + 1);
+                if(len < 4){
+                    dp[i][j] = shortest;
+                }else{
+                    dp[i][j] = shortest;
+                    for (int k = i; k < j ; k++) {
+                        if((dp[i][k].length() + dp[k+1][j].length()) < dp[i][j].length()){
+                            dp[i][j] = dp[i][k] + dp[k+1][j];
+                        }
+                    }
+
+                    for (int k = 0; k < shortest.length(); k++){
+                        String repeatStr = shortest.substring(0, k + 1);
+                        if(repeatStr != null
+                                && shortest.length() % repeatStr.length() == 0
+                                && shortest.replaceAll(repeatStr, "").length() == 0){
+
+                            String ss = shortest.length() / repeatStr.length() + "[" + dp[i][i + k] + "]";
+                            if(ss.length() < dp[i][j].length()){
+                                dp[i][j] = ss;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return dp[0][n - 1];
+    }
+
+    /*
+    * https://leetcode.com/problems/longest-arithmetic-subsequence-of-given-difference/
+    * 1218. Longest Arithmetic Subsequence of Given Difference
+    * */
+    public int longestSubsequence(int[] arr, int difference) {
+        HashMap<Integer,Integer> map = new HashMap<>();
+        int result = 1;
+        for (int a : arr) {
+            int prev = map.getOrDefault(a - difference, 0);
+            map.put(a, 1 + prev);
+            result = Math.max(result, map.get(a));
+        }
+        return result;
+    }
+
     public long maxTaxiEarnings(int n, int[][] rides) {
         Arrays.sort(rides, (a,b) -> a[0] == b[0] ? a[1] - b[1] : a[0] - b[0]);
         long[] dp = new long[n + 1];

@@ -17,6 +17,34 @@ import java.util.Set;
  * Created by Pankaj Kumar on 14/August/2020
  */
 class A {
+
+    /*
+    https://www.hackerrank.com/challenges/minimum-swaps-2/problem
+    */
+    static int minimumSwapsToSortArray(int[] arr) {
+        int n = arr.length;
+        int[][] arrWithIdx = new int[arr.length][2];
+        for (int i = 0; i < arr.length; i++) {
+            arrWithIdx[i] = new int[]{arr[i], i};
+        }
+        Arrays.sort(arrWithIdx, (a,b) -> a[0] - b[0]);
+
+        boolean[] visited = new boolean[n];
+        int minSwaps = 0;
+        for (int i = 0; i < arrWithIdx.length; i++) {
+            int startIdx = arrWithIdx[i][1];
+            if(visited[startIdx]) continue;
+            int cycleLen = 0;
+            while (!visited[startIdx]){
+                visited[startIdx] = true;
+                cycleLen += 1;
+                startIdx = arrWithIdx[startIdx][1];
+            }
+            minSwaps += (cycleLen - 1);
+        }
+        return minSwaps;
+    }
+
     /*
     * https://leetcode.com/problems/find-center-of-star-graph/
     * */

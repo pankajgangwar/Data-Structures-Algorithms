@@ -4,6 +4,65 @@ import java.util.Stack;
 
 public class B {
 
+    /*
+    * https://leetcode.com/problems/build-binary-expression-tree-from-infix-expression/
+    * 1597. Build Binary Expression Tree From Infix Expression
+    * https://en.wikipedia.org/wiki/Shunting_yard_algorithm
+    * */
+    class NodeExp {
+        char val;
+        NodeExp left;
+        NodeExp right;
+        NodeExp() {
+            this.val = ' ';
+        }
+        NodeExp(char val) {
+            this.val = val;
+        }
+        NodeExp(char val, NodeExp left, NodeExp right) {
+            this.val = val;
+            this.left = left;
+            this.right = right;
+        }
+    }
+
+    public NodeExp expTree(String s) {
+        Stack<NodeExp> nodes = new Stack<>();
+        Stack<Character> ops  = new Stack<>();
+        for (char ch : s.toCharArray()) {
+            if(Character.isDigit(ch)){
+                nodes.push(new NodeExp(ch));
+            }else if(ch == '('){
+                ops.push(ch);
+            }else if(ch == ')'){
+                while (ops.peek() != '('){
+                    nodes.push(buildNode(ops.pop(), nodes.pop(),nodes.pop()));
+                }
+                ops.pop();
+            }else {
+                while (!ops.isEmpty() && compare(ops.peek(), ch)){
+                    nodes.push(buildNode(ops.pop(), nodes.pop(), nodes.pop()));
+                }
+                ops.push(ch);
+            }
+        }
+        while (!ops.isEmpty()){
+            nodes.push(buildNode(ops.pop(), nodes.pop(), nodes.pop()));
+        }
+        return nodes.peek();
+    }
+
+    private boolean compare(char ch1, char ch2) {
+        if(ch1 == '(' || ch2 == ')') {
+            return false;
+        }
+        return ch1 == '*' || ch1 == '/' || ch2 == '+' || ch2 == '-';
+    }
+
+    private NodeExp buildNode(Character ch, NodeExp left, NodeExp right) {
+        return new NodeExp(ch, right, left);
+    }
+
     /* 1628. Design an Expression Tree With Evaluate Function
     * https://leetcode.com/problems/design-an-expression-tree-with-evaluate-function/
     * */

@@ -9,59 +9,95 @@ import java.util.Deque;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Queue;
 
-/* 1522. Diameter of N-Ary Tree
-* https://leetcode.com/problems/diameter-of-n-ary-tree/
-* */
-class DiameterNArrayTree{
-    class Node {
-        public int val;
-        public List<Node> children;
-        public Node() {
-            children = new ArrayList<Node>();
-        }
-        public Node(int _val) {
-            val = _val;
-            children = new ArrayList<Node>();
-        }
-        public Node(int _val,ArrayList<Node> _children) {
-            val = _val;
-            children = _children;
-        }
-    };
+public class B {
 
-    int diameter = 0;
-    public int diameter(Node root) {
-        maxDepth(root);
-        return diameter;
+    /* 1522. Diameter of N-Ary Tree
+     * https://leetcode.com/problems/diameter-of-n-ary-tree/
+     * */
+    class DiameterNArrayTree{
+        class Node {
+            public int val;
+            public List<Node> children;
+            public Node() {
+                children = new ArrayList<Node>();
+            }
+            public Node(int _val) {
+                val = _val;
+                children = new ArrayList<Node>();
+            }
+            public Node(int _val,ArrayList<Node> _children) {
+                val = _val;
+                children = _children;
+            }
+        };
+
+        int diameter = 0;
+        public int diameter(Node root) {
+            maxDepth(root);
+            return diameter;
+        }
+
+        public int maxDepth(Node root){
+            if(root == null) return 0;
+            if(root.children.isEmpty()) return 1;
+            List<Integer> depths = new ArrayList<>();
+            for(Node ch : root.children){
+                int d = maxDepth(ch);
+                depths.add(d);
+            }
+            int currMax = Collections.max(depths);
+            int max = 0;
+            int secondMax = 0;
+            for(int d : depths){
+                if(max < d){
+                    secondMax = max;
+                    max = d;
+                }else if(secondMax < d){
+                    secondMax = d;
+                }
+            }
+            diameter = Math.max(diameter, max + secondMax);
+            return currMax + 1;
+        }
     }
 
-    public int maxDepth(Node root){
-        if(root == null) return 0;
-        if(root.children.isEmpty()) return 1;
-        List<Integer> depths = new ArrayList<>();
-        for(Node ch : root.children){
-            int d = maxDepth(ch);
-            depths.add(d);
+    /*
+     * https://leetcode.com/problems/longest-path-with-different-adjacent-characters/
+     * 2246. Longest Path With Different Adjacent Characters
+     * */
+    int res = 0;
+    public int longestPath(int[] parent, String s) {
+        int n = parent.length;
+        LinkedList<Integer>[] tree = new LinkedList[n];
+
+        for (int i = 0; i < n; i++) {
+            tree[i] = new LinkedList<>();
         }
-        int currMax = Collections.max(depths);
-        int max = 0;
-        int secondMax = 0;
-        for(int d : depths){
-            if(max < d){
-                secondMax = max;
-                max = d;
-            }else if(secondMax < d){
-                secondMax = d;
+        for (int i = 1; i < n; i++) {
+            int p = parent[i];
+            tree[p].add(i);
+        }
+        dfs(tree, 0, s);
+        return res;
+    }
+
+    public int dfs(LinkedList<Integer>[] tree, int root, String s){
+        PriorityQueue<Integer> maxHeap = new PriorityQueue<>((a, b) -> b -a);
+        for(int child : tree[root]){
+            int len = dfs(tree, child, s);
+            if(s.charAt(root) != s.charAt(child)){
+                maxHeap.offer(len);
             }
         }
-        diameter = Math.max(diameter, max + secondMax);
-        return currMax + 1;
-    }
-}
+        int max = maxHeap.isEmpty() ? 0 : maxHeap.poll();
+        int secondMax = maxHeap.isEmpty() ? 0 : maxHeap.poll();
 
-public class B {
+        res = Math.max(res, 1 + max + secondMax);
+        return max + 1;
+    }
 
     /*
     * https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree-ii/

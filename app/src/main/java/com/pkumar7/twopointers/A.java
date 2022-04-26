@@ -148,6 +148,10 @@ class A {
         return res;
     }
 
+    public static void main(String[] args) {
+        A a = new A();
+        a.uniqueLetterString("XAX");
+    }
     /*
     828. Count Unique Characters of All Substrings of a Given String
     https://leetcode.com/problems/count-unique-characters-of-all-substrings-of-a-given-string/
@@ -169,6 +173,29 @@ class A {
             res = (res + (n - index[i][1]) * (index[i][1] - index[i][0]) % mod ) % mod;
         }
         return res;
+    }
+
+    public int uniqueLetterStringStr(String s) {
+        int n = s.length();
+        ArrayList<Integer>[] list = new ArrayList[26];
+        for (int i = 0; i < 26; i++) {
+            list[i] = new ArrayList<>();
+        }
+        for (int i = 0; i < n; i++) {
+            list[s.charAt(i)].add(i);
+        }
+        long result = 0, mod = (int)1e9+7;;
+        for (int i = 0; i < 26; i++) {
+            int size = list[i].size();
+            for (int j = 0; j < size; j++) {
+                int currIndex = list[i].get(j);
+                int left = j == 0 ? -1 : list[i].get(j - 1);
+                int right = (j == size - 1) ? n : list[i].get(j + 1);
+                result += (long) (currIndex - left) * (right - currIndex);
+                result %= mod;
+            }
+        }
+        return (int)result;
     }
 
     /* 977. Squares of a Sorted Array

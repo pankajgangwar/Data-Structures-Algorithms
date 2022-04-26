@@ -9,6 +9,70 @@ import java.util.Queue;
 public class B {
 
     /*
+     * https://leetcode.com/problems/maximum-candies-allocated-to-k-children/
+     * 2226. Maximum Candies Allocated to K Children
+     * */
+    public int maximumCandies(int[] candies, long k) {
+        int low = 0;
+        int high = 10_000_000;
+        while (low < high){
+            int mid = (low + high + 1) / 2;
+            if(canDistribute(candies, mid, k)){
+                low = mid;
+            }else{
+                high = mid - 1;
+            }
+        }
+        return (int)low;
+    }
+
+    public boolean canDistribute(int[] candies, long max, long k){
+        int totalPiles = 0;
+        for(int c : candies){
+            totalPiles += (c / max);
+        }
+        return (totalPiles >= k);
+    }
+
+    /*
+    * https://leetcode.com/problems/maximum-total-beauty-of-the-gardens/
+    * 2234. Maximum Total Beauty of the Gardens
+    * */
+    public long maximumBeauty(int[] flowers, long newFlowers, int target, int full, int partial) {
+        int n = flowers.length;
+
+        Arrays.sort(flowers);
+        long[] cost = new long[n];
+        for (int i = 1; i < n ; i++) {
+            flowers[i] = Math.min(flowers[i], target);
+            cost[i] = cost[i - 1] + (long) i * ( flowers[i] - flowers[i - 1]);
+        }
+
+        if(flowers[0] == target) {
+            return (long) full * flowers.length;
+        }
+
+        if(newFlowers >= cost[n - 1] + (long) (target - flowers[n - 1]) * n){
+            return Math.max((long) full * n , (long) full * (n - 1) + (long)partial * (target - 1));
+        }
+
+        int j = n - 1;
+        while (flowers[j] == target) j--;
+
+        long ans = 0, left = newFlowers;
+        while (left >= 0){
+            int idx = Arrays.binarySearch(cost, 0, j + 1, left);
+            if(idx < 0) idx = ~idx - 1;
+
+            long bar = flowers[idx] + (left - cost[idx]) / (idx + 1);
+            ans = Math.max(ans, bar * partial + (long) full * (n - j - 1));
+            left -= (target - flowers[j]);
+            j -= 1;
+        }
+        return ans;
+    }
+
+    /*
     * 1891. Cutting Ribbons
     * https://leetcode.com/problems/cutting-ribbons/
     * */

@@ -1,9 +1,27 @@
 package com.pkumar7.prefixsum;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class A {
+
+    /*
+     * https://leetcode.com/problems/grid-game/
+     * 2017. Grid Game
+     * */
+    public long gridGame(int[][] grid) {
+        long top = Arrays.stream(grid[0]).asLongStream().sum();
+        long bottom = 0;
+        long res = Long.MAX_VALUE;
+        for (int i = 0; i < grid[0].length; i++) {
+            top -= grid[0][i];
+            res = Math.min(res, Math.max(top, bottom));
+            bottom += grid[1][i];
+        }
+        return res;
+    }
+
 
     /* 1177. Can Make Palindrome from Substring
      * https://leetcode.com/problems/can-make-palindrome-from-substring/

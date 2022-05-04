@@ -34,8 +34,9 @@ class AugustW1 {
     public static void main(String[] args) {
         AugustW1 w1 = new AugustW1();
         //boolean status = w1.canConvertString("atmtxzjkz","tvbtjhvjd", 35);
-        int status = w1.findMaximumXOR(new int[]{3,10,5,25,2,8});
-        System.out.println(status);
+        //int status = w1.findMaximumXOR(new int[]{3,10,5,25,2,8});
+        //System.out.println(status);
+        w1.sumSubarrayMins(new int[]{3,1,2,4});
     }
 
     /*
@@ -588,6 +589,32 @@ class AugustW1 {
         return min == Integer.MAX_VALUE ? 0 : min;
     }
 
+    public long subArrayRanges(int[] nums) {
+        int n = nums.length;
+        long res = 0;
+        int j, k;
+        Stack<Integer> s = new Stack<>();
+        for (int i = 0; i <= n; i++) {
+            while (!s.isEmpty() && nums[s.peek()] > ( i== n ? Integer.MIN_VALUE : nums[i])){
+                j = s.pop();
+                k = s.isEmpty() ? -1 : s.peek();
+                res -= (long) nums[j] * (i - j) * (j - k);
+            }
+            s.push(i);
+        }
+
+        s.clear();
+        for (int i = 0; i <= n; i++) {
+            while (!s.isEmpty() && nums[s.peek()] < ( i == n ? Integer.MAX_VALUE : nums[i])){
+                j = s.pop();
+                k = s.isEmpty() ? -1 : s.peek();
+                res += (long) nums[j] * (i - j) *( j - k);
+            }
+            s.push(i);
+        }
+        return res;
+    }
+
     /* 
     907. Sum of Subarray Minimums
     https://leetcode.com/problems/sum-of-subarray-minimums/ 
@@ -612,7 +639,10 @@ class AugustW1 {
             left[i] = i + 1;
             right[i] = n - i;
         }
-
+        // 1 2 3 4 5 6 5 4 3 2 1
+        // st : 1 2 3 4 5
+        // 1 2 3
+        // 0 + 1 + 1 + 2
         for(int i = 0; i < n; i++) {
             while(!stk_p.isEmpty() && stk_p.peek()[0] > arr[i]) {
                 stk_p.pop();
@@ -631,6 +661,10 @@ class AugustW1 {
 
         int ans = 0;
         int mod = (int)1e9 + 7;
+
+        System.out.println(Arrays.toString(left));
+        System.out.println(Arrays.toString(right));
+
         for(int i = 0; i < n; i++){
             ans = (ans + arr[i] * left[i] * right[i]) % mod;
         }

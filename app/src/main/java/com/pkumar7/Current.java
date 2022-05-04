@@ -1,16 +1,30 @@
 package com.pkumar7;
 
+import com.pkumar7.datastructures.ListNode;
+
+import org.jetbrains.annotations.NotNull;
+
 import java.math.BigInteger;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Objects;
+import java.util.PriorityQueue;
+import java.util.Set;
 import java.util.Stack;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
+
+import javax.print.attribute.IntegerSyntax;
 
 
 /**
@@ -32,10 +46,10 @@ class Current {
 
     //https://leetcode.com/problems/odd-even-jump/
     // https://leetcode.com/problems/remove-boxes/
+
     public static void main(String[] args) {
         Current current = new Current();
         int[] arr = new int[]{1,2,3};
-
         long ans = getcount(new int[]{2,1,3});
         System.out.println(ans);
 
@@ -247,16 +261,237 @@ class Current {
         return length;
     }
 
-    public int minSpaceWastedKResizing(int[] nums, int k) {
+    public int minDeletion(int[] nums) {
+        int ans = 0;
+        for (int i = 0; i < nums.length -1 ; i++) {
+            if(nums[i] == nums[i + 1] && (i - ans) % 2 == 0){
+                ans += 1;
+            }
+        }
+        if((nums.length - ans) % 2 == 1){
+            ans += 1;
+        }
+        return ans;
+    }
+
+
+    public int subarraysWithMoreZerosThanOnes(int[] nums) {
+        int mod = (int)1e9 + 7;
         return 0;
     }
 
-    /*
-     * https://leetcode.com/problems/find-the-longest-substring-containing-vowels-in-even-counts/
-     * https://leetcode.com/problems/number-of-wonderful-substrings/
-     * https://leetcode.com/problems/find-longest-awesome-substring
-     * */
-    public long wonderfulSubstrings(String word) {
+    public List<List<Integer>> findWinners(int[][] matches) {
+        HashMap<Integer, Integer> indegree = new HashMap<>();
+        for(int[] match : matches){
+            int winner = match[0];
+            int loser = match[1];
+            indegree.put(loser, indegree.getOrDefault(loser, 0) + 1);
+            indegree.put(winner, indegree.getOrDefault(winner, 0));
+        }
+
+        List<List<Integer>> res = new ArrayList<>();
+        List<Integer> a = new ArrayList<>();
+        List<Integer> b = new ArrayList<>();
+        for(Map.Entry<Integer, Integer> e : indegree.entrySet()){
+            int player = e.getKey();
+            int timesLoser = e.getValue();
+            if(timesLoser == 0){
+                a.add(player);
+            }else if(timesLoser == 1){
+                b.add(player);
+            }
+        }
+        Collections.sort(a);
+        Collections.sort(b);
+        res.add(a);
+        res.add(b);
+        return res;
+    }
+
+    public int maximumTop(int[] nums, int k) {
+        int n = nums.length;
+        int max = Integer.MIN_VALUE;
+        if(n == 1 && k % 2 == 1) return -1;
+        for (int i = 0; i < Math.min(n, k - 1); i++){
+            max = Math.max(max, nums[i]);
+        }
+        if(k < n){
+            max = Math.max(max, nums[k]);
+        }
+        return max;
+    }
+
+    public List<Integer> replaceNonCoprimes(int[] nums) {
+        int n = nums.length;
+        LinkedList<Integer> list = new LinkedList<>();
+        for (int i = 0; i < n; i++) {
+            int a = nums[i];
+            while (true){
+                int last = list.isEmpty() ? 1 : list.peekLast();
+                int x = __gcd(last,a);
+                if(x == 1) break;
+                a *= list.pollLast() / x;
+            }
+            list.add(a);
+        }
+        return list;
+    }
+
+
+    static int __gcd(int a, int b) {
+        return b > 0 ? __gcd(b, a % b) : a;
+    }
+
+    public long minimumTime(int[] time, int totalTrips) {
+        long low = 1;
+        long high = (long)1e14;
+        long minTime = 1;
+        while (low <= high){
+            long mid = (low + high) / 2;
+            if(canCompleteTrips(time, totalTrips, mid)){
+                minTime = mid;
+                high = mid - 1;
+            }else{
+                low = mid + 1;
+            }
+        }
+        return minTime;
+    }
+
+    public boolean canCompleteTrips(int[] time, long totalTrips, long endTime){
+        long currTripCount = 0;
+        for (int t : time) {
+            currTripCount += (endTime / (long)t);
+        }
+        return currTripCount >= totalTrips;
+    }
+
+    public int minSteps(String s, String t) {
+        int[] a = new int[26];
+        int[] b = new int[26];
+        for (int i = 0; i < s.length(); i++) {
+            a[(s.charAt(i) - 'a')] += 1;
+        }
+        for (int i = 0; i < t.length(); i++) {
+            b[(t.charAt(i) - 'a')] += 1;
+        }
+        int steps = 0;
+        for (int i = 0; i < a.length; i++) {
+            steps += Math.abs(a[i] - b[i]);
+        }
+        return steps;
+    }
+
+    public String subStrHash(String s, int power, int modulo, int k, int hashValue) {
+        for (int i = 0; i < s.length() && i + k <= s.length(); i++) {
+            String sub = s.substring(i, i + k);
+            int hash = computeHash(sub, power, modulo, k);
+            if(hash == hashValue){
+                return sub;
+            }
+        }
+        return s.substring(0, k + 1);
+    }
+
+    private int computeHash(String sub, int power, int modulo, int k) {
+        double hash = 0;
+        for (int i = 0; i < sub.length(); i++) {
+            int charIdx = sub.charAt(i) - 'a' + 1;
+            double currHash = (charIdx * Math.pow(power, i));
+            currHash = currHash % modulo;
+            hash = hash + currHash;
+            hash = hash % modulo;
+        }
+        return (int)hash;
+    }
+
+    public List<Integer> maxScoreIndices(int[] nums) {
+        int n = nums.length;
+        int[] zeroFromLeft = new int[n];
+        int[] oneFromRight = new int[n];
+        if(nums[0] == 0 ){
+            zeroFromLeft[0] = 1;
+        }
+        if(nums[n - 1] == 1){
+            oneFromRight[n - 1] = 1;
+        }
+        for (int i = 1; i < n; i++) {
+            if(nums[i] == 0){
+                zeroFromLeft[i] = zeroFromLeft[i - 1] + 1;
+            }else{
+                zeroFromLeft[i] = zeroFromLeft[i - 1];
+            }
+        }
+        for (int i = n - 2; i >= 0; i--) {
+            if(nums[i] == 1){
+                oneFromRight[i] = oneFromRight[i + 1] + 1;
+            }else{
+                oneFromRight[i] = oneFromRight[i + 1];
+            }
+        }
+        TreeMap<Integer, List<Integer>> count = new TreeMap<>(Collections.reverseOrder());
+        for (int i = 0; i <= n; i++) {
+            int sum = 0;
+            if(i == n){
+                sum = zeroFromLeft[i -1];
+            }else if(i > 0){
+                sum = oneFromRight[i] + zeroFromLeft[i - 1];
+            }else{
+                sum = oneFromRight[i];
+            }
+            count.putIfAbsent(sum, new ArrayList<>());
+            count.get(sum).add(i);
+        }
+        int max = count.firstKey();
+        List<Integer> res = count.get(max);
+        return res;
+    }
+
+    public int maximumGood(int[][] statements) {
+        HashMap<Integer, int[]> reviewsMap = new HashMap<>();
+        for (int i = 0; i < statements.length; i++) {
+            for (int j = 0; j < statements[i].length; j++) {
+                if(i == j) continue;
+                int statement = statements[i][j];
+                int[] review = reviewsMap.getOrDefault(j, new int[]{0,0});
+                if(statement == 0){ // bad
+                    review[1] += 1;
+                }else if(statement == 1){ // good
+                    review[0] += 1;
+                }
+                reviewsMap.put(j, review);
+            }
+        }
+        int count = 0;
+        for (Integer person : reviewsMap.keySet()) {
+            int[] reviews = reviewsMap.get(person);
+            if(reviews[0] > reviews[1]){
+                count += 1;
+            }
+        }
+        return count;
+    }
+
+    public static List<List<Integer>> subsets(int[] nums) {
+        List<List<Integer>> result = new ArrayList<>();
+        List<Integer> mNum = new ArrayList<>();
+        for (int ele : nums) {
+            mNum.add(ele);
+        }
+        subsetsRec(result, new ArrayList<>(), nums, 0);
+        return result;
+    }
+
+    public static void subsetsRec(List<List<Integer>> result, List<Integer> tempList, int[] nums, int start) {
+        result.add(new ArrayList<>(tempList));
+        for (int i = start; i < nums.length; i++) {
+            tempList.add(nums[i]);
+            subsetsRec(result, tempList, nums, i + 1);
+            tempList.remove(tempList.size() - 1);
+        }
+    }
+
+    public int minSpaceWastedKResizing(int[] nums, int k) {
         return 0;
     }
 
@@ -342,7 +577,7 @@ class Current {
         while (!stack.isEmpty()) {
             int j = stack.pop();
             sb.append(A[j].substring(A[j].length() -
-                    graph[i][j]));
+                                     graph[i][j]));
             i = j;
         }
         return sb.toString();

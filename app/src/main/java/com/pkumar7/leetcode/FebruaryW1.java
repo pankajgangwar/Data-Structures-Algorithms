@@ -440,10 +440,28 @@ public class FebruaryW1 {
         return result;
     }
 
+    public static void main(String[] args) {
+        FebruaryW1 w1 = new FebruaryW1();
+        //int val = w1.evaluate(new StringBuilder("-45+45+15+10"), 0);
+        //int val = w1.shortestSubarray(new int[]{17,85,93,-45,-21}, 150);
+
+        //int val = w1.minSetSize(new int[]{2,28,92,30,100,52,28,48,91,27,66,19,11,53,91,95,74,51,65,65,96,81,
+        //        21,55,98,3,2,89,99,57,78,34,50,2,57,76,23,90,89,36,53,22,73,59,95,45});
+        //w1.isMatch("axb","a*****b****c");
+        //w1.findShortestSubArray(new int[]{1,2,2,3,1});
+        //w1.findMaxAverageII(new int[]{1,3,1,4,2}, 4);
+        //w1.isOneBitCharacter(new int[]{1,0,1,1,0});
+        //w1.minJumps(new int[]{100,-23,-23,404,100,23,23,23,3,404});
+
+        w1.shortestSubarray(new int[]{84,-37,32,40,95}, 167);
+
+        //System.out.println("val = " + val);
+    }
+
     /* https://leetcode.com/problems/shortest-subarray-with-sum-at-least-k/  */
     public int shortestSubarray(int[] arr, int k) {
         int n = arr.length;
-        int[] prefixSum = new int[n+1];
+        long[] prefixSum = new long[n+1];
         int res = n + 1;
 
         for(int i = 0; i < n; i++) {
@@ -461,7 +479,6 @@ public class FebruaryW1 {
         }
         return res <= n ? res : -1;
     }
-
 
 
     /* https://leetcode.com/problems/two-sum-bsts/ */
@@ -1170,23 +1187,6 @@ class FizzBuzz {
         return angle; 
     } 
 
-
-
-    public static void main(String[] args) {
-        FebruaryW1 w1 = new FebruaryW1();
-        //int val = w1.evaluate(new StringBuilder("-45+45+15+10"), 0);
-        //int val = w1.shortestSubarray(new int[]{17,85,93,-45,-21}, 150);
-
-        //int val = w1.minSetSize(new int[]{2,28,92,30,100,52,28,48,91,27,66,19,11,53,91,95,74,51,65,65,96,81,
-        //        21,55,98,3,2,89,99,57,78,34,50,2,57,76,23,90,89,36,53,22,73,59,95,45});
-        //w1.isMatch("axb","a*****b****c");
-        //w1.findShortestSubArray(new int[]{1,2,2,3,1});
-        //w1.findMaxAverageII(new int[]{1,3,1,4,2}, 4);
-        //w1.isOneBitCharacter(new int[]{1,0,1,1,0});
-        w1.minJumps(new int[]{100,-23,-23,404,100,23,23,23,3,404});
-
-        //System.out.println("val = " + val);
-    }
 
 
     /* https://leetcode.com/problems/basic-calculator-ii/

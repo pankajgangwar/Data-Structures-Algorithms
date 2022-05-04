@@ -9,6 +9,91 @@ import java.util.HashSet;
  * Created by Pankaj Kumar on 14/November/2020
  */
 class A {
+    /*
+    * https://leetcode.com/problems/reverse-nodes-in-even-length-groups/
+    * 2074. Reverse Nodes in Even Length Groups
+    * */
+    public ListNode reverseEvenLengthGroups(ListNode head) {
+        int currLen = 1;
+        ListNode temp = head;
+        ListNode prev = head;
+        int remainingNodes = findLength(head);
+        while (temp != null){
+            if(currLen % 2 == 0 && remainingNodes >= currLen){
+                prev.next = reverseNodes(currLen, temp);
+                temp = prev.next;
+                int advance = currLen;
+                while (advance-- > 0 && temp != null){
+                    prev = temp;
+                    temp = temp.next;
+                    remainingNodes -= 1;
+                }
+            }else{
+                if(currLen > remainingNodes && remainingNodes % 2 == 0){
+                    prev.next = reverseNodes(currLen, temp);
+                    temp = prev.next;
+                }
+                int advance = currLen;
+                while (advance-- > 0 && temp != null){
+                    prev = temp;
+                    temp = temp.next;
+                    remainingNodes -= 1;
+                }
+            }
+            currLen += 1;
+        }
+        return head;
+    }
+
+    private int findLength(ListNode temp){
+        int count = 0;
+        while (temp != null){
+            temp = temp.next;
+            count += 1;
+        }
+        return count;
+    }
+
+    private ListNode reverseNodes(int len, ListNode head) {
+        ListNode fastPtr = head;
+        int i = 0;
+        for(; i < len && fastPtr != null; i++){
+            fastPtr = fastPtr.next;
+        }
+        while (i-- > 0) {
+            ListNode next = head.next;
+            head.next = fastPtr;
+            fastPtr = head;
+            head = next;
+        }
+        head = fastPtr;
+        return head;
+    }
+
+    ListNode arrayToLinkedList(int arr[]) {
+        int n = arr.length;
+        ListNode root = null;
+        for (int i = 0; i < n; i++){
+            root = insert(root, arr[i]);
+        }
+        return root;
+    }
+
+    ListNode insert(ListNode root, int item) {
+        ListNode temp = new ListNode(item);
+        ListNode ptr;
+        temp.next = null;
+
+        if (root == null)
+            root = temp;
+        else {
+            ptr = root;
+            while (ptr.next != null)
+                ptr = ptr.next;
+            ptr.next = temp;
+        }
+        return root;
+    }
 
     /* 92. Reverse Linked List II
     * https://leetcode.com/problems/reverse-linked-list-ii/

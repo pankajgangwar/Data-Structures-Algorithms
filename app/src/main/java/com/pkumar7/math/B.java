@@ -1,9 +1,74 @@
 package com.pkumar7.math;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 public class B {
+
+    /*
+     * https://leetcode.com/problems/count-lattice-points-inside-a-circle/
+     * 2249. Count Lattice Points Inside a Circle
+     * */
+    public int countLatticePoints(int[][] circles) {
+        HashSet<String> points = new HashSet<>();
+        for(int[] c : circles){
+            int x = c[0];
+            int y = c[1];
+            int r = c[2];
+            for(int i = x - r; i <= x + r; i++){
+                for(int j = y - r; j <= y+r; j++){
+                    if((x-i)*(x-i) + (y-j)*(y-j) <= r*r){
+                        String coord = i + ","+j;
+                        points.add(coord);
+                    }
+                }
+            }
+        }
+        return points.size();
+    }
+
+    /*
+     * 1828. Queries on Number of Points Inside a Circle
+     * https://leetcode.com/problems/queries-on-number-of-points-inside-a-circle/
+     * */
+    public int[] countPoints(int[][] points, int[][] queries) {
+        int[] res = new int[queries.length];
+        for (int i = 0; i < queries.length; i++) {
+            int[] q = queries[i];
+            int x = q[0], y = q[1], r = q[2];
+            int count = 0;
+            for (int[] p : points) {
+                int xx = (int)Math.pow((x-p[0]), 2);
+                int yy = (int)Math.pow((y-p[1]), 2);
+                if(xx + yy <= r*r){
+                    count += 1;
+                }
+            }
+            res[i] = count;
+        }
+        return res;
+    }
+
+    /*
+    https://leetcode.com/problems/the-kth-factor-of-n/
+    */
+    public int kthFactor(int n, int k) {
+        int sqrt = (int)Math.sqrt(n);
+
+        for(int i = 1; i <= sqrt; i++) {
+            if(n % i == 0 && --k == 0) {
+                return i;
+            }
+        }
+        for (int i = sqrt; i >=0 ; i--) {
+            if(i * i == n) continue;
+            if(n % i == 0 && --k == 0){
+                return n / i;
+            }
+        }
+        return -1;
+    }
 
     class DetectSquares {
         HashMap<Integer, LinkedList<Integer>> xMap = new HashMap<>();

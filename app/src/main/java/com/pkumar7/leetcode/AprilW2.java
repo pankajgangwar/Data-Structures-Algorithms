@@ -27,7 +27,8 @@ public class AprilW2 {
     public static void main(String[] args) {
         AprilW2 w2 = new AprilW2();
         //w2.stringMatching(new String[]{"leetcoder","leetcode","od","hamlet","am"});
-        w2.entityParser("&amp; is an HTML entity but &ambassador; is not.");
+        //w2.entityParser("&amp; is an HTML entity but &ambassador; is not.");
+        w2.dailyTemperatures(new int[]{73,74,75,71,69,72,76,73});
     }
 
     /* https://leetcode.com/problems/find-permutation/ */

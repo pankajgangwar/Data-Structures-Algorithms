@@ -10,6 +10,106 @@ import java.util.PriorityQueue;
 
 public class B {
 
+    /*
+     * https://leetcode.com/problems/furthest-building-you-can-reach/
+     * 1642. Furthest Building You Can Reach
+     * */
+    public int furthestBuilding(int[] heights, int bricks, int ladders) {
+        PriorityQueue<Integer> pq = new PriorityQueue<>();
+        int n = heights.length;
+        for (int i = 0; i < n - 1; i++) {
+            int d = heights[i + 1] - heights[i];
+            if(d > 0){
+                pq.offer(d);
+                if(!pq.isEmpty() && pq.size() > ladders){
+                    bricks -= pq.poll();
+                }
+            }
+            if(bricks < 0){
+                return i;
+            }
+        }
+        return n - 1;
+    }
+
+    /* 2102. Sequentially Ordinal Rank Tracker
+     * https://leetcode.com/problems/sequentially-ordinal-rank-tracker/
+     * */
+    class SORTracker {
+
+        int query = 1;
+        PriorityQueue<Item> top = new PriorityQueue<>((a,b) -> a.score == b.score ? -a.name.compareTo(b.name) : a.score - b.score);
+        PriorityQueue<Item> bottom = new PriorityQueue<>((a,b) -> a.score == b.score ? a.name.compareTo(b.name) : -a.score + b.score);
+        public SORTracker() {
+
+        }
+
+        public void add(String name, int score) {
+            top.offer(new Item(score,name));
+            if(top.size() >= query){
+                bottom.offer(top.poll());
+            }
+        }
+
+        public String get() {
+            query += 1;
+            Item it = bottom.poll();
+            top.offer(it);
+            return it.name;
+        }
+    }
+
+    class Item{
+        int score;
+        String name;
+        public Item(int score, String name){
+            this.score = score;
+            this.name = name;
+        }
+    }
+
+    /*
+    * https://leetcode.com/problems/maximum-product-after-k-increments/
+    * 2233. Maximum Product After K Increments
+    * */
+    public int maximumProduct(int[] nums, int k) {
+        int mod = 1000_000_000 + 7;
+        if(k == 0){
+            int prod = 1;
+            for(int a : nums){
+                prod *= a;
+                prod %= mod;
+            }
+            System.out.println(prod);
+            return prod;
+        }
+        int n = nums.length;
+        if(n == 1){
+            nums[0] += k;
+            return nums[0] % mod;
+        }
+        PriorityQueue<Long> minHeap = new PriorityQueue<>();
+        for(int a : nums){
+            minHeap.offer((long)a);
+        }
+        while (k > 0){
+            long a = minHeap.poll();
+            long b = minHeap.poll();
+            long incr = Math.min(k, b - a + 1);
+            a += incr;
+            k -= incr;
+            minHeap.offer(a);
+            minHeap.offer(b);
+        }
+        long prod = 1l;
+        while (!minHeap.isEmpty()){
+            long a = minHeap.poll();
+            prod *= a;
+            prod = prod % mod;
+        }
+        return (int)prod;
+    }
+
     /* 1942. The Number of the Smallest Unoccupied Chair
      * https://leetcode.com/problems/the-number-of-the-smallest-unoccupied-chair/
      * */

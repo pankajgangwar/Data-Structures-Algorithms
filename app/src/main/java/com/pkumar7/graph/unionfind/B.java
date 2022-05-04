@@ -5,15 +5,72 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
-
-import javax.security.auth.login.AccountException;
 
 public class B {
 	public static void main(String[] args) {
 
+	}
+
+	/*
+	* https://leetcode.com/problems/find-critical-and-pseudo-critical-edges-in-minimum-spanning-tree/
+	* 1489. Find Critical and Pseudo-Critical Edges in Minimum Spanning Tree
+	* */
+	public List<List<Integer>> findCriticalAndPseudoCriticalEdges(int n, int[][] edges) {
+		HashMap<int[], Integer> map = new HashMap<>();
+		for (int i = 0; i < edges.length; i++) {
+			map.putIfAbsent(edges[i], i);
+		}
+		Arrays.sort(edges, Comparator.comparingInt(a -> a[2]));
+		int minCost = buildMst(n, edges, null, null);
+
+		List<Integer> criticalEdges = new ArrayList<>();
+		List<Integer> pseudoCriticalEdges = new ArrayList<>();
+
+		for (int i = 0; i < edges.length; i++) {
+			int[] curr = edges[i];
+			int criticalCost = buildMst(n, edges, curr, null);
+			if(criticalCost > minCost){
+				criticalEdges.add(map.get(curr));
+			}else{
+				int pseudoCost = buildMst(n, edges, null, curr);
+				if(pseudoCost == minCost){
+					pseudoCriticalEdges.add(map.get(curr));
+				}
+			}
+		}
+		List<List<Integer>> ans = new ArrayList<>();
+		ans.add(criticalEdges);
+		ans.add(pseudoCriticalEdges);
+		return ans;
+	}
+
+	public int buildMst(int n, int[][] edges, int[] skip, int[] include){
+		UnionFind ds = new UnionFind(n);
+		int cost = 0;
+
+		if(include != null){
+			cost += include[2];
+			ds.union(include[0], include[1]);
+		}
+
+		for (int i = 0; i < edges.length; i++) {
+			int[] curr = edges[i];
+			if(skip == curr) continue;
+			int a = curr[0];
+			int b = curr[1];
+			int w = curr[2];
+			int aRoot = ds.find(a);
+			int bRoot = ds.find(b);
+			if(aRoot != bRoot){
+				ds.union(a, b);
+				cost  += w;
+			}
+		}
+		if(ds.getDisjointSets() == 1){
+			return cost;
+		}
+		return Integer.MAX_VALUE;
 	}
 
 	/*

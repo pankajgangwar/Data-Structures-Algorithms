@@ -30,7 +30,8 @@ public class NovemberW4 {
         239. Sliding Window Maximum
     */
     public int[] maxSlidingWindow(int[] nums, int k) {
-        return maxSlidingWindowUsingDeque(nums, k);
+        int[] res =  maxSlidingWindowUsingDeque(nums, k);
+        return res;
     }
 
     public int[] maxSlidingWindowUsingDeque(int[] nums, int k) {

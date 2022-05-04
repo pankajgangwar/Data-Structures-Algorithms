@@ -2,12 +2,96 @@ package com.pkumar7.trie;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 /**
  * Created by Pankaj Kumar on 20/August/2020
  */
 class A {
+
+    /* 1948. Delete Duplicate Folders in System
+     * https://leetcode.com/problems/delete-duplicate-folders-in-system/
+     * */
+    class Folder {
+        String key = "";
+        String name;
+        List<Folder> children;
+        HashMap<String, Folder> map;
+        boolean toDelete = false;
+        public Folder(String name){
+            this.name = name;
+            map = new HashMap<>();
+            children = new ArrayList<>();
+        }
+    }
+
+    Folder root = new Folder("/");
+    HashMap<String, Integer> mapKey = new HashMap<>();
+    public List<List<String>> deleteDuplicateFolder(List<List<String>> paths) {
+        for (List<String> p : paths) {
+            buildDirectories(p);
+        }
+        generateKey(root);
+        markFolderToBeDeleted(root);
+        List<List<String>> list = new ArrayList<>();
+        for(List<String> path : paths){
+            if(toDelete(path)) continue;
+            list.add(path);
+        }
+        return list;
+    }
+
+    private boolean toDelete(List<String> path) {
+        Folder curr = root;
+        for(String p : path){
+            curr = curr.map.get(p);
+            if(curr.toDelete){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void markFolderToBeDeleted(Folder root) {
+        if(root.children.size() > 0 && mapKey.get(root.key) > 1){
+            root.toDelete = true;
+            return;
+        }
+        for(Folder f : root.children){
+            markFolderToBeDeleted(f);
+        }
+    }
+
+    private String generateKey(Folder root) {
+        if(root.children.isEmpty()) return "";
+        Collections.sort(root.children, Comparator.comparing(a -> a.name));
+        StringBuilder sb = new StringBuilder();
+        for(Folder child : root.children){
+            sb.append("(")
+                    .append(child.name)
+                    .append(generateKey(child))
+                    .append(")");
+        }
+        String key = sb.toString();
+        root.key = key;
+        mapKey.put(key, mapKey.getOrDefault(key, 0) + 1);
+        return key;
+    }
+
+    private void buildDirectories(List<String> paths) {
+        Folder curr = root;
+        for(String folderName : paths){
+            if(!curr.map.containsKey(folderName)){
+                Folder folder = new Folder(folderName);
+                curr.map.put(folderName, folder);
+                curr.children.add(folder);
+            }
+            curr = curr.map.get(folderName);
+        }
+    }
 
     /* 1803. Count Pairs With XOR in a Range
     * https://leetcode.com/problems/count-pairs-with-xor-in-a-range/

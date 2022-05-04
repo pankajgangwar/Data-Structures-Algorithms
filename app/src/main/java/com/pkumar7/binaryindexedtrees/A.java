@@ -2,9 +2,12 @@ package com.pkumar7.binaryindexedtrees;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Stream;
 
 /**
@@ -13,24 +16,38 @@ import java.util.stream.Stream;
 class A {
     public static void main(String[] args) {
         A current = new A();
-        int[] arr = new int[]{1, 3, 5};
-        int[] arr1 = new int[]{1,2,3,6,5,4};
-        int[] arr2 = new int[]{1,3,3,3,2,4,2,1,2};
-        //int res = current.createSortedArray(new int[]{1,3,3,3,2,4,2,1,2});
-        /*NumArray numArray = new NumArray(arr);
-        System.out.println("res = " + numArray.sumRange(0, 2));
-        numArray.update(1, 2);
-        System.out.println("res = " + numArray.sumRange(0, 2));*/
-        int[] nums = new int[]{-2, 5, -1};
-        //int res = current.countRangeSum(nums, -2, 2);
-        //System.out.println("res = " + res);
-        List<Integer> res = new ArrayList<>();
-        res.add(3);
-        res.add(9);
-        res.add(5);
-        res.add(8);
-        int ans = current.sortedSum(res);
-        System.out.println(ans);
+    }
+
+    /*
+    * https://leetcode.com/problems/range-frequency-queries/
+    * 2080. Range Frequency Queries
+    * */
+    static class RangeFreqQuery {
+        HashMap<Integer, TreeSet<Integer>> mapToTreeSet = new HashMap<>();
+        HashMap<Integer, List<Integer>> mapToList = new HashMap<>();
+        public RangeFreqQuery(int[] arr) {
+            for (int i = 0; i < arr.length; i++) {
+                mapToTreeSet.putIfAbsent(arr[i], new TreeSet<>());
+                mapToTreeSet.get(arr[i]).add(i);
+
+                mapToList.putIfAbsent(arr[i], new ArrayList<>());
+                mapToList.get(arr[i]).add(i);
+            }
+        }
+
+        public int query(int left, int right, int value) {
+            if(!mapToTreeSet.containsKey(value)) return 0;
+            TreeSet<Integer> indices = mapToTreeSet.get(value);
+            List<Integer> list = mapToList.get(value);
+
+            Integer lower = indices.ceiling(left);
+            Integer higher = indices.floor(right);
+            if(lower == null || higher == null){
+                return 0;
+            }
+            if(higher < lower) return 0;
+            return Collections.binarySearch(list, higher) - Collections.binarySearch(list, lower) + 1;
+        }
     }
 
     /* HackerRank problems

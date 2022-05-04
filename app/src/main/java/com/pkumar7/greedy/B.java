@@ -18,6 +18,24 @@ import java.util.TreeMap;
 
 public class B {
 
+	/* 1996. The Number of Weak Characters in the Game
+	* https://leetcode.com/problems/the-number-of-weak-characters-in-the-game/
+	* */
+	public int numberOfWeakCharactersSort(int[][] properties) {
+		//[attack, defense]
+		Arrays.sort(properties, (a,b) -> a[0] == b[0] ? a[1] - b[1] : a[0] - b[0]);
+		int res = 0;
+		int n = properties.length;
+		int min = Integer.MIN_VALUE;
+		for (int i = n - 1; i >= 0; i--) {
+			int[] a = properties[i];
+			if(a[1] < min) {
+				res++;
+			}
+			min = Math.max(min, a[1]);
+		}
+		return res;
+	}
 
 	public int countPaths(int n, int[][] roads) {
 		PriorityQueue<long[]> pq = new PriorityQueue<>(Comparator.comparingLong(a -> a[1]));

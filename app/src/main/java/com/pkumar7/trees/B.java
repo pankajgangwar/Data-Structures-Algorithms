@@ -9,6 +9,7 @@ import java.util.Deque;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Queue;
 
 public class B {
@@ -67,10 +68,10 @@ public class B {
     * https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree-iv/
     * */
     public TreeNode lowestCommonAncestor(TreeNode root, TreeNode[] nodes) {
-        if(root == null) return null;
+        if (root == null) return null;
 
-        for(TreeNode n : nodes){
-            if(root == n){
+        for (TreeNode n : nodes) {
+            if (root == n) {
                 return root;
             }
         }
@@ -78,11 +79,46 @@ public class B {
         TreeNode l = lowestCommonAncestor(root.left, nodes);
         TreeNode r = lowestCommonAncestor(root.right, nodes);
 
-        if(l != null && r == null) return l;
-        if(l == null && r != null) return r;
-        if(l != null && r != null) return root;
+        if (l != null && r == null) return l;
+        if (l == null && r != null) return r;
+        if (l != null && r != null) return root;
 
         return null;
+    }
+
+    /*
+     * https://leetcode.com/problems/longest-path-with-different-adjacent-characters/
+     * 2246. Longest Path With Different Adjacent Characters
+     * */
+    int res = 0;
+    public int longestPath(int[] parent, String s) {
+        int n = parent.length;
+        LinkedList<Integer>[] tree = new LinkedList[n];
+
+        for (int i = 0; i < n; i++) {
+            tree[i] = new LinkedList<>();
+        }
+        for (int i = 1; i < n; i++) {
+            int p = parent[i];
+            tree[p].add(i);
+        }
+        dfs(tree, 0, s);
+        return res;
+    }
+
+    public int dfs(LinkedList<Integer>[] tree, int root, String s){
+        PriorityQueue<Integer> maxHeap = new PriorityQueue<>((a, b) -> b -a);
+        for(int child : tree[root]){
+            int len = dfs(tree, child, s);
+            if(s.charAt(root) != s.charAt(child)){
+                maxHeap.offer(len);
+            }
+        }
+        int max = maxHeap.isEmpty() ? 0 : maxHeap.poll();
+        int secondMax = maxHeap.isEmpty() ? 0 : maxHeap.poll();
+
+        res = Math.max(res, 1 + max + secondMax);
+        return max + 1;
     }
 
     /*

@@ -9,6 +9,10 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+import java.util.Objects;
+import java.util.PriorityQueue;
+import java.util.Set;
 import java.util.Stack;
 import java.util.TreeMap;
 
@@ -67,6 +71,212 @@ class Current {
             dp[0] += Math.pow(len, i);
         }
         return dp[0];
+    }
+
+    /*
+    * https://leetcode.com/problems/minimum-health-to-beat-game/
+    * */
+    public long minimumHealth(int[] damage, int armor) {
+        long sum = 0L;
+        for (int i = 0; i < damage.length ; i++) {
+            sum += damage[i];
+        }
+        Arrays.sort(damage);
+        int index = Arrays.binarySearch(damage, armor);
+        if(index < 0) index = ~index;
+
+        if(index == damage.length) index = damage.length - 1;
+
+        if(armor < damage[index]){
+            return sum + 1 - armor;
+        }
+        return sum - (damage[index]) + 1;
+    }
+
+    static long getcount(int[] arr) {
+        int ans = arr.length;
+        int count = 0;
+        for (int i = 1; i < arr.length; i++) {
+            if (arr[i - 1] - arr[i] == 1)
+                count++;
+            else
+                count = 0;
+            ans = ans + count;
+        }
+        return ans;
+    }
+
+    // 1,3,1,3
+    // 3,1,2
+    public int minimumOperations(int[] nums) {
+        int n = nums.length;
+        HashMap<Integer, Integer> map1 = new HashMap<>();
+        HashMap<Integer, Integer> map2 = new HashMap<>();
+
+        for (int i = 0; i < nums.length; i+=2) {
+            map1.put(nums[i], map1.getOrDefault(nums[i], 0) + 1);
+        }
+        for (int i = 1; i < nums.length; i+=2) {
+            map2.put(nums[i], map2.getOrDefault(nums[i], 0) + 1);
+        }
+        int count1 = 0;
+        int count2 = 0;
+        List<int[]> list1 = new ArrayList<>();
+        for(Map.Entry<Integer, Integer> e : map1.entrySet()){
+            count1 += e.getValue();
+        }
+        List<int[]> list2 = new ArrayList<>();
+        for(Map.Entry<Integer, Integer> e : map2.entrySet()){
+            count2 += e.getValue();
+        }
+        for(int[] a : list1 ){
+            for(int[]b : list2){
+                if(a[0] != b[0]){
+                  //  return count1 - a[1] + count2 - b[1];
+                }
+            }
+        }
+        return Math.min(count1, count2);
+    }
+
+
+    public long maxTaxiEarnings(int n, int[][] rides) {
+        Arrays.sort(rides, (a, b) -> a[0] == b[0] ? -a[1] + b[1] : a[0] - b[0]);
+        int[] curr = rides[0];
+        long res = 0;
+        long max = curr[1] - curr[0] + curr[2];
+        for (int[] r : rides) {
+            if (r[0] < curr[1]) {
+                long xx = r[1] - r[0] + r[2];
+                max = Math.max(max, xx);
+                curr[1] = Math.max(curr[1], r[1]);
+            } else {
+                //System.out.println(Arrays.toString(curr) + " " + max);
+                res += max;
+                long xx = r[1] - r[0] + r[2];
+                max = xx;
+                curr = r;
+            }
+        }
+        return res + max;
+    }
+
+    /*
+     * https://leetcode.com/problems/smallest-missing-genetic-value-in-each-subtree/
+     * */
+    /*
+     * https://leetcode.com/problems/longest-common-subpath/
+     * */
+    long BASE = 100007L, MOD = 1000000007L;
+    public int longestCommonSubpath(int n, int[][] paths) {
+        int ans = 0;
+        int high = 1, low = 1;
+        for (int i = 0; i < paths.length; i++) {
+            high = Math.min(ans, paths[i].length);
+        }
+
+        long[] pow = new long[high + 1];
+
+        pow[0] = 1;
+        for (int i = 1; i <= high; ++i) {
+            pow[i] = pow[i - 1] * BASE % MOD;
+        }
+
+        while (low <= high) {
+            int mid = (low + high) >> 1;
+            if (pathExistsWithCurrLen(mid, paths)) {
+                ans = mid;
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }
+        }
+        return ans;
+    }
+
+    private boolean pathExistsWithCurrLen(int mid, int[][] paths) {
+        return true;
+    }
+
+    public int rollingHashSol(int[] a, int[] b) {
+        int min = Math.min(a.length, b.length);
+        int max = Math.max(a.length, b.length);
+        long[] pow = new long[max + 1];
+        long[] hash_a = new long[a.length + 1];
+        long[] hash_b = new long[b.length + 1];
+
+        pow[0] = 1;
+        for (int i = 1; i <= max; ++i) {
+            pow[i] = pow[i - 1] * BASE % MOD;
+        }
+
+        for (int i = 1; i <= a.length; i++) {
+            hash_a[i] = (hash_a[i - 1] * BASE + a[i - 1]) % MOD;
+        }
+
+        for (int i = 1; i <= b.length; i++) {
+            hash_b[i] = (hash_b[i - 1] * BASE + b[i - 1]) % MOD;
+        }
+
+        int low = 1, high = min;
+        int ans = 0;
+        while (low <= high) {
+            int mid = (low + high) / 2;
+            HashSet<Long> seen = new HashSet<>();
+            for (int i = 1; i + mid - 1 <= a.length; i++) {
+                long hashA = getHash(i - 1, i + mid - 1, hash_a, pow);
+                seen.add(hashA);
+            }
+            boolean found = false;
+            for (int i = 1; i + mid - 1 <= b.length; i++) {
+                long hashB = getHash(i - 1, i + mid - 1, hash_b, pow);
+                if (seen.contains(hashB)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (found) {
+                ans = mid;
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }
+        }
+        return ans;
+    }
+
+    public long getHash(int l, int r, long[] hash, long[] pow) {
+        return (hash[r] - hash[l] * pow[r - l] % MOD + MOD) % MOD;
+    }
+
+    public int dpSol(int n, int[][] paths) {
+        int p = paths.length;
+        int max = Integer.MAX_VALUE;
+        for (int i = 0; i < p - 1; i++) {
+            int[] a = paths[i];
+            int[] b = paths[i + 1];
+            int res = dpFindMaxCommon(a, b);
+            max = Math.min(max, res);
+        }
+        return max == Integer.MAX_VALUE ? 0 : max;
+    }
+
+    public int dpFindMaxCommon(int[] nums1, int[] nums2) {
+        int n = nums1.length;
+        int m = nums2.length;
+        int[][] dp = new int[n + 1][m + 1];
+
+        //dp[i][j] = max lcs that ends with i and j
+        int length = 0;
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= m; j++) {
+                if (nums1[i - 1] == nums2[j - 1]) {
+                    dp[i][j] = 1 + dp[i - 1][j - 1];
+                }
+                length = Math.max(length, dp[i][j]);
+            }
+        }
+        return length;
     }
 
     /*

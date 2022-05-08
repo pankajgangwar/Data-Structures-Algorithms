@@ -170,6 +170,28 @@ public class B {
         }
     }
 
+    /* 1676. Lowest Common Ancestor of a Binary Tree IV
+    * https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree-iv/
+    * */
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode[] nodes) {
+        if (root == null) return null;
+
+        for (TreeNode n : nodes) {
+            if (root == n) {
+                return root;
+            }
+        }
+
+        TreeNode l = lowestCommonAncestor(root.left, nodes);
+        TreeNode r = lowestCommonAncestor(root.right, nodes);
+
+        if (l != null && r == null) return l;
+        if (l == null && r != null) return r;
+        if (l != null && r != null) return root;
+
+        return null;
+    }
+
     /*
      * https://leetcode.com/problems/longest-path-with-different-adjacent-characters/
      * 2246. Longest Path With Different Adjacent Characters

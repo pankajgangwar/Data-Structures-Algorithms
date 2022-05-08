@@ -4,8 +4,10 @@ import com.pkumar7.TreeNode;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,6 +15,110 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 
 public class B {
+
+    /*
+    2096. Step-By-Step Directions From a Binary Tree Node to Another
+    * https://leetcode.com/problems/step-by-step-directions-from-a-binary-tree-node-to-another/
+    * */
+    HashMap<Integer, TreeNode> map = new HashMap<>();
+    HashMap<TreeNode, TreeNode> parent = new HashMap<>();
+    public String getDirections(TreeNode root, int startValue, int destValue) {
+        TreeNode lca = findLCA(root, startValue, destValue);
+        TreeNode s = map.get(startValue);
+        TreeNode d = map.get(destValue);
+        StringBuilder path = new StringBuilder();
+        while (s != lca){
+            s = parent.get(s);
+            path.append("U");
+        }
+        String p = "";
+        dfs(root, d, p);
+        return path + p ;
+    }
+
+    public void dfs(TreeNode root, TreeNode dst, String path){
+        if(root == null) return;
+        if(root == dst) return;
+        dfs(root.left, dst, path + "L");
+        dfs(root.right, dst, path + "R");
+    }
+
+    public TreeNode findLCA(TreeNode root, int p, int q) {
+        if(root == null) return root;
+        map.put(root.val, root);
+        if(root.left != null){
+            parent.put(root.left, root);
+        }
+        if(root.right != null){
+            parent.put(root.right, root);
+        }
+        if(root.val == p || root.val == q) {
+            return root;
+        }
+        TreeNode left = findLCA(root.left, p, q);
+        TreeNode right = findLCA(root.right, p, q);
+        if(left != null && right != null){
+            return root;
+        }
+        if(left != null){
+            return left;
+        }
+        if(right != null){
+            return right;
+        }
+        return null;
+    }
+
+    /*
+    * https://leetcode.com/problems/binary-tree-upside-down/
+    * 156. Binary Tree Upside Down
+    * */
+    public TreeNode upsideDownBinaryTree(TreeNode root) {
+        if(root == null || root.left == null){
+            return root;
+        }
+        TreeNode newRoot = upsideDownBinaryTree(root.left);
+        root.left.left = root.right;
+        root.left.right = root;
+        root.left = null;
+        root.right = null;
+        return newRoot;
+    }
+
+    /*
+     * https://leetcode.com/problems/count-nodes-with-the-highest-score/
+     * https://leetcode.com/problems/count-nodes-with-the-highest-score/
+     * */
+    public int countHighestScoreNodes(int[] parents) {
+        int n = parents.length;
+        LinkedList<Integer>[] tree = new LinkedList[n];
+        for (int i = 0; i < n; i++) {
+            tree[i] = new LinkedList<>();
+        }
+        for (int i = 1; i < n; i++) {
+            int p = parents[i];
+            tree[p].add(i);
+        }
+        long[] score = new long[n];
+        dfs(tree, 0, score);
+        long max = Arrays.stream(score).max().getAsLong();
+        return (int)Arrays.stream(score).filter(v -> (v == max)).count();
+    }
+
+    public long dfs(LinkedList<Integer>[] list, int u, long[] score){
+        long prod = 1L, sum = 1L;
+        int n = list.length;
+        for(int v : list[u]){
+            long cnt = dfs(list, v, score);
+            prod *= cnt;
+            sum += cnt;
+        }
+        long rem = Math.max(1, n - sum);
+        prod *= rem;
+        score[u] = prod;
+        return sum;
+    }
+
 
     /* 1522. Diameter of N-Ary Tree
      * https://leetcode.com/problems/diameter-of-n-ary-tree/
@@ -120,7 +226,6 @@ public class B {
     public TreeNode findLCA(TreeNode root, TreeNode p, TreeNode q) {
         if(root == null) return root;
         if(root == p || root == q) {
-            dfs(root);
             return root;
         }
         sets.add(root.val);

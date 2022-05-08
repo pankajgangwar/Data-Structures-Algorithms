@@ -1,29 +1,16 @@
 package com.pkumar7;
 
-import com.pkumar7.datastructures.ListNode;
-
-import org.jetbrains.annotations.NotNull;
-
 import java.math.BigInteger;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.PriorityQueue;
-import java.util.Set;
 import java.util.Stack;
 import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
-
-import javax.print.attribute.IntegerSyntax;
 
 
 /**
@@ -44,11 +31,96 @@ class Current {
     */
 
     //https://leetcode.com/problems/odd-even-jump/
-    // https://leetcode.com/problems/remove-boxes/
+    //https://leetcode.com/problems/remove-boxes/
 
     public static void main(String[] args) {
         Current current = new Current();
+        String s = "2222";
+        int mod = (int)1e9 + 7;
+        int res = (int)Math.pow(2, s.length() -1 ) % mod;
+        System.out.println(res);
     }
+
+    /* 902. Numbers At Most N Given Digit Set
+    * https://leetcode.com/problems/numbers-at-most-n-given-digit-set/
+    * */
+    public int atMostNGivenDigitSet(String[] digits, int n) {
+        String s = String.valueOf(n);
+        int k = s.length();
+        int[] dp = new int[k + 1];
+        dp[k] = 1;
+
+        int len = digits.length;
+
+        for(int i = k - 1; i >= 0; --i){
+            int si = s.charAt(i) - '0';
+            for(String d : digits){
+                if(Integer.parseInt(d) < si){
+                    dp[i] += Math.pow(len, k - i - 1);
+                }else if(Integer.parseInt(d) == si){
+                    dp[i] += dp[i + 1];
+                }
+            }
+        }
+
+        for(int i = 1; i < k; i++){
+            dp[0] += Math.pow(len, i);
+        }
+        return dp[0];
+    }
+
+    /*
+    * 1703. Minimum Adjacent Swaps for K Consecutive Ones
+    * https://leetcode.com/problems/minimum-adjacent-swaps-for-k-consecutive-ones/
+    * */
+    public int minMoves(int[] nums, int k) {
+        if(k == 1) return 0;
+        List<Integer> ones = new ArrayList<>();
+        for (int i = 0; i < nums.length; i++) {
+            if(nums[i] == 1){
+                ones.add(i);
+            }
+        }
+        int totalOnes = ones.size();
+        List<Integer> pref = new ArrayList<>(totalOnes);
+        pref.add(ones.get(0));
+
+        for (int i = 1; i < totalOnes; i++) {
+            pref.add(pref.get(i -1) + ones.get(i));
+        }
+
+        int ans = Integer.MAX_VALUE;
+        for (int mid = (k - 1) / 2; mid < totalOnes - k/ 2; mid++) {
+            int radius = (k - 1) / 2;
+            int right = (k%2 == 0) ? pref.get(mid + radius + 1) - pref.get(mid) - ones.get(mid) :
+                    pref.get(mid + radius) - pref.get(mid);
+            int left = (mid == 0) ? 0 : pref.get(mid - 1) - (mid- radius == 0 ? 0 : pref.get(mid - radius - 1));
+            int save = (radius + 1) * radius + (k%2 == 0 ? radius + 1 : 0);
+            ans = Math.min(ans, right - left - save);
+        }
+        return ans;
+    }
+
+    public int minOperations(int[] nums) {
+        int n = nums.length;
+        int op = n;
+
+        HashSet<Integer> sets = new HashSet<>();
+        for (int i = 0; i < n; i++) {
+            sets.add(nums[i]);
+        }
+        List<Integer> list = new ArrayList<>(sets);
+        Collections.sort(list);
+
+        int m = list.size();
+        int j = 0;
+        for (int i = 0; i < m; i++) {
+            while (j < m && list.get(j) < list.get(i) + n) ++j;
+            op = Math.min(op, n - (j - i));
+        }
+        return op;
+    }
+
 
     public int minDeletion(int[] nums) {
         int ans = 0;
@@ -62,7 +134,6 @@ class Current {
         }
         return ans;
     }
-
 
     public int subarraysWithMoreZerosThanOnes(int[] nums) {
         int mod = (int)1e9 + 7;

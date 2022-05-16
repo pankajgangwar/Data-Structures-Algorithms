@@ -4,8 +4,10 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +17,9 @@ import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.Stack;
 import java.util.TreeMap;
+import java.util.TreeSet;
+
+import sun.reflect.generics.tree.Tree;
 
 
 /**
@@ -39,10 +44,28 @@ class Current {
 
     public static void main(String[] args) {
         Current current = new Current();
-        String s = "2222";
+    }
+
+    public int numTilings(int n) {
+        return 0;
+    }
+
+    /* 923. 3Sum With Multiplicity
+    * https://leetcode.com/problems/3sum-with-multiplicity/
+    * */
+    public int threeSumMulti(int[] arr, int target) {
         int mod = (int)1e9 + 7;
-        int res = (int)Math.pow(2, s.length() -1 ) % mod;
-        System.out.println(res);
+        int n = arr.length;
+        int res = 0;
+        HashMap<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < n; i++) {
+            res = (res + map.getOrDefault(target - arr[i], 0)) % mod;
+            for (int j = 0; j < i; j++) {
+                int temp = arr[i] + arr[j];
+                map.put(temp, map.getOrDefault(temp, 0) + 1);
+            }
+        }
+        return res % mod;
     }
 
     /* 902. Numbers At Most N Given Digit Set

@@ -5,6 +5,28 @@ import java.util.List;
 
 public class C {
 
+    /*
+     * https://leetcode.com/problems/champagne-tower/
+     * 799. Champagne Tower
+     * */
+    public double champagneTower(int poured_glass, int query_row, int query_glass) {
+        double[][] tower = new double[query_row + 1][query_row + 1];
+        tower[0][0] = (double)poured_glass;
+
+        for (int i = 0; i <= query_row; i++) {
+            double[] currentRow = tower[i];
+            for (int j = 0; j < i + 1; j++) {
+                double extraAmount = Math.max(0, (currentRow[j] - 1.0));
+                currentRow[j] = Math.min(1, currentRow[j]);
+                if(extraAmount > 0 && i+1 <= query_row ){
+                    tower[i + 1][j] += extraAmount / 2;
+                    tower[i + 1][j + 1] += extraAmount / 2;
+                }
+            }
+        }
+        return tower[query_row][query_glass];
+    }
+
     /* 2266. Count Number of Texts
     * https://leetcode.com/problems/count-number-of-texts/
     * */

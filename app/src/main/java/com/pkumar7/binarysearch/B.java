@@ -10,6 +10,67 @@ import java.util.Queue;
 public class B {
 
     /*
+     * https://leetcode.com/problems/find-the-index-of-the-large-integer/
+     * 1533. Find the Index of the Large Integer
+     * */
+    interface ArrayReader {
+        // Compares the sum of arr[l..r] with the sum of arr[x..y]
+        // return 1 if sum(arr[l..r]) > sum(arr[x..y])
+        // return 0 if sum(arr[l..r]) == sum(arr[x..y])
+        // return -1 if sum(arr[l..r]) < sum(arr[x..y])
+        int compareSub(int l, int r, int x, int y);
+        int length();
+    }
+
+    public int getIndex(ArrayReader reader) {
+        int n = reader.length();
+        int l = 0, r = n - 1;
+        while (l < r){
+            int mid = l + (r-l)/2;
+            if((r-l)%2 == 0){
+                int ans = reader.compareSub(l, mid - 1, mid + 1, r);
+                if(ans == 0){
+                    return mid;
+                }else if(ans < 0){
+                    l = mid+1;
+                }else{
+                    r = mid-1;
+                }
+            }else{
+                int ans = reader.compareSub(l, mid , mid + 1, r);
+                if(ans == 1){
+                    r = mid;
+                }else{
+                    l = mid+1;
+                }
+            }
+        }
+        return l;
+    }
+
+    /* 702. Search in a Sorted Array of Unknown Size
+    * https://leetcode.com/problems/search-in-a-sorted-array-of-unknown-size/
+    * */
+    interface ArrayReader1 {
+        int get(int index);
+    }
+
+    public int search(ArrayReader1 reader, int target) {
+        int l = 0, r = 10000;
+        while (l <= r){
+            int mid = l + (r - l) / 2;
+            if(reader.get(mid) == target) {
+                return mid;
+            }else if(reader.get(mid) < target){
+                l = mid + 1;
+            }else{
+                r = mid - 1;
+            }
+        }
+        return -1;
+    }
+
+    /*
      * https://leetcode.com/problems/plates-between-candles/
      * 2055. Plates Between Candles
      * */

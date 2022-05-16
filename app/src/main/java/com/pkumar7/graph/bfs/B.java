@@ -7,6 +7,93 @@ import java.util.Queue;
 
 public class B {
 
+    /*
+     * 2258. Escape the Spreading Fire
+     * https://leetcode.com/problems/escape-the-spreading-fire/
+     * */
+    public int maximumMinutes(int[][] grid) {
+        Queue<int[]> bfs = new LinkedList<>();
+        int m = grid.length;
+        int n = grid[0].length;
+        boolean[][] visited = new boolean[m][n];
+        int[][] fireTime = new int[m][n];
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[0].length; j++) {
+                if (grid[i][j] == 1) {
+                    bfs.offer(new int[]{i, j, 0});
+                    visited[i][j] = true;
+                }
+            }
+        }
+        int[][] dirs = new int[][] {{ -1, 0}, {1, 0}, {0, 1}, {0, -1}};
+        while (!bfs.isEmpty()) {
+            int size = bfs.size();
+            while (size-- > 0){
+                int[] c = bfs.poll();
+                int curr_x = c[0], curr_y = c[1];
+                visited[curr_x][curr_y] = true;
+                fireTime[curr_x][curr_y] = c[2];
+                for(int[] d : dirs){
+                    int next_x = d[0] + curr_x;
+                    int next_y = d[1] + curr_y;
+                    if(canFireSpread(next_x, next_y, grid, visited)){
+                        bfs.offer(new int[]{next_x, next_y, c[2] + 1});
+                    }
+                }
+            }
+        }
+        bfs.clear();
+        bfs.offer(new int[]{0,0, 0});
+        visited = new boolean[m][n];
+        int[][] personTime = new int[m][n];
+        while (!bfs.isEmpty()) {
+            int size = bfs.size();
+            while (size-- > 0){
+                int[] c = bfs.poll();
+                int curr_x = c[0], curr_y = c[1];
+                visited[curr_x][curr_y] = true;
+                personTime[curr_x][curr_y] = c[2];
+                for(int[] d : dirs){
+                    int next_x = d[0] + c[0];
+                    int next_y = d[1] + c[1];
+                    if(canPersonMove(next_x, next_y, grid, visited)){
+                        bfs.offer(new int[]{next_x, next_y, c[2]+1});
+                    }
+                }
+            }
+        }
+        if(personTime[m-1][n-1] == 0){
+            return -1;
+        }
+        if(fireTime[m-1][n-1] == 0){
+            return (int)1e9;
+        }
+        if(fireTime[m-1][n-1] < personTime[m-1][n-1] ){
+            return -1;
+        }
+        int diff = fireTime[m-1][n-1] - personTime[m-1][n-1];
+        int ppl_1 = personTime[m-2][n-1], ppl_2 = personTime[m-1][n-2];
+        int fire_1 = fireTime[m-2][n-1], fire_2 = fireTime[m-1][n-2];
+        if(ppl_1 > 0 && ppl_2 > 0 && (fire_1 - ppl_1 > diff || fire_2 - ppl_2 > diff)){
+            return diff; // If fire and person are coming from different path
+        }
+        return diff - 1; // if fire and person coming from same path, then person has to stay ahead of fire
+    }
+
+    public boolean canPersonMove(int next_x, int next_y, int[][] grid, boolean[][] visited){
+        int m = grid.length;
+        int n = grid[0].length;
+        return (next_x >= 0 && next_x < m && next_y >=0 && next_y < n
+                && grid[next_x][next_y] != 2 && grid[next_x][next_y] != 1 && !visited[next_x][next_y]);
+    }
+
+    public boolean canFireSpread(int next_x, int next_y, int[][] grid, boolean[][] visited){
+        int m = grid.length;
+        int n = grid[0].length;
+        return (next_x >= 0 && next_x < m && next_y >=0 && next_y < n
+                && grid[next_x][next_y] != 2 && !visited[next_x][next_y]);
+    }
+
     /* 2059. Minimum Operations to Convert Number
     * https://leetcode.com/problems/minimum-operations-to-convert-number/
     * */

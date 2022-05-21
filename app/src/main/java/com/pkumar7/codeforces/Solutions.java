@@ -17,25 +17,19 @@ public class Solutions {
     void pre() throws Exception{}
     void solve(int TC) throws Exception {
         int n = ni();
-        int[] coins = new int[]{100, 20, 10, 5, 1};
-
-        coins = Arrays.stream(coins).
-                boxed().
-                sorted((a, b) -> b.compareTo(a)). // sort descending
-                mapToInt(i -> i).
-                toArray();
-        int i = 0;
-        int res = 0;
-
-        while (i < coins.length){
-            System.out.println("coins = " + Arrays.toString(coins));
-            while (n >= coins[i]){
-                n -= coins[i];
-                res++;
-            }
-            i++;
+        String s = String.valueOf(n);
+        if(s.length() == 2){
+            int min = s.charAt(1) - '0';
+            p(min);
+            p("\n");
+            return;
         }
-        p(res);
+        int min = n;
+        for (int i = 0; i < s.length(); i++) {
+            int digit = s.charAt(i) - '0';
+            min = Math.min(min, digit);
+        }
+        p(min);
         p("\n");
     }
 
@@ -57,10 +51,10 @@ public class Solutions {
             in = new FastReader();
             out = new PrintWriter(System.out);
         }
-        //int T = (multipleTC) ? ni() : 1;
+        int T = (multipleTC) ? ni() : 1;
         pre();
-        //for (int t = 1; t <= T; t++) solve(t);
-        solve(0);
+        for (int t = 1; t <= T; t++) solve(t);
+        //solve(0);
         out.flush();
         out.close();
         System.err.println(System.currentTimeMillis() - ct + "ms");

@@ -7,6 +7,34 @@ import java.util.List;
 public class A {
 
     /*
+     * https://leetcode.com/problems/number-of-ways-to-select-buildings/
+     * 2222. Number of Ways to Select Buildings
+     * */
+    public long numberOfWays(String s) {
+        int n = s.length();
+        long[] prefix = new long[n];
+        int d = s.charAt(0) - '0';
+        prefix[0] = d;
+        for (int i = 1; i < n; i++) {
+            int digit = s.charAt(i) - '0';
+            prefix[i] = digit + prefix[i - 1];
+        }
+        long ways = 0;
+        for (int i = 1; i < n; i++) {
+            int digit = s.charAt(i) - '0';
+            long onesOnRight = prefix[n - 1] - prefix[i];
+            if(digit == 0){
+                ways += prefix[i - 1] * onesOnRight;
+            }else{
+                long leftzero = i - prefix[i - 1];
+                long rightZero = (n - i - 1) - onesOnRight;
+                ways += (leftzero * rightZero);
+            }
+        }
+        return ways;
+    }
+
+    /*
      * https://leetcode.com/problems/grid-game/
      * 2017. Grid Game
      * */

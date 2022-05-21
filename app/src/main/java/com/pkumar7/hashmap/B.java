@@ -24,6 +24,37 @@ class B {
         int res = curr.longestStrChainDp(arr2);
         System.out.println("Res : "+ res);
     }
+    /*
+     * https://leetcode.com/problems/longest-palindrome-by-concatenating-two-letter-words/
+     * 2131. Longest Palindrome by Concatenating Two Letter Words
+     * */
+    public int longestPalindrome(String[] words) {
+        HashMap<String, Integer> map = new HashMap<>();
+        int unpaired = 0;
+        int ans =0;
+        for(String s : words){
+            if(s.charAt(0) == s.charAt(1)){
+                if(map.containsKey(s) && map.get(s) > 0){
+                    ans += 4;
+                    map.put(s, map.get(s) - 1);
+                    unpaired--;
+                }else{
+                    unpaired++;
+                    map.put(s, 1);
+                }
+            }else{
+                String rev = s.charAt(1) + "" + s.charAt(0);
+                if(map.containsKey(rev) && map.get(rev) > 0){
+                    ans += 4;
+                    map.put(rev, map.get(rev) - 1);
+                }else{
+                    map.put(s, map.getOrDefault(s, 0) + 1);
+                }
+            }
+        }
+        if(unpaired > 0) ans += 2;
+        return ans;
+    }
 
     /* 1930. Unique Length-3 Palindromic Subsequences
      * https://leetcode.com/problems/unique-length-3-palindromic-subsequences/

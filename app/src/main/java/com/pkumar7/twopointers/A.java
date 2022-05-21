@@ -2,12 +2,50 @@ package com.pkumar7.twopointers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
  * Created by Pankaj Kumar on 21/August/2020
  */
 class A {
+
+    /*
+     * https://leetcode.com/problems/longest-word-in-dictionary-through-deleting/
+     * 524. Longest Word in Dictionary through Deleting
+     * */
+    public String findLongestWord(String s, List<String> dictionary) {
+        Collections.sort(dictionary, Comparator.comparing(a -> -a.length()));
+        String max = "";
+        for(String dict : dictionary){
+            int m = s.length();
+            int n = dict.length();
+            int i = 0, j = 0;
+            while (i < m && j < n){
+                if(s.charAt(i) == dict.charAt(j)){
+                    i += 1;
+                    j += 1;
+                }else {
+                    i += 1;
+                }
+            }
+            if(j == n){
+                if(dict.length() >= max.length()){
+                    if(max.length() == dict.length()){
+                        if(dict.compareTo(max) < 0){
+                            max = dict;
+                        }
+                    }else{
+                        max = dict;
+                    }
+                }else{
+                    break;
+                }
+            }
+        }
+        return max;
+    }
 
     /*
     * https://leetcode.com/problems/get-the-maximum-score/

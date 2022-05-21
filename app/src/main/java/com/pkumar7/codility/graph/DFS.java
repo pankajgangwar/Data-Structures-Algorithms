@@ -20,16 +20,13 @@ public class DFS {
 
 
     public Node search(Node result) {
-
         while (!stack.empty()) {
-
             Node current = stack.pop();
             if (current.getKey().equals(result.getKey())) {
                 if (solution == null || current.getDepth() < solution.getDepth()) {
                     solution = current;
                 }
             }
-
             List<Node> children = current.getChildren();
             for (Node child : children) {
                 if (!discovered.containsKey(child.getKey())) {
@@ -43,9 +40,7 @@ public class DFS {
                 }
             }
         }
-
         return solution;
     }
-
 
 }

@@ -12,14 +12,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.Objects;
-import java.util.PriorityQueue;
-import java.util.Set;
 import java.util.Stack;
 import java.util.TreeMap;
-import java.util.TreeSet;
-
-import sun.reflect.generics.tree.Tree;
 
 
 /**
@@ -46,8 +40,32 @@ class Current {
         Current current = new Current();
     }
 
-    public int numTilings(int n) {
-        return 0;
+    /*
+    * https://leetcode.com/problems/string-transforms-into-another-string/
+    * 1153. String Transforms Into Another String
+    * */
+    public boolean canConvert(String str1, String str2) {
+        if(str1.equals(str2)) return true;
+        if(str1.length() != str2.length()) return false;
+        HashMap<Character, Character> map = new HashMap<>();
+        HashSet<Character> str2Set = new HashSet<>();
+        for (int i = 0; i < str1.length(); i++) {
+            char ch1 = str1.charAt(i);
+            char ch2 = str2.charAt(i);
+            str2Set.add(ch2);
+            if(!map.containsKey(ch1)){
+                map.put(ch1, ch2);
+            }else{
+                if(map.get(ch1) != ch2){
+                    return false;
+                }
+            }
+        }
+        if(map.size() == 26 && str2Set.size() == 26){
+            // we are not left with any temp variable to swap in this case
+            return false;
+        }
+        return true;
     }
 
     /* 923. 3Sum With Multiplicity

@@ -7,6 +7,25 @@ import java.util.LinkedList;
 public class B {
 
     /*
+     * https://leetcode.com/problems/squirrel-simulation/
+     * 573. Squirrel Simulation
+     * */
+    public int minDistance(int height, int width, int[] t, int[] s, int[][] nuts) {
+        int sum = 0;
+        int maxDiff = Integer.MIN_VALUE;
+        for (int[] n : nuts) {
+            int dist = getDistance(t, n);
+            sum += 2*dist;
+            maxDiff = Math.max(maxDiff, dist - getDistance(s, n));
+        }
+        return sum - maxDiff;
+    }
+
+    int getDistance(int[] a, int[] b){
+        return Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]);
+    }
+
+    /*
      * https://leetcode.com/problems/count-lattice-points-inside-a-circle/
      * 2249. Count Lattice Points Inside a Circle
      * */

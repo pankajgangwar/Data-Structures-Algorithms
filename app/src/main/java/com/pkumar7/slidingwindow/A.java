@@ -1,6 +1,7 @@
 package com.pkumar7.slidingwindow;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,6 +9,31 @@ import java.util.Map;
  * Created by Pankaj Kumar on 21/August/2020
  */
 class A {
+
+    /* 2271. Maximum White Tiles Covered by a Carpet
+     * Sliding Window
+     * https://leetcode.com/problems/maximum-white-tiles-covered-by-a-carpet/
+     * */
+    public int maximumWhiteTiles(int[][] t, int len) {
+        if(t.length == 1)  {
+            return Math.min(len, t[0][1] - t[0][0] + 1);
+        }
+        Arrays.sort(t, Comparator.comparingInt(a -> a[0]));
+        int res = 0;
+        int j = 0, cover = 0;
+        for (int i = 0; res < len && i < t.length; ) {
+            if(j == i || t[j][0] + len > t[i][1]){
+                cover += Math.min(len, t[i][1] - t[i][0] + 1);
+                res = Math.max(res, cover);
+                ++i;
+            }else{
+                int partial = Math.max(0, t[j][0]+len - t[i][0]);
+                res = Math.max(res, cover + partial);
+                cover -= (t[j][1] - t[j][0] + 1);
+            }
+        }
+        return res;
+    }
 
     /* 1151. Minimum Swaps to Group All 1's Together
      * https://leetcode.com/problems/minimum-swaps-to-group-all-1s-together/

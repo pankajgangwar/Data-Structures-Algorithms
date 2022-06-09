@@ -1,12 +1,53 @@
 package com.pkumar7.backtracking;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 /**
  * Created by Pankaj Kumar on 29/August/2020
  */
 class A {
+
+    /*
+    * https://leetcode.com/problems/word-pattern-ii/
+    * 291. Word Pattern II
+    * */
+    public boolean wordPatternMatch(String pattern, String s) {
+        return helper(pattern, 0, s, 0, new HashMap<>(), new HashSet<>());
+    }
+
+    public boolean helper(String pattern, int patternIdx, String s,
+                          int sIdx, HashMap<Character, String> mapCharToString,
+                          HashSet<String> set ){
+        if(pattern.length() == patternIdx && s.length() == sIdx){
+            return true;
+        }
+        if(pattern.length() == patternIdx || s.length() == sIdx){
+            return false;
+        }
+        char ch = pattern.charAt(patternIdx);
+        if(mapCharToString.containsKey(ch)){
+            String prev = mapCharToString.get(ch);
+            if(!s.startsWith(prev, sIdx)) return false;
+            return (helper(pattern, patternIdx + 1, s, sIdx + prev.length(), mapCharToString, set));
+        }
+        for (int j = sIdx; j < s.length(); j++) {
+            String sub = s.substring(sIdx, j + 1);
+            if(set.contains(sub)){
+                continue;
+            }
+            mapCharToString.put(ch, sub);
+            set.add(sub);
+            if(helper(pattern, patternIdx + 1, s, j + 1, mapCharToString, set)){
+                return true;
+            }
+            mapCharToString.remove(ch);
+            set.remove(sub);
+        }
+        return false;
+    }
 
     /*
     * https://leetcode.com/problems/sudoku-solver/

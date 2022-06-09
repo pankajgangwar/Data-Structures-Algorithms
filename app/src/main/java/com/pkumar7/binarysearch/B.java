@@ -2,11 +2,114 @@ package com.pkumar7.binarysearch;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
 public class B {
+
+    /*
+     * https://leetcode.com/problems/find-the-index-of-the-large-integer/
+     * 1533. Find the Index of the Large Integer
+     * */
+    interface ArrayReader {
+        // Compares the sum of arr[l..r] with the sum of arr[x..y]
+        // return 1 if sum(arr[l..r]) > sum(arr[x..y])
+        // return 0 if sum(arr[l..r]) == sum(arr[x..y])
+        // return -1 if sum(arr[l..r]) < sum(arr[x..y])
+        int compareSub(int l, int r, int x, int y);
+        int length();
+    }
+
+    public int getIndex(ArrayReader reader) {
+        int n = reader.length();
+        int l = 0, r = n - 1;
+        while (l < r){
+            int mid = l + (r-l)/2;
+            if((r-l)%2 == 0){
+                int ans = reader.compareSub(l, mid - 1, mid + 1, r);
+                if(ans == 0){
+                    return mid;
+                }else if(ans < 0){
+                    l = mid+1;
+                }else{
+                    r = mid-1;
+                }
+            }else{
+                int ans = reader.compareSub(l, mid , mid + 1, r);
+                if(ans == 1){
+                    r = mid;
+                }else{
+                    l = mid+1;
+                }
+            }
+        }
+        return l;
+    }
+
+    /* 702. Search in a Sorted Array of Unknown Size
+    * https://leetcode.com/problems/search-in-a-sorted-array-of-unknown-size/
+    * */
+    interface ArrayReader1 {
+        int get(int index);
+    }
+
+    public int search(ArrayReader1 reader, int target) {
+        int l = 0, r = 10000;
+        while (l <= r){
+            int mid = l + (r - l) / 2;
+            if(reader.get(mid) == target) {
+                return mid;
+            }else if(reader.get(mid) < target){
+                l = mid + 1;
+            }else{
+                r = mid - 1;
+            }
+        }
+        return -1;
+    }
+
+    /*
+     * https://leetcode.com/problems/plates-between-candles/
+     * 2055. Plates Between Candles
+     * */
+    public int[] platesBetweenCandles(String s, int[][] queries) {
+        int n = s.length();
+        List<Integer> list = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            if(s.charAt(i) == '|'){
+                list.add(i);
+            }
+        }
+        int q = queries.length;
+        int[] res = new int[q];
+        int[] prefixSum = new int[list.size()];
+        if(list.isEmpty()) return res;
+
+        for (int i = 1; i < list.size() ; i++) {
+            prefixSum[i] = prefixSum[i - 1] + list.get(i) - list.get(i - 1) -1;
+        }
+
+        for (int i = 0; i < q; i++) {
+            int[] qq = queries[i];
+            int left = Collections.binarySearch(list, qq[0]);
+            if(left < 0) {
+                left = ~left;
+            }
+            int right = Collections.binarySearch(list, qq[1]);
+            if(right < 0) {
+                right = ~right;
+                right -= 1;
+            }
+            int plates = 0;
+            if(left <= right){
+                plates += prefixSum[right] - prefixSum[left];
+            }
+            res[i] = plates;
+        }
+        return res;
+    }
 
     /*
      * https://leetcode.com/problems/maximum-candies-allocated-to-k-children/

@@ -1,12 +1,13 @@
 package com.pkumar7;
 
-
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,7 @@ class Current {
     */
 
     //https://leetcode.com/problems/odd-even-jump/
-    // https://leetcode.com/problems/remove-boxes/
+    //https://leetcode.com/problems/remove-boxes/
 
     public static void main(String[] args) {
         Current current = new Current();
@@ -378,6 +379,80 @@ class Current {
     }
 
     /*
+    * https://leetcode.com/problems/string-transforms-into-another-string/
+    * 1153. String Transforms Into Another String
+    * */
+    public boolean canConvert(String str1, String str2) {
+        if(str1.equals(str2)) return true;
+        if(str1.length() != str2.length()) return false;
+        HashMap<Character, Character> map = new HashMap<>();
+        HashSet<Character> str2Set = new HashSet<>();
+        for (int i = 0; i < str1.length(); i++) {
+            char ch1 = str1.charAt(i);
+            char ch2 = str2.charAt(i);
+            str2Set.add(ch2);
+            if(!map.containsKey(ch1)){
+                map.put(ch1, ch2);
+            }else{
+                if(map.get(ch1) != ch2){
+                    return false;
+                }
+            }
+        }
+        if(map.size() == 26 && str2Set.size() == 26){
+            // we are not left with any temp variable to swap in this case
+            return false;
+        }
+        return true;
+    }
+
+    /* 923. 3Sum With Multiplicity
+    * https://leetcode.com/problems/3sum-with-multiplicity/
+    * */
+    public int threeSumMulti(int[] arr, int target) {
+        int mod = (int)1e9 + 7;
+        int n = arr.length;
+        int res = 0;
+        HashMap<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < n; i++) {
+            res = (res + map.getOrDefault(target - arr[i], 0)) % mod;
+            for (int j = 0; j < i; j++) {
+                int temp = arr[i] + arr[j];
+                map.put(temp, map.getOrDefault(temp, 0) + 1);
+            }
+        }
+        return res % mod;
+    }
+
+    /* 902. Numbers At Most N Given Digit Set
+    * https://leetcode.com/problems/numbers-at-most-n-given-digit-set/
+    * */
+    public int atMostNGivenDigitSet(String[] digits, int n) {
+        String s = String.valueOf(n);
+        int k = s.length();
+        int[] dp = new int[k + 1];
+        dp[k] = 1;
+
+        int len = digits.length;
+
+        for(int i = k - 1; i >= 0; --i){
+            int si = s.charAt(i) - '0';
+            for(String d : digits){
+                if(Integer.parseInt(d) < si){
+                    dp[i] += Math.pow(len, k - i - 1);
+                }else if(Integer.parseInt(d) == si){
+                    dp[i] += dp[i + 1];
+                }
+            }
+        }
+
+        for(int i = 1; i < k; i++){
+            dp[0] += Math.pow(len, i);
+        }
+        return dp[0];
+    }
+
+    /*
      * https://leetcode.com/problems/minimum-health-to-beat-game/
      * */
     public long minimumHealth(int[] damage, int armor) {
@@ -498,6 +573,59 @@ class Current {
         return length;
     }
 
+    /*
+    * 1703. Minimum Adjacent Swaps for K Consecutive Ones
+    * https://leetcode.com/problems/minimum-adjacent-swaps-for-k-consecutive-ones/
+    * */
+    public int minMoves(int[] nums, int k) {
+        if(k == 1) return 0;
+        List<Integer> ones = new ArrayList<>();
+        for (int i = 0; i < nums.length; i++) {
+            if(nums[i] == 1){
+                ones.add(i);
+            }
+        }
+        int totalOnes = ones.size();
+        List<Integer> pref = new ArrayList<>(totalOnes);
+        pref.add(ones.get(0));
+
+        for (int i = 1; i < totalOnes; i++) {
+            pref.add(pref.get(i -1) + ones.get(i));
+        }
+
+        int ans = Integer.MAX_VALUE;
+        for (int mid = (k - 1) / 2; mid < totalOnes - k/ 2; mid++) {
+            int radius = (k - 1) / 2;
+            int right = (k%2 == 0) ? pref.get(mid + radius + 1) - pref.get(mid) - ones.get(mid) :
+                    pref.get(mid + radius) - pref.get(mid);
+            int left = (mid == 0) ? 0 : pref.get(mid - 1) - (mid- radius == 0 ? 0 : pref.get(mid - radius - 1));
+            int save = (radius + 1) * radius + (k%2 == 0 ? radius + 1 : 0);
+            ans = Math.min(ans, right - left - save);
+        }
+        return ans;
+    }
+
+    public int minOperations(int[] nums) {
+        int n = nums.length;
+        int op = n;
+
+        HashSet<Integer> sets = new HashSet<>();
+        for (int i = 0; i < n; i++) {
+            sets.add(nums[i]);
+        }
+        List<Integer> list = new ArrayList<>(sets);
+        Collections.sort(list);
+
+        int m = list.size();
+        int j = 0;
+        for (int i = 0; i < m; i++) {
+            while (j < m && list.get(j) < list.get(i) + n) ++j;
+            op = Math.min(op, n - (j - i));
+        }
+        return op;
+    }
+
+
     public int minDeletion(int[] nums) {
         int ans = 0;
         for (int i = 0; i < nums.length - 1; i++) {
@@ -510,7 +638,6 @@ class Current {
         }
         return ans;
     }
-
 
     public int subarraysWithMoreZerosThanOnes(int[] nums) {
         int mod = (int) 1e9 + 7;

@@ -1,30 +1,18 @@
 package com.pkumar7;
 
-import com.pkumar7.datastructures.ListNode;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.Objects;
-import java.util.PriorityQueue;
-import java.util.Set;
 import java.util.Stack;
 import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
-
-import javax.print.attribute.IntegerSyntax;
 
 
 /**
@@ -49,27 +37,361 @@ class Current {
 
     public static void main(String[] args) {
         Current current = new Current();
-        int[] arr = new int[]{1,2,3};
-        long ans = getcount(new int[]{2,1,3});
-        System.out.println(ans);
+        int[] arr = new int[]{1, 2, 3};
+    }
 
+    public int tallestBillboard(int[] rods) {
+        int remaining = Arrays.stream(rods).sum();
+        int n = rods.length;
+        helper(rods, n - 1, 0, 0, remaining);
+        return globalMax;
+    }
+
+    public int dpSol(int[] rods){
+        int n = rods.length;
+        int maxSum = 10000;
+        boolean[][] dp = new boolean[n+1][maxSum+1];
+        int[][]max = new int[n+1][maxSum+1];
+        dp[0][maxSum / 2] = true;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j <= maxSum; j++) {
+                if(j - rods[i] >= 0 && dp[i][j-rods[i]]){
+                    dp[i+1][j] = true;
+                    max[i+1][j] = Math.max(max[i+1][j], max[i][j-rods[i]] + rods[i]);
+                }
+                if(j + rods[i] <= maxSum && dp[i][j + rods[i]]){
+                    dp[i+1][j] = true;
+                    max[i+1][j] = Math.max(max[i+1][j], max[i][j+rods[i]]);
+                }
+                if(dp[i][j]){
+                    dp[i+1][j] = true;
+                    max[i+1][j] = Math.max(max[i+1][j], max[i][j]);
+                }
+            }
+        }
+        return max[n][maxSum / 2];
+    }
+
+    int globalMax = 0;
+    public void helper(int[] rods, int i, int first, int second, int remaining){
+        if(i < 0){
+            if(first == second){
+                globalMax = Math.max(globalMax, first);
+            }
+            return;
+        }
+        if(first + second + remaining <= 2 * globalMax ||
+                Math.abs(first - second) > remaining) return;
+
+        helper(rods, i-1, first + rods[i], second, remaining - rods[i]);
+        helper(rods, i-1, first, second + rods[i], remaining - rods[i]);
+        helper(rods, i-1, first, second, remaining - rods[i]);
+    }
+
+    public int minimumDifference(int[] nums) {
+        int n = nums.length;
+        if(n == 2) return Math.abs(nums[0] - nums[1]);
+        int[][] arr1 = generate(Arrays.copyOfRange(nums, 0, n / 2));
+        int[][] arr2 = generate(Arrays.copyOfRange(nums, n/2, n));
+        int ans = Integer.MAX_VALUE;
+        for (int d = 0; d <= n/2 ; d++) {
+            int[] a = arr1[d];
+            int[] b = arr2[d];
+            int l = a.length;
+            int i = 0, j = 0;
+            while (i < l && j < l){
+                int diff = a[i] - b[j];
+                ans = Math.min(ans, Math.abs(diff));
+                if(diff <= 0){
+                    i++;
+                }
+                if(diff >= 0){
+                    j++;
+                }
+            }
+        }
+        return ans;
+    }
+
+    private int[][] generate(int[] arr) {
+        int n = arr.length;
+        int[][] ans = new int[n+1][];
+        int[] pos = new int[n+1];
+        int total = Arrays.stream(arr).sum();
+        for (int i = 0, binomial = 1; i <= n ; i++) {
+            ans[i] = new int[binomial];
+            binomial = binomial * (n-i) / (i+1);
+        }
+        int maxValue = 1 << n;
+        for(int key = 0; key < maxValue; key++){
+            int sum1 = 0;
+            for (int i = 0; i < n; i++) {
+                if((key >> i & 1) == 1) sum1 += arr[i];
+            }
+            int sum2 = total - sum1;
+            int bits = Integer.bitCount(key);
+            ans[bits][pos[bits]++] = sum1 - sum2;
+        }
+        for(int[] a : ans){
+            Arrays.sort(a);
+        }
+        return ans;
+    }
+
+    public int[] amountPainted(int[][] paint) {
+        TreeMap<Integer, Integer> map = new TreeMap<>();
+
+        int n = paint.length;
+        int[] res = new int[n];
+        for (int i = 0; i < n; i++) {
+            int[] p = paint[i];
+            int left = p[0], right = p[1];
+            int toPaint = right - left;
+            if(map.floorKey(left) != null
+                    && map.get(map.floorKey(left)) > left){
+                int l = map.floorKey(left);
+                int r = map.get(l);
+                if(r >= right) continue;
+                toPaint -= (r - left);
+                map.remove(l);
+                left = l;
+            }
+            Integer start = p[0];
+            while(start != null && map.ceilingKey(start) != null
+                    && map.ceilingKey(start) <= right){
+                int l = map.ceilingKey(start);
+                int r = map.get(l);
+                toPaint -= Math.min(l, right) - r;
+                map.remove(l);
+                right = Math.max(right, r);
+                start = map.ceilingKey(p[0]);
+            }
+            map.put(left, right);
+            res[i] = toPaint;
+        }
+        return res;
+    }
+
+    public int shortestPathLength(int[][] graph) {
+        int n = graph.length;
+        Queue<int[]> bfs = new LinkedList<>();
+        int row = (int)Math.pow(2, n);
+        int col = n;
+        int[][] dist = new int[row][col];
+        for (int i = 0; i < row; i++) {
+            Arrays.fill(dist[i], -1);
+        }
+        for (int leadingNode = 0; leadingNode < n; leadingNode++) {
+            int mask = setBit(0, leadingNode);
+            bfs.offer(new int[]{mask, leadingNode});
+            dist[mask][leadingNode] = 0;
+        }
+        while (!bfs.isEmpty()){
+            int size  = bfs.size();
+            while (size-- > 0){
+                int[] curr = bfs.poll();
+                int mask = curr[0];
+                int leadingNode = curr[1];
+                if(mask == row -1) return dist[mask][leadingNode];
+                for(int child : graph[leadingNode]){
+                    int newMask = setBit(mask, child);
+                    if(dist[newMask][child] != -1) continue;
+                    dist[newMask][child] = dist[mask][leadingNode] + 1;
+                    bfs.offer(new int[]{newMask, child});
+                }
+            }
+        }
+        return 1221;
+    }
+
+    public int setBit(int mask, int node){
+        return mask | (1 << node);
+    }
+
+    public int countDistinct(String s) {
+        int n = s.length();
+        Suffix[] suffixArray = new Suffix[n];
+        for (int i = 0; i < s.length(); i++) {
+            suffixArray[i] = new Suffix(s.substring(i), i);
+        }
+        Arrays.sort(suffixArray);
+        int[] sa = new int[n];
+        for (int i = 0; i < n; i++) {
+            sa[i] = suffixArray[i].orgIdx;
+        }
+        int[] lcp = constructLcpUsingKasai(n, s, sa);
+        //int[] lcp = constructLcpNaive(n, suffixArray);
+        return (n * (n+1) / 2) - Arrays.stream(lcp).sum();
+    }
+
+    public int[] constructLcpNaive(int n, Suffix[] suffixArray){
+        int[] lcp = new int[n];
+        lcp[0] = 0;
+        for (int i = 1; i < suffixArray.length; i++) {
+            String prev = suffixArray[i-1].suffix;
+            String curr = suffixArray[i].suffix;
+            int currLCP = 0;
+            for(int j = 0; j < Math.min(prev.length(), curr.length()); j++){
+                if(prev.charAt(j) == curr.charAt(j)){
+                    currLCP++;
+                }else{
+                    break;
+                }
+            }
+            lcp[i] = currLCP;
+        }
+        return lcp;
+    }
+
+    public int[] constructLcpUsingKasai(int n, String s, int[] sa){
+        // LCP Construction using kasai algorithm
+        int[] lcp = new int[n];
+        int[] rank = new int[n];
+        for (int i = 0; i < n; i++) {
+            rank[sa[i]] = i;
+        }
+
+        int k = 0;
+        for (int i = 0; i < n; i++) {
+            if (rank[i] == n - 1) {
+                k = 0;
+                continue;
+            }
+            int j = sa[rank[i] + 1];
+            while (i + k < n && j + k < n && s.charAt(i + k) == s.charAt(j + k)) {
+                k++;
+            }
+            lcp[rank[i]] = k;
+            k = Math.max(k - 1, 0);
+        }
+        return lcp;
+    }
+
+    class Suffix implements Comparable<Suffix>{
+        final int orgIdx;
+        final String suffix;
+        final int len;
+        public Suffix(String suffix, int orgIdx){
+            this.len = suffix.length();
+            this.orgIdx = orgIdx;
+            this.suffix = suffix;
+        }
+
+        @Override
+        public int compareTo(Suffix other) {
+            if (this == other) return 0;
+            int min_len = Math.min(len, other.len);
+            for (int i = 0; i < min_len; i++) {
+                char otherCh = other.suffix.charAt(i);
+                char thisCh = suffix.charAt(i);
+                if (thisCh < otherCh) return -1;
+                if (thisCh > otherCh) return 1;
+            }
+            return len - other.len;
+        }
+
+        @Override
+        public String toString() {
+            return new String(suffix.toCharArray(), orgIdx, len);
+        }
+    }
+
+    public int maximumMinutes(int[][] grid) {
+        Queue<int[]> bfs = new LinkedList<>();
+        int m = grid.length;
+        int n = grid[0].length;
+        boolean[][] visited = new boolean[m][n];
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[0].length; j++) {
+                if (grid[i][j] == 1) {
+                    bfs.offer(new int[]{i, j});
+                    visited[i][j] = true;
+                }
+            }
+        }
+        int minDistanceFireToSafeHouse = 0;
+        int[][] dirs = new int[][]{{-1, 0}, {1, 0}, {0, 1}, {0, -1}};
+        boolean fireCanReachSafeHouse = false;
+        while (!bfs.isEmpty()) {
+            int size = bfs.size();
+            while (size-- > 0) {
+                int[] c = bfs.poll();
+                visited[c[0]][c[1]] = true;
+                if (c[0] == m - 1 && c[1] == n - 1) {
+                    fireCanReachSafeHouse = true;
+                    break;
+                }
+                for (int[] d : dirs) {
+                    int next_x = d[0] + c[0];
+                    int next_y = d[1] + c[1];
+                    if (canFireSpread(next_x, next_y, grid, visited)) {
+                        bfs.offer(new int[]{next_x, next_y});
+                    }
+                }
+            }
+            minDistanceFireToSafeHouse += 1;
+        }
+        bfs.clear();
+        bfs.offer(new int[]{0, 0});
+        visited = new boolean[m][n];
+        int minDistanceManToSafeHouse = 0;
+        while (!bfs.isEmpty()) {
+            int size = bfs.size();
+            while (size-- > 0) {
+                int[] c = bfs.poll();
+                visited[c[0]][c[1]] = true;
+                if (c[0] == m - 1 && c[1] == n - 1) {
+                    break;
+                }
+                for (int[] d : dirs) {
+                    int next_x = d[0] + c[0];
+                    int next_y = d[1] + c[1];
+                    if (canPersonMove(next_x, next_y, grid, visited)) {
+                        bfs.offer(new int[]{next_x, next_y});
+                    }
+                }
+            }
+            minDistanceManToSafeHouse += 1;
+        }
+        if (minDistanceManToSafeHouse == minDistanceFireToSafeHouse) {
+            return -1;
+        }
+        if (!fireCanReachSafeHouse) {
+            return (int) 1e9;
+        }
+        System.out.println(minDistanceManToSafeHouse + " " + minDistanceFireToSafeHouse);
+        return minDistanceFireToSafeHouse - minDistanceManToSafeHouse;
+    }
+
+    public boolean canPersonMove(int next_x, int next_y, int[][] grid, boolean[][] visited) {
+        int m = grid.length;
+        int n = grid[0].length;
+        return (next_x >= 0 && next_x < m && next_y >= 0 && next_y < n
+                && grid[next_x][next_y] != 2 && grid[next_x][next_y] != 1 && !visited[next_x][next_y]);
+    }
+
+    public boolean canFireSpread(int next_x, int next_y, int[][] grid, boolean[][] visited) {
+        int m = grid.length;
+        int n = grid[0].length;
+        return (next_x >= 0 && next_x < m && next_y >= 0 && next_y < n
+                && grid[next_x][next_y] != 2 && !visited[next_x][next_y]);
     }
 
     /*
-    * https://leetcode.com/problems/minimum-health-to-beat-game/
-    * */
+     * https://leetcode.com/problems/minimum-health-to-beat-game/
+     * */
     public long minimumHealth(int[] damage, int armor) {
         long sum = 0L;
-        for (int i = 0; i < damage.length ; i++) {
+        for (int i = 0; i < damage.length; i++) {
             sum += damage[i];
         }
         Arrays.sort(damage);
         int index = Arrays.binarySearch(damage, armor);
-        if(index < 0) index = ~index;
+        if (index < 0) index = ~index;
 
-        if(index == damage.length) index = damage.length - 1;
+        if (index == damage.length) index = damage.length - 1;
 
-        if(armor < damage[index]){
+        if (armor < damage[index]) {
             return sum + 1 - armor;
         }
         return sum - (damage[index]) + 1;
@@ -95,26 +417,26 @@ class Current {
         HashMap<Integer, Integer> map1 = new HashMap<>();
         HashMap<Integer, Integer> map2 = new HashMap<>();
 
-        for (int i = 0; i < nums.length; i+=2) {
+        for (int i = 0; i < nums.length; i += 2) {
             map1.put(nums[i], map1.getOrDefault(nums[i], 0) + 1);
         }
-        for (int i = 1; i < nums.length; i+=2) {
+        for (int i = 1; i < nums.length; i += 2) {
             map2.put(nums[i], map2.getOrDefault(nums[i], 0) + 1);
         }
         int count1 = 0;
         int count2 = 0;
         List<int[]> list1 = new ArrayList<>();
-        for(Map.Entry<Integer, Integer> e : map1.entrySet()){
+        for (Map.Entry<Integer, Integer> e : map1.entrySet()) {
             count1 += e.getValue();
         }
         List<int[]> list2 = new ArrayList<>();
-        for(Map.Entry<Integer, Integer> e : map2.entrySet()){
+        for (Map.Entry<Integer, Integer> e : map2.entrySet()) {
             count2 += e.getValue();
         }
-        for(int[] a : list1 ){
-            for(int[]b : list2){
-                if(a[0] != b[0]){
-                  //  return count1 - a[1] + count2 - b[1];
+        for (int[] a : list1) {
+            for (int[] b : list2) {
+                if (a[0] != b[0]) {
+                    //  return count1 - a[1] + count2 - b[1];
                 }
             }
         }
@@ -146,91 +468,6 @@ class Current {
     /*
      * https://leetcode.com/problems/smallest-missing-genetic-value-in-each-subtree/
      * */
-    /*
-     * https://leetcode.com/problems/longest-common-subpath/
-     * */
-    long BASE = 100007L, MOD = 1000000007L;
-    public int longestCommonSubpath(int n, int[][] paths) {
-        int ans = 0;
-        int high = 1, low = 1;
-        for (int i = 0; i < paths.length; i++) {
-            high = Math.min(ans, paths[i].length);
-        }
-
-        long[] pow = new long[high + 1];
-
-        pow[0] = 1;
-        for (int i = 1; i <= high; ++i) {
-            pow[i] = pow[i - 1] * BASE % MOD;
-        }
-
-        while (low <= high) {
-            int mid = (low + high) >> 1;
-            if (pathExistsWithCurrLen(mid, paths)) {
-                ans = mid;
-                low = mid + 1;
-            } else {
-                high = mid - 1;
-            }
-        }
-        return ans;
-    }
-
-    private boolean pathExistsWithCurrLen(int mid, int[][] paths) {
-        return true;
-    }
-
-    public int rollingHashSol(int[] a, int[] b) {
-        int min = Math.min(a.length, b.length);
-        int max = Math.max(a.length, b.length);
-        long[] pow = new long[max + 1];
-        long[] hash_a = new long[a.length + 1];
-        long[] hash_b = new long[b.length + 1];
-
-        pow[0] = 1;
-        for (int i = 1; i <= max; ++i) {
-            pow[i] = pow[i - 1] * BASE % MOD;
-        }
-
-        for (int i = 1; i <= a.length; i++) {
-            hash_a[i] = (hash_a[i - 1] * BASE + a[i - 1]) % MOD;
-        }
-
-        for (int i = 1; i <= b.length; i++) {
-            hash_b[i] = (hash_b[i - 1] * BASE + b[i - 1]) % MOD;
-        }
-
-        int low = 1, high = min;
-        int ans = 0;
-        while (low <= high) {
-            int mid = (low + high) / 2;
-            HashSet<Long> seen = new HashSet<>();
-            for (int i = 1; i + mid - 1 <= a.length; i++) {
-                long hashA = getHash(i - 1, i + mid - 1, hash_a, pow);
-                seen.add(hashA);
-            }
-            boolean found = false;
-            for (int i = 1; i + mid - 1 <= b.length; i++) {
-                long hashB = getHash(i - 1, i + mid - 1, hash_b, pow);
-                if (seen.contains(hashB)) {
-                    found = true;
-                    break;
-                }
-            }
-            if (found) {
-                ans = mid;
-                low = mid + 1;
-            } else {
-                high = mid - 1;
-            }
-        }
-        return ans;
-    }
-
-    public long getHash(int l, int r, long[] hash, long[] pow) {
-        return (hash[r] - hash[l] * pow[r - l] % MOD + MOD) % MOD;
-    }
-
     public int dpSol(int n, int[][] paths) {
         int p = paths.length;
         int max = Integer.MAX_VALUE;
@@ -263,12 +500,12 @@ class Current {
 
     public int minDeletion(int[] nums) {
         int ans = 0;
-        for (int i = 0; i < nums.length -1 ; i++) {
-            if(nums[i] == nums[i + 1] && (i - ans) % 2 == 0){
+        for (int i = 0; i < nums.length - 1; i++) {
+            if (nums[i] == nums[i + 1] && (i - ans) % 2 == 0) {
                 ans += 1;
             }
         }
-        if((nums.length - ans) % 2 == 1){
+        if ((nums.length - ans) % 2 == 1) {
             ans += 1;
         }
         return ans;
@@ -276,13 +513,13 @@ class Current {
 
 
     public int subarraysWithMoreZerosThanOnes(int[] nums) {
-        int mod = (int)1e9 + 7;
+        int mod = (int) 1e9 + 7;
         return 0;
     }
 
     public List<List<Integer>> findWinners(int[][] matches) {
         HashMap<Integer, Integer> indegree = new HashMap<>();
-        for(int[] match : matches){
+        for (int[] match : matches) {
             int winner = match[0];
             int loser = match[1];
             indegree.put(loser, indegree.getOrDefault(loser, 0) + 1);
@@ -292,12 +529,12 @@ class Current {
         List<List<Integer>> res = new ArrayList<>();
         List<Integer> a = new ArrayList<>();
         List<Integer> b = new ArrayList<>();
-        for(Map.Entry<Integer, Integer> e : indegree.entrySet()){
+        for (Map.Entry<Integer, Integer> e : indegree.entrySet()) {
             int player = e.getKey();
             int timesLoser = e.getValue();
-            if(timesLoser == 0){
+            if (timesLoser == 0) {
                 a.add(player);
-            }else if(timesLoser == 1){
+            } else if (timesLoser == 1) {
                 b.add(player);
             }
         }
@@ -311,11 +548,11 @@ class Current {
     public int maximumTop(int[] nums, int k) {
         int n = nums.length;
         int max = Integer.MIN_VALUE;
-        if(n == 1 && k % 2 == 1) return -1;
-        for (int i = 0; i < Math.min(n, k - 1); i++){
+        if (n == 1 && k % 2 == 1) return -1;
+        for (int i = 0; i < Math.min(n, k - 1); i++) {
             max = Math.max(max, nums[i]);
         }
-        if(k < n){
+        if (k < n) {
             max = Math.max(max, nums[k]);
         }
         return max;
@@ -326,10 +563,10 @@ class Current {
         LinkedList<Integer> list = new LinkedList<>();
         for (int i = 0; i < n; i++) {
             int a = nums[i];
-            while (true){
+            while (true) {
                 int last = list.isEmpty() ? 1 : list.peekLast();
-                int x = __gcd(last,a);
-                if(x == 1) break;
+                int x = __gcd(last, a);
+                if (x == 1) break;
                 a *= list.pollLast() / x;
             }
             list.add(a);
@@ -344,24 +581,24 @@ class Current {
 
     public long minimumTime(int[] time, int totalTrips) {
         long low = 1;
-        long high = (long)1e14;
+        long high = (long) 1e14;
         long minTime = 1;
-        while (low <= high){
+        while (low <= high) {
             long mid = (low + high) / 2;
-            if(canCompleteTrips(time, totalTrips, mid)){
+            if (canCompleteTrips(time, totalTrips, mid)) {
                 minTime = mid;
                 high = mid - 1;
-            }else{
+            } else {
                 low = mid + 1;
             }
         }
         return minTime;
     }
 
-    public boolean canCompleteTrips(int[] time, long totalTrips, long endTime){
+    public boolean canCompleteTrips(int[] time, long totalTrips, long endTime) {
         long currTripCount = 0;
         for (int t : time) {
-            currTripCount += (endTime / (long)t);
+            currTripCount += (endTime / (long) t);
         }
         return currTripCount >= totalTrips;
     }
@@ -386,7 +623,7 @@ class Current {
         for (int i = 0; i < s.length() && i + k <= s.length(); i++) {
             String sub = s.substring(i, i + k);
             int hash = computeHash(sub, power, modulo, k);
-            if(hash == hashValue){
+            if (hash == hashValue) {
                 return sub;
             }
         }
@@ -402,41 +639,41 @@ class Current {
             hash = hash + currHash;
             hash = hash % modulo;
         }
-        return (int)hash;
+        return (int) hash;
     }
 
     public List<Integer> maxScoreIndices(int[] nums) {
         int n = nums.length;
         int[] zeroFromLeft = new int[n];
         int[] oneFromRight = new int[n];
-        if(nums[0] == 0 ){
+        if (nums[0] == 0) {
             zeroFromLeft[0] = 1;
         }
-        if(nums[n - 1] == 1){
+        if (nums[n - 1] == 1) {
             oneFromRight[n - 1] = 1;
         }
         for (int i = 1; i < n; i++) {
-            if(nums[i] == 0){
+            if (nums[i] == 0) {
                 zeroFromLeft[i] = zeroFromLeft[i - 1] + 1;
-            }else{
+            } else {
                 zeroFromLeft[i] = zeroFromLeft[i - 1];
             }
         }
         for (int i = n - 2; i >= 0; i--) {
-            if(nums[i] == 1){
+            if (nums[i] == 1) {
                 oneFromRight[i] = oneFromRight[i + 1] + 1;
-            }else{
+            } else {
                 oneFromRight[i] = oneFromRight[i + 1];
             }
         }
         TreeMap<Integer, List<Integer>> count = new TreeMap<>(Collections.reverseOrder());
         for (int i = 0; i <= n; i++) {
             int sum = 0;
-            if(i == n){
-                sum = zeroFromLeft[i -1];
-            }else if(i > 0){
+            if (i == n) {
+                sum = zeroFromLeft[i - 1];
+            } else if (i > 0) {
                 sum = oneFromRight[i] + zeroFromLeft[i - 1];
-            }else{
+            } else {
                 sum = oneFromRight[i];
             }
             count.putIfAbsent(sum, new ArrayList<>());
@@ -451,12 +688,12 @@ class Current {
         HashMap<Integer, int[]> reviewsMap = new HashMap<>();
         for (int i = 0; i < statements.length; i++) {
             for (int j = 0; j < statements[i].length; j++) {
-                if(i == j) continue;
+                if (i == j) continue;
                 int statement = statements[i][j];
-                int[] review = reviewsMap.getOrDefault(j, new int[]{0,0});
-                if(statement == 0){ // bad
+                int[] review = reviewsMap.getOrDefault(j, new int[]{0, 0});
+                if (statement == 0) { // bad
                     review[1] += 1;
-                }else if(statement == 1){ // good
+                } else if (statement == 1) { // good
                     review[0] += 1;
                 }
                 reviewsMap.put(j, review);
@@ -465,7 +702,7 @@ class Current {
         int count = 0;
         for (Integer person : reviewsMap.keySet()) {
             int[] reviews = reviewsMap.get(person);
-            if(reviews[0] > reviews[1]){
+            if (reviews[0] > reviews[1]) {
                 count += 1;
             }
         }
@@ -577,7 +814,7 @@ class Current {
         while (!stack.isEmpty()) {
             int j = stack.pop();
             sb.append(A[j].substring(A[j].length() -
-                                     graph[i][j]));
+                    graph[i][j]));
             i = j;
         }
         return sb.toString();

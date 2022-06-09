@@ -15,33 +15,12 @@ public class Template {
     void pre() throws Exception{}
     void solve(int TC) throws Exception {
         int n = ni();
-        int[][] p = new int[n][];
-        for(int i = 0; i< n; i++)p[i] = new int[]{i, ni(), ni()};
-        Arrays.sort(p, (int[] i1, int[] i2) -> Integer.compare(i1[1], i2[1]));
-        char[] ans = new char[n];
-        int[] end = new int[2];
-        boolean imp = false;
-        for(int i = 0; i< n; i++){
-            if(Math.min(end[0], end[1]) > p[i][1]){
-                pn("Case #"+TC+": IMPOSSIBLE");
-                return;
-            }
-            if(end[0] <= p[i][1]){
-                ans[p[i][0]] = 'C';
-                end[0] = p[i][2];
-            }
-            else if(end[1] <= p[i][1]){
-                ans[p[i][0]] = 'J';
-                end[1] = p[i][2];
-            }
-            else imp = true;
+        int[]p = new int[n];
+        for (int i = 0; i < n; i++) {
+            p[i] = ni();
         }
-        if(imp)pn("Case #"+TC+": IMPOSSIBLE");
-        else{
-            StringBuilder o = new StringBuilder("");
-            for(char ch:ans)o.append(ch);
-            pn("Case #"+TC+": "+o.toString());
-        }
+        Arrays.sort(p);
+        pn(Arrays.toString(p));
     }
     //SOLUTION END
     void hold(boolean b)throws Exception{if(!b)throw new Exception("Hold right there, Sparky!");}

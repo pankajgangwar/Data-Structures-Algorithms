@@ -415,14 +415,19 @@ class JuneW4 {
             suffixArray[i] = new Suffix(s.substring(i), i);
         }
         Arrays.sort(suffixArray);
-
         int[] sa = new int[n];
         for (int i = 0; i < n; i++) {
             sa[i] = suffixArray[i].orgIdx;
-            suffixArray[i] = null;
         }
-        suffixArray = null;
+        int[] lcp = constructLcpUsingKasai(n, s, sa);
+        int maxLen = 0;
+        maxLen = Arrays.stream(lcp).max().getAsInt();
+        System.out.println("maxLcp = " + maxLen);
+        return maxLen;
+    }
 
+    public int[] constructLcpUsingKasai(int n, String s, int[] sa){
+        // LCP Construction using kasai algorithm
         int[] lcp = new int[n];
         int[] rank = new int[n];
         for (int i = 0; i < n; i++) {
@@ -430,29 +435,21 @@ class JuneW4 {
         }
 
         int k = 0;
-        for(int i = 0; i < n; i++) {
-            if(rank[i] == n - 1) {
+        for (int i = 0; i < n; i++) {
+            if (rank[i] == n - 1) {
                 k = 0;
                 continue;
             }
-            if(rank[i] > 0) {
-                int j = sa[rank[i] + 1];
-                while (i + k < n && j + k < n && s.charAt(i + k) == s.charAt(j + k)) {
-                    k++;
-                }
-                lcp[rank[i] - 1] = k;
-                if (k > 0) {
-                    k--;
-                }
+            int j = sa[rank[i] + 1];
+            while (i + k < n && j + k < n && s.charAt(i + k) == s.charAt(j + k)) {
+                k++;
             }
+            lcp[rank[i]] = k;
+            k = Math.max(k - 1, 0);
         }
-        int maxLen = 0;
-        for (int i = 0; i < n; i++) {
-            maxLen = Math.max(maxLen, lcp[i]);
-        }
-        System.out.println("maxLcp = " + maxLen);
-        return maxLen;
+        return lcp;
     }
+
 
     public void patternMatchingWithBinarySearch(){
         String pat = "ana";

@@ -94,6 +94,9 @@ public class SegTreeRangeAnd {
         }
     }
 
+    /*
+    * https://leetcode.com/problems/find-subarray-with-bitwise-and-closest-to-k/
+    * */
     public int minimumDifference(int[] arr, int k) {
         int n = arr.length;
         int ans = Integer.MAX_VALUE;

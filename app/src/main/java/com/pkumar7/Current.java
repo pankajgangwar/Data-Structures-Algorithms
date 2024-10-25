@@ -39,6 +39,7 @@ class Current {
     public static void main(String[] args) {
         Current current = new Current();
         int[] arr = new int[]{1, 2, 3};
+        
     }
 
     public int tallestBillboard(int[] rods) {
